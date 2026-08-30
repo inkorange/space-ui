@@ -6,6 +6,10 @@ concurrency: release-${{ github.ref }}
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      # secrets.* is not readable inside a step "if"; surfacing presence as
+      # an env flag is the supported pattern.
+      NPM_TOKEN_SET: ${{ secrets.NPM_TOKEN != '' }}
     permissions:
       contents: write
       pull-requests: write
@@ -23,7 +27,7 @@ jobs:
       # publish of whatever version sits in package.json (it tried 0.0.0 on
       # the very first push). Until the token exists, this workflow is a
       # deliberate no-op.
-      - if: ${{ secrets.NPM_TOKEN != '' }}
+      - if: env.NPM_TOKEN_SET == 'true'
         uses: changesets/action@v1
         with:
           publish: pnpm release
