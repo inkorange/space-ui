@@ -1,0 +1,51 @@
+// src/components/ui/Select.module.scss
+// Structural styles only — the space skin (glass, rim, highlight colors)
+// stays in spaceControls.module.scss / page modules, re-anchored in the
+// migration task. Bare Selects (AuthModal, NewsBrowser) get a minimal
+// readable default from these rules alone.
+.root { position: relative; display: inline-block; }
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  color: inherit;
+  background: none;
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font: inherit;
+
+  &:disabled { cursor: not-allowed; opacity: 0.55; }
+}
+
+.triggerLabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chevron { flex-shrink: 0; opacity: 0.7; }
+
+.listbox {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  // Above the builder's absolute overlays (max z-index 12 per inventory)
+  // and safe inside dialog stacking contexts.
+  z-index: 50;
+  min-width: 100%;
+  max-height: min(60vh, 380px);
+  overflow-y: auto;
+  background: #101216;
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 8px;
+  padding: 4px;
+  outline: none;
+}
+
+.item {
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+
+  &[data-highlighted] { background: rgba(110, 160, 255, 0.2); color: #fff; }
+  &[aria-disabled] { opacity: 0.5; cursor: not-allowed; }
+}

@@ -1,0 +1,18 @@
+// Sizes mirror the measured Radix type scale; no size prop = inherit, which
+// is Radix Text's behavior at unsized call sites.
+.text { margin: 0; }
+
+.size1 { font-size: 12px; line-height: 16px; letter-spacing: 0.0025em; }
+.size2 { font-size: 14px; line-height: 20px; }
+.size3 { font-size: 16px; line-height: 24px; }
+.size4 { font-size: 18px; line-height: 26px; letter-spacing: -0.0025em; }
+.size5 { font-size: 20px; line-height: 28px; letter-spacing: -0.005em; }
+.size6 { font-size: 24px; line-height: 30px; letter-spacing: -0.00625em; }
+
+.medium { font-weight: 500; }
+.bold { font-weight: 700; }
+
+.colorGray { color: var(--sp-gray-text-dim); }
+.colorRed { color: var(--sp-red-11); }
+.colorGreen { color: var(--sp-green-11); }
+.colorAmber { color: var(--sp-amber-11); }

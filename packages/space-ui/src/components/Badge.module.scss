@@ -1,0 +1,44 @@
+// Soft palette measured from Radix dark (<color>-a3 background, <color>-11
+// text). Component-local by design — Badge's palette, not global tokens.
+.badge {
+  display: inline-flex;
+  align-items: center;
+  // Radix Badge pins the system stack (does NOT inherit the app font) and
+  // both sizes use the 12px type step — only padding/radius differ. Metrics
+  // lifted verbatim from rt-Badge so badges match pre-migration rendering.
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI (Custom)", Roboto,
+    "Helvetica Neue", "Open Sans (Custom)", system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.size1 {
+  font-size: 12px; line-height: 16px; letter-spacing: 0.0025em;
+  padding: 2px 6px; gap: 6px; border-radius: 3px;
+}
+.size2 {
+  font-size: 12px; line-height: 16px; letter-spacing: 0.0025em;
+  padding: 4px 8px; gap: 6px; border-radius: 4px;
+}
+
+.colorGray   { background: #ffffff12; color: var(--sp-gray-text-dim); }
+.colorBlue   { background: #0077ff3a; color: var(--sp-blue-11); }
+.colorGreen  { background: #22ff991e; color: var(--sp-green-11); }
+.colorRed    { background: #ff173f2d; color: var(--sp-red-11); }
+.colorAmber  { background: #fa820022; color: var(--sp-amber-11); }
+.colorCyan   { background: #00befd28; color: #4ccce6; }
+.colorPurple { background: #c150ff2d; color: #d19dff; }
+.colorOrange { background: #fb6a0025; color: #ffa057; }
+.colorViolet { background: #8354fe36; color: var(--sp-violet-11); }
+.colorYellow { background: #ffaa001e; color: #f5e147; }
+
+/* Solid variant: only the color(s) actually used with variant="solid" get a
+   rule (grep 'variant="solid"' — one site). Implement for that color:
+   background = its -9 step solid, white text. Example for blue:
+   .solid.colorBlue { background: var(--sp-blue-9); color: #fff; }
+   Replace/extend per what the grep finds and note it in the task report. */
+.solid.colorGreen { background: var(--sp-green-9); color: #fff; }
+
+/* Opt-in wrapping for long free-text badges (user-named systems). */
+.wrap { white-space: normal; min-width: 0; overflow-wrap: anywhere; }

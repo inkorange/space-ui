@@ -1,0 +1,57 @@
+/* ============================================================
+   Space design-system tokens — Phase 1 of the Radix removal.
+   Grays are 7 ROLE tokens (consolidated from 15 Radix variants);
+   spacing is a t-shirt scale on the 8pt grid (xs is the 4px
+   half-step). Accent/type values are seeded from the measured
+   Radix dark theme so the swap is visually silent.
+   Spec: docs/superpowers/specs/2026-07-31-radix-removal-design.md
+   ============================================================ */
+:root {
+  /* Grays — role-based (seeded from Radix slate, dark) */
+  --sp-gray-text: #edeef0;        /* headings, primary text        (was gray-12) */
+  --sp-gray-text-dim: #b0b4ba;    /* secondary text, labels        (was gray-11) */
+  --sp-gray-muted: #696e77;       /* placeholder, disabled, faint  (was gray-9)  */
+  --sp-gray-border: #d6ebfd30;    /* hairlines, control borders    (was gray-a6) */
+  --sp-gray-surface: #d8f4f609;   /* subtle washes: hovers, wells  (was gray-a2) */
+  --sp-gray-panel: #18191b;       /* solid card/panel fills        (was gray-2);
+                                     split from surface after visual review —
+                                     one alpha value can't serve both the old
+                                     solid panels and the old 3.5% washes */
+  --sp-gray-track: #272a2d;       /* recessed meter/progress tracks (was gray-4);
+                                     split from border after visual review —
+                                     tracks need the old solid, not 19% alpha */
+
+  /* Accents (Radix dark values, 1:1) */
+  --sp-blue-2: #111927;
+  --sp-blue-8: #2870bd;
+  --sp-blue-9: #0090ff;
+  --sp-blue-11: #70b8ff;
+  --sp-blue-12: #c2e6ff;
+  --sp-blue-a2: #1166fb18;
+  --sp-blue-a3: #0077ff3a;
+  --sp-blue-a6: #0f89fd7f;
+  --sp-amber-10: #ffd60a;
+  --sp-amber-11: #ffca16;
+  --sp-green-9: #30a46c;
+  --sp-green-11: #3dd68c;
+  --sp-green-a3: #22ff991e;
+  --sp-green-a6: #44ffaa4b;
+  --sp-red-9: #e5484d;
+  --sp-red-11: #ff9592;
+  --sp-violet-11: #baa7ff;
+  --sp-yellow-9: #ffe629;
+  --sp-orange-9: #f76b15;
+
+  /* Spacing — 8pt grid, xs = 4px half-step */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Type scale (seeded from Radix font-size steps in use) */
+  --sp-font-xs: 12px;
+  --sp-font-sm: 14px;
+  --sp-font-md: 16px;
+  --sp-font-xl: 24px;
+}

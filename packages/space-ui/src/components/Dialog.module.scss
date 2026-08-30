@@ -1,0 +1,84 @@
+// src/components/ui/Dialog.module.scss
+// Metrics from the measured Radix dark dialog (Step 0 extraction — see
+// task-1-report.md for the raw node/regex output). Every inventoried site
+// uses size="3" or size="4" (never 1/2), and BOTH of those map to Radix's
+// --radius-5 (12px), not --radius-4 (8px) — the earlier ballpark undershot
+// the real corner radius. The backdrop and box-shadow below are likewise
+// the measured dark-theme --color-overlay/--shadow-6 values (with
+// --gray-a6/--black-a4/--black-a6/--black-a11 resolved to their dark-theme
+// rgba equivalents; the shadow's own hairline layer is expressed as a real
+// border using the app's existing --sp-gray-border token instead of
+// duplicating it inside box-shadow).
+.dialog {
+  // Tailwind's preflight resets `margin: 0` on every element via a `*`
+  // selector, which clobbers the native <dialog>'s UA default of
+  // `margin: auto` that centers it in the viewport (dialog:modal is
+  // `position: fixed; inset: 0`, so without auto margins it collapses to
+  // the top-left corner at its content size instead of centering). Restore
+  // it explicitly — our class selector already outranks the universal one.
+  margin: auto;
+  border: 1px solid var(--sp-gray-border);
+  padding: 0;
+  background: var(--sp-gray-panel);
+  color: var(--sp-gray-text);
+  border-radius: 12px; // measured: --radius-5 (size-3 and size-4 both resolve here)
+  width: calc(100vw - 32px);
+  max-width: 580px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto; // content taller than max-height scrolls inside the panel, like Radix
+  box-shadow:
+    0 12px 60px rgba(0, 0, 0, 0.2),
+    0 16px 64px rgba(0, 0, 0, 0.4),
+    0 16px 36px -20px rgba(0, 0, 0, 0.9);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.6); // measured: dark-theme --color-overlay (--black-a8)
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &[open] { animation: dialogIn 160ms ease-out; }
+  }
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.inner { position: relative; padding: 24px; } // measured: size-3 --dialog-content-padding (--space-5)
+.size4 .inner { padding: 32px; } // measured: size-4 --dialog-content-padding (--space-6)
+.title { margin-bottom: 8px; }
+
+/* Dismiss glyph, pinned to the dialog's top-right corner. Replaces the
+   bottom "Close" buttons that used to float at the end of a dialog's content,
+   where they competed with the dialog's real actions (Save, Create) for the
+   same visual weight. Dim until hovered — present, not shouting. */
+.closeX {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--sp-gray-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #eaf2ff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-blue-8);
+    outline-offset: 2px;
+    color: #eaf2ff;
+  }
+}

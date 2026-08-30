@@ -1,0 +1,251 @@
+{
+  "about": {
+    "homepage": "https://www.ladle.dev",
+    "github": "https://github.com/tajo/ladle",
+    "version": 1
+  },
+  "stories": {
+    "buttons--buttons": {
+      "name": "Buttons",
+      "levels": [
+        "Buttons"
+      ],
+      "locStart": 5,
+      "locEnd": 13,
+      "filePath": "src/buttons.stories.tsx",
+      "namedExport": "Buttons",
+      "meta": {}
+    },
+    "buttons--icon-toggle": {
+      "name": "Icon toggle",
+      "levels": [
+        "Buttons"
+      ],
+      "locStart": 25,
+      "locEnd": 38,
+      "filePath": "src/buttons.stories.tsx",
+      "namedExport": "IconToggleStory",
+      "meta": {}
+    },
+    "buttons--loader": {
+      "name": "Loader",
+      "levels": [
+        "Buttons"
+      ],
+      "locStart": 15,
+      "locEnd": 15,
+      "filePath": "src/buttons.stories.tsx",
+      "namedExport": "Loader",
+      "meta": {}
+    },
+    "buttons--progress": {
+      "name": "Progress",
+      "levels": [
+        "Buttons"
+      ],
+      "locStart": 17,
+      "locEnd": 22,
+      "filePath": "src/buttons.stories.tsx",
+      "namedExport": "ProgressStory",
+      "meta": {}
+    },
+    "forms--radio-group": {
+      "name": "Radio group",
+      "levels": [
+        "Forms"
+      ],
+      "locStart": 43,
+      "locEnd": 52,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "RadioGroupStory",
+      "meta": {}
+    },
+    "forms--select": {
+      "name": "Select",
+      "levels": [
+        "Forms"
+      ],
+      "locStart": 28,
+      "locEnd": 40,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "SelectStory",
+      "meta": {}
+    },
+    "forms--slider": {
+      "name": "Slider",
+      "levels": [
+        "Forms"
+      ],
+      "locStart": 18,
+      "locEnd": 25,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "SliderStory",
+      "meta": {}
+    },
+    "forms--text-area": {
+      "name": "Text area",
+      "levels": [
+        "Forms"
+      ],
+      "locStart": 13,
+      "locEnd": 15,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "TextAreaStory",
+      "meta": {}
+    },
+    "forms--text-field": {
+      "name": "Text field",
+      "levels": [
+        "Forms"
+      ],
+      "locStart": 4,
+      "locEnd": 10,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "TextFieldStory",
+      "meta": {}
+    },
+    "icons--all-icons": {
+      "name": "All icons",
+      "levels": [
+        "Icons"
+      ],
+      "locStart": 5,
+      "locEnd": 18,
+      "filePath": "src/icons.stories.tsx",
+      "namedExport": "AllIcons",
+      "meta": {}
+    },
+    "layout--card": {
+      "name": "Card",
+      "levels": [
+        "Layout"
+      ],
+      "locStart": 3,
+      "locEnd": 8,
+      "filePath": "src/layout.stories.tsx",
+      "namedExport": "CardStory",
+      "meta": {}
+    },
+    "layout--flex-and-grid": {
+      "name": "Flex and grid",
+      "levels": [
+        "Layout"
+      ],
+      "locStart": 11,
+      "locEnd": 28,
+      "filePath": "src/layout.stories.tsx",
+      "namedExport": "FlexAndGrid",
+      "meta": {}
+    },
+    "layout--scroll-area": {
+      "name": "Scroll area",
+      "levels": [
+        "Layout"
+      ],
+      "locStart": 30,
+      "locEnd": 38,
+      "filePath": "src/layout.stories.tsx",
+      "namedExport": "ScrollAreaStory",
+      "meta": {}
+    },
+    "overlays--alert-dialog": {
+      "name": "Alert dialog",
+      "levels": [
+        "Overlays"
+      ],
+      "locStart": 17,
+      "locEnd": 29,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "AlertDialogStory",
+      "meta": {}
+    },
+    "overlays--dialog": {
+      "name": "Dialog",
+      "levels": [
+        "Overlays"
+      ],
+      "locStart": 3,
+      "locEnd": 14,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "DialogStory",
+      "meta": {}
+    },
+    "overlays--dropdown-menu": {
+      "name": "Dropdown menu",
+      "levels": [
+        "Overlays"
+      ],
+      "locStart": 32,
+      "locEnd": 42,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "DropdownStory",
+      "meta": {}
+    },
+    "overlays--tabs": {
+      "name": "Tabs",
+      "levels": [
+        "Overlays"
+      ],
+      "locStart": 45,
+      "locEnd": 56,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "TabsStory",
+      "meta": {}
+    },
+    "overlays--tooltip": {
+      "name": "Tooltip",
+      "levels": [
+        "Overlays"
+      ],
+      "locStart": 59,
+      "locEnd": 63,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "TooltipStory",
+      "meta": {}
+    },
+    "typography--badges": {
+      "name": "Badges",
+      "levels": [
+        "Typography"
+      ],
+      "locStart": 21,
+      "locEnd": 28,
+      "filePath": "src/typography.stories.tsx",
+      "namedExport": "Badges",
+      "meta": {}
+    },
+    "typography--headings": {
+      "name": "Headings",
+      "levels": [
+        "Typography"
+      ],
+      "locStart": 3,
+      "locEnd": 9,
+      "filePath": "src/typography.stories.tsx",
+      "namedExport": "Headings",
+      "meta": {}
+    },
+    "typography--separator": {
+      "name": "Separator",
+      "levels": [
+        "Typography"
+      ],
+      "locStart": 30,
+      "locEnd": 36,
+      "filePath": "src/typography.stories.tsx",
+      "namedExport": "SeparatorStory",
+      "meta": {}
+    },
+    "typography--text-sizes": {
+      "name": "Text sizes",
+      "levels": [
+        "Typography"
+      ],
+      "locStart": 11,
+      "locEnd": 19,
+      "filePath": "src/typography.stories.tsx",
+      "namedExport": "TextSizes",
+      "meta": {}
+    }
+  }
+}

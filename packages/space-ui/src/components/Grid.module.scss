@@ -1,0 +1,21 @@
+.grid { display: grid; }
+
+.cols1 { grid-template-columns: repeat(1, 1fr); }
+.cols2 { grid-template-columns: repeat(2, 1fr); }
+.cols3 { grid-template-columns: repeat(3, 1fr); }
+
+@media (min-width: 768px) {
+  .smCols2 { grid-template-columns: repeat(2, 1fr); }
+  .smCols3 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  .mdCols2 { grid-template-columns: repeat(2, 1fr); }
+  .mdCols3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+.gap1 { gap: 4px; }
+.gap2 { gap: 8px; }
+.gap3 { gap: 12px; }
+.gap4 { gap: 16px; }
+.gap5 { gap: 24px; }
+.gap6 { gap: 32px; }

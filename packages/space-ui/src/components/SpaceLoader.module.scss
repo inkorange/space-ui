@@ -1,0 +1,105 @@
+/* Orbital spinner — a pulsing "planet" disc at the center of a static ring,
+   with a "moon" dot traveling the ring. Speaks the same rendering language
+   as SpaceButton's limb-lit rim, scaled down to a loading glyph. */
+
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.sm {
+  --loader-size: 24px;
+  --loader-planet: 8px;
+  --loader-moon: 4px;
+}
+
+.md {
+  --loader-size: 40px;
+  --loader-planet: 12px;
+  --loader-moon: 5px;
+}
+
+.lg {
+  --loader-size: 64px;
+  --loader-planet: 18px;
+  --loader-moon: 7px;
+}
+
+/* Static ring the moon travels around. */
+.orbit {
+  position: relative;
+  width: var(--loader-size);
+  height: var(--loader-size);
+  border-radius: 50%;
+  border: 1px solid var(--sp-gray-border);
+}
+
+/* Pulsing planet disc, centered on the ring. */
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--loader-planet);
+  height: var(--loader-planet);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, var(--sp-blue-11), var(--sp-blue-9) 60%, var(--sp-blue-2) 100%);
+  box-shadow: 0 0 6px var(--sp-blue-a6);
+  animation: sp-loader-planet-pulse 2.2s ease-in-out infinite;
+}
+
+/* Invisible rotating carrier the same size as the ring; its ::before is the
+   visible moon dot, so rotating the carrier travels the dot around the ring. */
+.moon {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: sp-loader-orbit 2.6s linear infinite;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--loader-moon);
+    height: var(--loader-moon);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--sp-blue-11);
+    box-shadow: 0 0 4px var(--sp-blue-a6);
+  }
+}
+
+.label {
+  color: var(--sp-gray-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--sp-font-xs);
+  text-align: center;
+}
+
+@keyframes sp-loader-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sp-loader-planet-pulse {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.88); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes sp-loader-reduced-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Vestibular-safe fallback: drop the rotation and the scale pulse, keep a
+   gentle opacity breathe on both the planet and the moon dot. */
+@media (prefers-reduced-motion: reduce) {
+  .planet,
+  .moon {
+    animation: sp-loader-reduced-pulse 2.4s ease-in-out infinite;
+  }
+}

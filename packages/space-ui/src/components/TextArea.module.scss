@@ -1,0 +1,12 @@
+.root { display: flex; min-width: 0; }
+
+.textarea {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}

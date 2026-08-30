@@ -1,0 +1,30 @@
+// Gap steps map through the same round-up rule as spacing props (3 → 12px in
+// Radix; our scale has no 12, and gap "3" is the most common value in the
+// codebase (59 uses) — HOLD IT AT 12px as a literal to avoid reflowing half
+// the app; it is a layout rhythm, not a box padding. The spec's round-up rule
+// governs box spacing; gaps keep their measured Radix values exactly.
+.flex { display: flex; }
+
+.gap1 { gap: 4px; }
+.gap2 { gap: 8px; }
+.gap3 { gap: 12px; }
+.gap4 { gap: 16px; }
+.gap5 { gap: 24px; }
+.gap6 { gap: 32px; }
+
+.directionRow { flex-direction: row; }
+.directionColumn { flex-direction: column; }
+
+.alignStart { align-items: flex-start; }
+.alignCenter { align-items: center; }
+.alignEnd { align-items: flex-end; }
+.alignBaseline { align-items: baseline; }
+.alignStretch { align-items: stretch; }
+
+.justifyStart { justify-content: flex-start; }
+.justifyCenter { justify-content: center; }
+.justifyEnd { justify-content: flex-end; }
+.justifyBetween { justify-content: space-between; }
+
+.wrapWrap { flex-wrap: wrap; }
+.wrapNowrap { flex-wrap: nowrap; }

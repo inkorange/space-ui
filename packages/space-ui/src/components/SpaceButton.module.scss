@@ -1,0 +1,247 @@
+/* "Limb-lit glass" button — speaks the app's own rendering language:
+   the rim glows like a planet's sunlit atmosphere limb (bright arc fading
+   around the terminator), tiny stars twinkle inside the glass, and a glint
+   occasionally sweeps across like light catching a visor. */
+
+/* Registered as a real <angle> so the browser interpolates it smoothly —
+   drives the `from` of every rim conic gradient so the sunlit arc can orbit
+   the pill's edge instead of sitting fixed at the upper-left terminator. */
+@property --rim-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 210deg;
+}
+
+.spaceButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 999px;
+  font: 600 15px/1 var(--font-roboto, ui-sans-serif, system-ui);
+  letter-spacing: 0.02em;
+  color: #eaf2ff;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(130% 200% at 22% -20%, rgba(96, 150, 250, 0.22), transparent 50%),
+    linear-gradient(180deg, rgba(15, 20, 40, 0.88), rgba(5, 7, 15, 0.94));
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  transition: transform 0.18s ease, box-shadow 0.35s ease;
+  /* The lit arc slowly orbits the rim, like the sun tracking around the limb. */
+  animation: rimRotate 12s linear infinite;
+
+  /* Terminator rim: a conic border, brightest where the "sun" hits, decaying
+     around the dark side — same story as the planet limb. The `from` angle is
+     animated (see rimRotate) so the bright arc travels around the edge. */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--rim-angle),
+      rgba(150, 190, 255, 0.95),
+      rgba(150, 190, 255, 0.1) 35%,
+      rgba(150, 190, 255, 0.03) 55%,
+      rgba(150, 190, 255, 0.4) 85%,
+      rgba(150, 190, 255, 0.95)
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Glint sweep: a thin streak of starlight crossing the glass every ~7s.
+     Animates `left` (percent of the BUTTON), not translateX (percent of the
+     34px streak itself), so the sweep spans the full width of wide buttons. */
+  &::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    bottom: -60%;
+    /* Park FULLY out of view at any button size: a fixed px offset covering
+       the 34px streak plus its skew overhang. A percent park (-18% of the
+       button) left half the streak visible inside small buttons when idle. */
+    left: -64px;
+    width: 34px;
+    background: linear-gradient(105deg, transparent, rgba(225, 238, 255, 0.38), transparent);
+    transform: skewX(-18deg);
+    /* linear: ease-in-out decelerated the streak near the right edge, which on
+       small buttons (short travel) read as the glint lingering on the right. */
+    animation: glintSweep 7s linear infinite;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 4px 28px rgba(0, 0, 0, 0.55),
+      0 0 22px rgba(110, 160, 255, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #9cc0ff;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+    transform: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+    }
+  }
+}
+
+/* Circular icon-only variant (e.g. the share glyph) */
+.iconOnly {
+  padding: 12px;
+  width: 46px;
+  height: 46px;
+}
+
+/* Hero CTA (splash / marketing pages) */
+.lg {
+  padding: 17px 40px;
+  font-size: 17px;
+}
+
+/* Compact dialogs and inline actions */
+.sm {
+  padding: 11px 26px;
+  font-size: 13.5px;
+}
+
+/* Micro steppers (element +/-): keeps the glass + limb rim but drops the
+   stars and glint — thirty simultaneously twinkling steppers would be noise.
+   Also drops the per-frame effects (the orbiting rim animation and the
+   backdrop blur): ~30 of these live in the scrollable Elements list, and
+   animated gradients + backdrop-filter force a full re-raster every frame
+   while scrolling, which starves the WebGL render loop and drops the 3D
+   scene's frame rate. Static, they composite cheaply. Imperceptible at 28px. */
+.micro {
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  animation: none;
+  backdrop-filter: none;
+
+  &::before {
+    /* Fixed sunlit-arc angle instead of the animated one. */
+    background: conic-gradient(
+      from 210deg,
+      rgba(150, 190, 255, 0.95),
+      rgba(150, 190, 255, 0.1) 35%,
+      rgba(150, 190, 255, 0.03) 55%,
+      rgba(150, 190, 255, 0.4) 85%,
+      rgba(150, 190, 255, 0.95)
+    );
+  }
+
+  &::after {
+    display: none;
+  }
+
+  .stars {
+    display: none;
+  }
+}
+
+/* Stretch to the container (sticky footers) */
+.fullWidth {
+  width: 100%;
+}
+
+/* Warm variant for destructive-ish actions (Clear): the rim is lit like a
+   red-dwarf limb instead of a blue-white one. */
+.ember {
+  background:
+    radial-gradient(130% 200% at 22% -20%, rgba(250, 150, 96, 0.18), transparent 50%),
+    linear-gradient(180deg, rgba(30, 16, 14, 0.88), rgba(12, 6, 5, 0.94));
+
+  &::before {
+    background: conic-gradient(
+      from var(--rim-angle),
+      rgba(255, 180, 130, 0.9),
+      rgba(255, 180, 130, 0.1) 35%,
+      rgba(255, 180, 130, 0.03) 55%,
+      rgba(255, 180, 130, 0.35) 85%,
+      rgba(255, 180, 130, 0.9)
+    );
+  }
+
+  &:hover {
+    box-shadow:
+      0 4px 28px rgba(0, 0, 0, 0.55),
+      0 0 22px rgba(255, 150, 100, 0.3);
+  }
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Three stars twinkling out of phase inside the glass */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2.5px;
+  height: 2.5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.7);
+  opacity: 0.15;
+  /* Position, delay, and duration come inline from the component — seeded per
+     button instance so no two buttons share a star arrangement. */
+  animation: twinkle 3.4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.12; transform: scale(0.7); }
+  50% { opacity: 0.95; transform: scale(1); }
+}
+
+@keyframes rimRotate {
+  from { --rim-angle: 210deg; }
+  to { --rim-angle: 570deg; }
+}
+
+@keyframes glintSweep {
+  /* Fixed px park on the left (fully hidden at any width) and a calc() exit
+     that clears the right edge of any button plus the skew overhang. */
+  0%, 64% { left: -64px; }
+  72% { left: calc(100% + 30px); }
+  100% { left: calc(100% + 30px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spaceButton,
+  .spaceButton::after,
+  .star {
+    animation: none;
+  }
+}

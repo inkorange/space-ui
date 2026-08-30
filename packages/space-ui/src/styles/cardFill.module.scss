@@ -1,0 +1,33 @@
+/* src/components/ui/cardFill.module.scss
+   Opt-in equal-height behaviour for cards that are wrapped in a <Link> inside a
+   grid. Deliberately NOT in Card.module.scss: putting height on the base .card
+   rule would affect every Card in the app, including ones that are direct grid
+   children (MySystemsList) or sit in unrelated flex parents. */
+
+/* The grid child. Grid already stretches it to the row height; making it a flex
+   container is what lets its single child fill that height instead of
+   collapsing to its own content. */
+.link {
+  display: flex;
+}
+
+/* The visible card surface: fill the stretched link, and become a column so the
+   meta row can be pushed to the bottom edge. */
+.card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The content column inside the card. Growing to fill is what gives `.meta`'s
+   auto margin something to push against. */
+.body {
+  flex: 1;
+}
+
+/* Pins the byline/date row to the card's bottom edge, so footers line up across
+   a row rather than floating mid-card. */
+.meta {
+  margin-top: auto;
+}

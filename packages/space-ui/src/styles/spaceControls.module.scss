@@ -1,0 +1,277 @@
+/* Limb-lit glass for form controls (selects, dropdown panels) — same visual
+   language as SpaceButton, built entirely from stacked backgrounds so it works
+   on elements whose children/pseudo-elements we don't control (native <select>,
+   Radix triggers). Rim = conic gradient on the border-box; glass = gradients on
+   the padding-box; faint static star specks as radial layers.
+   Class names are doubled in selectors to out-specify Radix Themes' own
+   component styles. */
+
+/* Registered as a real <angle> so the browser interpolates it smoothly —
+   drives the `from` of the rim conic gradient so the sunlit arc orbits the
+   control's edge (matches SpaceButton). */
+@property --rim-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 210deg;
+}
+
+$rim: conic-gradient(
+  from var(--rim-angle),
+  rgba(150, 190, 255, 0.95),
+  rgba(150, 190, 255, 0.1) 35%,
+  rgba(150, 190, 255, 0.03) 55%,
+  rgba(150, 190, 255, 0.4) 85%,
+  rgba(150, 190, 255, 0.95)
+);
+$stars:
+  radial-gradient(1.5px 1.5px at 16% 32%, rgba(255, 255, 255, 0.65), transparent 70%),
+  radial-gradient(1.2px 1.2px at 71% 68%, rgba(255, 255, 255, 0.45), transparent 70%),
+  radial-gradient(1.2px 1.2px at 86% 26%, rgba(255, 255, 255, 0.35), transparent 70%);
+$glass:
+  radial-gradient(130% 200% at 22% -20%, rgba(96, 150, 250, 0.22), transparent 50%),
+  linear-gradient(180deg, rgba(15, 20, 40, 0.9), rgba(5, 7, 15, 0.95));
+
+.spaceControl.spaceControl {
+  /* One shared control height across the app (size-variant-proof — overrides
+     Radix's per-size --select-trigger-height). Keep in sync with .spaceInput. */
+  --select-trigger-height: 40px;
+  /* Fixed 40px so the trigger matches the TextField exactly. The `ghost` variant
+     (used so the animated rim shows instead of Radix's surface border) ignores
+     --select-trigger-height and sizes to content (~50px), so pin it here and let
+     align-items center the label/chevron within it. */
+  height: 40px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  /* Cancel Radix's ghost-variant negative inline margin, which otherwise pulls
+     the trigger 8px wider than the sibling TextFields on each side. */
+  margin-inline: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #eaf2ff;
+  cursor: pointer;
+  /* Mirror .spaceInput's layer stack EXACTLY (6 layers). The old version had a
+     7th (a redundant transparent layer), which overran the 6-value clip list so
+     the $rim conic cycled back to padding-box — clipping the animated rim inside
+     the border where it never showed. */
+  background:
+    #{$stars},
+    #{$glass},
+    #{$rim} border-box;
+  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.3s ease;
+  /* The lit arc slowly orbits the rim, in sync with SpaceButton. */
+  animation: rimRotate 12s linear infinite;
+
+  &:hover:not(:disabled) {
+    /* Hover = the glass catching more starlight: an inner nebula glow plus an
+       outer atmosphere bloom (never a flat colour swap). */
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.45),
+      0 0 18px rgba(110, 160, 255, 0.3),
+      inset 0 0 24px rgba(110, 160, 255, 0.14);
+  }
+
+  /* Focused or open = the same starlight glow the TextField shows on focus. */
+  &:focus-visible,
+  &[data-state="open"] {
+    outline: 2px solid #9cc0ff;
+    outline-offset: 2px;
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.45),
+      0 0 18px rgba(110, 160, 255, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+}
+
+/* Slider in the same language: the track is a slim glass tube, the filled
+   range a starlight trail with faint specks, and the thumb a tiny limb-lit
+   planet you drag along its orbit (with an atmosphere halo on hover/drag). */
+.spaceSlider.spaceSlider {
+  :global(.spSliderTrack) {
+    background: linear-gradient(180deg, rgba(15, 20, 40, 0.92), rgba(5, 7, 15, 0.96));
+    box-shadow:
+      inset 0 0 0 1px rgba(150, 190, 255, 0.25),
+      inset 0 1px 3px rgba(0, 0, 0, 0.65);
+  }
+
+  :global(.spSliderRange) {
+    background:
+      radial-gradient(1.2px 1.2px at 22% 35%, rgba(255, 255, 255, 0.85), transparent 70%),
+      radial-gradient(1px 1px at 58% 65%, rgba(255, 255, 255, 0.6), transparent 70%),
+      radial-gradient(1px 1px at 84% 40%, rgba(255, 255, 255, 0.5), transparent 70%),
+      linear-gradient(90deg, rgba(70, 110, 210, 0.85), rgba(150, 190, 255, 0.95));
+    box-shadow: 0 0 10px rgba(110, 160, 255, 0.4);
+  }
+
+  /* The visible ball is now a real div (no thumb pseudo-element trick needed
+     natively) — shade it like a mini planet: lit upper-left, falling to a
+     dark limb, ringed by a thin atmosphere. */
+  :global(.spSliderThumb) {
+    background: radial-gradient(circle at 32% 28%, #e6f0ff, #86abe8 42%, #23386b 78%, #0b1330);
+    box-shadow:
+      0 0 0 1px rgba(160, 195, 255, 0.75),
+      0 0 10px rgba(110, 160, 255, 0.5);
+  }
+
+  &:hover :global(.spSliderThumb),
+  &:active :global(.spSliderThumb) {
+    box-shadow:
+      0 0 0 1px rgba(190, 215, 255, 0.9),
+      0 0 16px rgba(130, 175, 255, 0.75);
+  }
+
+  /* :has() (not the brief's literal `~` combinator) because the thumb
+     PRECEDES the input in Slider.tsx's DOM order — a following-sibling
+     combinator anchored on the input can never match an earlier thumb.
+     Verified empirically (Chromium) before writing it this way. */
+  :global(.spSliderThumb:has(+ .spSliderInput:focus-visible)) {
+    outline: 2px solid #9cc0ff;
+    outline-offset: 2px;
+  }
+}
+
+/* Dropdown/popover panel (e.g. Radix Select.Content): glass card with a
+   quieter limb rim, squared enough to hold a list. */
+.spacePanel.spacePanel {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  animation: rimRotate 12s linear infinite;
+  background:
+    #{$glass} padding-box,
+    conic-gradient(
+        from var(--rim-angle),
+        rgba(150, 190, 255, 0.55),
+        rgba(150, 190, 255, 0.08) 40%,
+        rgba(150, 190, 255, 0.03) 60%,
+        rgba(150, 190, 255, 0.3) 88%,
+        rgba(150, 190, 255, 0.55)
+      )
+      border-box;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  color: #eaf2ff;
+  /* Never exceed the trigger's width, so long items (e.g. preset
+     "name - description") can't run off the screen edge on mobile. */
+  max-width: var(--select-trigger-width);
+
+  /* Let long item labels wrap to multiple lines instead of overflowing. Radix
+     gives items a fixed single-line height, so also grow the height and add
+     vertical padding — otherwise a wrapped item's second line collides with the
+     next item. */
+  :global(.spSelectItem) {
+    white-space: normal;
+    height: auto;
+    min-height: var(--select-item-height, 24px);
+    padding-top: 6px;
+    padding-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  /* Item highlight, retinted to starlight blue */
+  :global(.spSelectItem[data-highlighted]) {
+    background: rgba(110, 160, 255, 0.2);
+    color: #ffffff;
+  }
+}
+
+/* Text input in the same language: limb-lit glass capsule with the orbiting rim,
+   applied to a Radix TextField.Root. The inner <input> is made transparent so
+   our glass shows through instead of Radix's default field surface/border. */
+.spaceInput.spaceInput {
+  /* Shared control height (size-variant-proof — overrides Radix's per-size
+     --text-field-height) so every input matches the selects. Keep in sync with
+     .spaceControl. 4px vertical inset replaces Radix's 1px root padding. */
+  --text-field-height: 40px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  animation: rimRotate 12s linear infinite;
+  background:
+    #{$stars},
+    #{$glass},
+    #{$rim} border-box;
+  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+
+  /* Single-line field: vertical inset replaces Radix's 1px root padding. The
+     textarea owns its own padding (below), so scope this to the field root. */
+  &:global(.spTextFieldRoot) {
+    padding-block: 4px;
+  }
+
+  :global(.spTextFieldInput) {
+    color: #eaf2ff;
+    /* 8pt grid: one grid unit of left/right text inset (Radix's default sits
+       the text almost against the rounded edge). */
+    padding-inline: 8px;
+
+    &::placeholder {
+      color: rgba(220, 230, 255, 0.45);
+    }
+  }
+
+  /* Multi-line textarea: a uniform 8px inset on every side (8pt grid). */
+  :global(.spTextAreaInput) {
+    padding: 8px;
+    color: #eaf2ff;
+
+    &::placeholder {
+      color: rgba(220, 230, 255, 0.45);
+    }
+  }
+
+  &:focus-within {
+    outline: 2px solid #9cc0ff;
+    outline-offset: 2px;
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.45),
+      0 0 18px rgba(110, 160, 255, 0.3);
+  }
+}
+
+@keyframes rimRotate {
+  from { --rim-angle: 210deg; }
+  to { --rim-angle: 570deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spaceControl.spaceControl,
+  .spacePanel.spacePanel,
+  .spaceInput.spaceInput {
+    animation: none;
+  }
+}
+
+/* Multi-line variant of .spaceInput. Layer it ON TOP of that class — it
+   inherits the glass/rim treatment and only corrects what a pill gets wrong
+   once text wraps.
+   
+   .spaceInput is built for single-line controls: a fixed 40px height and a
+   999px radius, which on a 4-row textarea curves the sides into a capsule and
+   pushes the first characters inward past the caret. A gentle 16px corner
+   keeps it in the same family as the buttons and cards without pretending to
+   be a pill. */
+.spaceTextArea.spaceTextArea {
+  --text-field-height: auto;
+  height: auto;
+  min-height: 92px;
+  border-radius: 16px;
+  padding: 10px 14px;
+  line-height: 1.5;
+  /* Vertical only: horizontal drag would break the surrounding layout. */
+  resize: vertical;
+
+  textarea {
+    line-height: 1.5;
+  }
+}

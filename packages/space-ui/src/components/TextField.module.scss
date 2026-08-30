@@ -1,0 +1,23 @@
+.root {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: inherit;
+  font: inherit;
+}
+
+.slot {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-inline-start: 8px;
+  opacity: 0.7;
+}

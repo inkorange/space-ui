@@ -1,0 +1,12 @@
+// Exact port of rendered Radix Card size-1 (dark, panelBackground
+// "translucent"): a subtle alpha wash — NOT the solid panel token — with
+// 12px inset and 8px radius. The 12px padding is a deliberate exception to
+// the round-up rule: Chris ruled component parity with prod beats grid
+// purity (2026-08-05, planet-card QA).
+.card {
+  position: relative;
+  background: var(--sp-gray-surface);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 8px;
+  padding: 12px;
+}
