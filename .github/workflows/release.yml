@@ -18,7 +18,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # With pending changesets: opens/updates the "Version Packages" PR.
       # When that PR merges: builds and publishes to npm with provenance.
-      - uses: changesets/action@v1
+      # GATED on NPM_TOKEN being configured: without the gate, a main push
+      # with zero pending changesets makes the action attempt a direct npm
+      # publish of whatever version sits in package.json (it tried 0.0.0 on
+      # the very first push). Until the token exists, this workflow is a
+      # deliberate no-op.
+      - if: ${{ secrets.NPM_TOKEN != '' }}
+        uses: changesets/action@v1
         with:
           publish: pnpm release
           title: "Version Packages"
