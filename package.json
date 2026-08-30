@@ -1,0 +1,16 @@
+{
+  "name": "space-ui-workspace",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @inkorange/space-ui build",
+    "test": "pnpm --filter @inkorange/space-ui test",
+    "docs": "pnpm --filter docs dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.0"
+  },
+  "packageManager": "pnpm@10.33.0"
+}
