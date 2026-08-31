@@ -193,8 +193,12 @@ const tokensIn = (css: string): TokenDoc[] => {
     if (!isComponentToken(name)) continue;
     names.add(name);
     if (fallback) {
+      // Gradients span several lines in the source; collapse them and cap the
+      // length, so the table shows a readable default rather than a wall.
+      const flat = fallback.replace(/\s+/g, " ").trim();
+      const shown = flat.length > 48 ? `${flat.slice(0, 45)}…` : flat;
       const set = defaults.get(name) ?? new Set<string>();
-      set.add(fallback.trim());
+      set.add(shown);
       defaults.set(name, set);
     }
   }

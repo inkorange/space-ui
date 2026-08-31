@@ -25,15 +25,21 @@ export const LoaderStory = () => <Loader label="Terraforming…" />;
 LoaderStory.storyName = "Loader";
 
 export const ProgressStory = () => (
-  <div style={{ display: "grid", gap: 12, width: 320 }}>
-    <Progress value={30} />
-    <Progress value={72} />
+  <div style={{ display: "grid", gap: 16, width: 320 }}>
+    <Progress value={12} />
+    <Progress value={45} />
+    <Progress value={88} />
+    <Progress value={64} style={{ ["--sp-progress-height" as string]: "12px" }} />
+    <Progress
+      value={92}
+      style={{ ["--sp-progress-fill-color" as string]: "var(--sp-danger-text)" }}
+    />
   </div>
 );
 ProgressStory.storyName = "Progress";
 ProgressStory.meta = {
   description:
-    "A determinate bar for work you can measure. The track uses the dedicated track token rather than the border token — a solid recess, not a hairline.",
+    "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable per instance.",
 };
 
 export const IconToggleStory = () => {
