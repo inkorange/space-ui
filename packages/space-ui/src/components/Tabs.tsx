@@ -1,13 +1,9 @@
-// src/components/ui/Tabs.tsx
-// ARIA tabs matching Radix's shape. Inactive Content unmounts (Radix's
-// default). Trigger emits data-state for the glass active styling the
-// ConfigurationPanel SCSS re-anchors to.
+// ARIA tabs. Inactive Content unmounts, matching Radix's default.
 "use client";
 import type * as React from "react";
 import { createContext, useContext, useId, type ReactNode } from "react";
 import { cx } from "./propShared";
 import styles from "./Tabs.module.scss";
-import ctl from "../styles/spaceControls.module.scss";
 
 interface TabsCtx {
   value: string;
@@ -24,8 +20,23 @@ const useTabs = () => {
   return ctx;
 };
 
+/**
+ * Wraps a tab set and owns which tab is showing. Fully controlled — pass
+ * `value` and `onValueChange`; there is no uncontrolled mode.
+ *
+ * Renders a plain div, so it imposes no layout of its own. It also mints the
+ * id that pairs each Trigger with its Content, which is why every part has to
+ * sit inside a Root rather than being usable on its own.
+ */
 export function Root({ value, onValueChange, className, children }: {
-  value: string; onValueChange: (v: string) => void; className?: string; children?: ReactNode;
+  /** The selected tab's value. Fully controlled — there is no default. */
+  value: string;
+  /** Called with the newly selected tab's value. */
+  onValueChange: (v: string) => void;
+  /** Merged onto the wrapper div, which is otherwise unstyled. */
+  className?: string;
+  /** A List and the Contents it switches between. */
+  children?: ReactNode;
 }) {
   const id = useId();
   return (
@@ -35,7 +46,20 @@ export function Root({ value, onValueChange, className, children }: {
   );
 }
 
-export function List({ children }: { children?: ReactNode }) {
+/**
+ * The row of triggers, and the keyboard model for the set: arrow keys move
+ * between tabs, Home and End jump to the ends, each moving focus and
+ * selection together as the ARIA tabs pattern expects.
+ *
+ * Bottom-aligns its children, so an active tab that grows taller rises above
+ * its neighbours instead of pushing the row down — the folder-tab effect.
+ */
+export function List({
+  children,
+}: {
+  /** The Triggers. Their order is the tab order. */
+  children?: ReactNode;
+}) {
   return (
     <div
       role="tablist"
@@ -57,10 +81,19 @@ export function List({ children }: { children?: ReactNode }) {
   );
 }
 
-export function Trigger({ value, className, animated = true, children, ...rest }: {
-  value: string; className?: string;
-  /** Ambient motion on the rim. Default true. */
-  animated?: boolean;
+/**
+ * One tab. Selects its `value` on click and carries the ARIA wiring that ties
+ * it to the matching Content.
+ *
+ * Emits `data-state="active" | "inactive"`, which is the hook the active
+ * styling keys off — useful if you are restyling tabs from outside.
+ */
+export function Trigger({ value, className, children, ...rest }: {
+  /** Selects this value. Must match the Content it reveals. */
+  value: string;
+  /** Merged with the tab's own classes rather than replacing them. */
+  className?: string;
+  /** The tab's label. */
   children?: ReactNode;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const t = useTabs();
@@ -75,8 +108,7 @@ export function Trigger({ value, className, animated = true, children, ...rest }
       aria-controls={`${t.id}-panel-${value}`}
       tabIndex={active ? 0 : -1}
       data-state={active ? "active" : "inactive"}
-      className={cx(styles.trigger, ctl.spaceControl, "spTabsTrigger", className)}
-      data-animated={animated ? undefined : "false"}
+      className={cx(styles.trigger, "spTabsTrigger", className)}
       onClick={() => t.onValueChange(value)}
     >
       {children}
@@ -84,7 +116,23 @@ export function Trigger({ value, className, animated = true, children, ...rest }
   );
 }
 
-export function Content({ value, children }: { value: string; children?: ReactNode }) {
+/**
+ * The panel for one tab. Renders only while its `value` is the selected one —
+ * inactive panels unmount rather than hide, so their contents do not run,
+ * hold state, or appear to a screen reader.
+ *
+ * Carries no styling: the surface a tab set seats onto is the consumer's, and
+ * should match `--sp-tabs-surface-color` so the active tab connects to it.
+ */
+export function Content({
+  value,
+  children,
+}: {
+  /** Shown while this matches the Root's value. Must match a Trigger. */
+  value: string;
+  /** Panel contents. Unmounted while another tab is selected. */
+  children?: ReactNode;
+}) {
   const t = useTabs();
   if (t.value !== value) return null;
   return (
