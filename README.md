@@ -2,16 +2,23 @@
 
 **Components for dark, instrument-dense interfaces.**
 
-The design system behind [planet-builder](https://github.com/inkorange/planet-builder),
-extracted so other projects can use it. 24 React components and 20 icons on a
-seven-role token system, with zero runtime dependencies.
+24 React components and 20 icons on a seven-role token system, with zero
+runtime dependencies.
 
-📖 **[Browse the gallery →](https://space-components.vercel.app)**
+<!-- Absolute URLs on purpose: npm renders this file too, and relative paths
+     resolve against the registry rather than the repository. -->
+<img alt="A lit-glass button, select, badges, slider, progress bar and folder tabs on a dark ground"
+     src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/components.svg"
+     width="100%">
 
-> **Not published yet.** `@inkorange/space-ui` is not on npm, so the install
-> command below will not resolve today. The package is complete and the
-> release is gated on a final review of the gallery. Until then, browse the
-> components or build from source.
+📖 **[Browse the gallery →](https://space-components.vercel.app)** — every
+component, its props, its tokens, and the source for each example.
+
+<a href="https://space-components.vercel.app">
+  <img alt="The SpaceUI documentation gallery: components, their props, tokens and source"
+       src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/doc-screen.jpg"
+       width="100%">
+</a>
 
 ## Install
 
@@ -161,13 +168,12 @@ that does nothing is worse than no prop.
 
 ## Extracted, not invented
 
-These components ran in production in planet-builder before they became a
-package. The extraction kept the rendered output identical — a few deliberate
-exceptions to the spacing grid survive where parity with the shipped app beat
-grid purity, and they are commented where they occur.
+These components ran in production before they became a package, so they
+arrived with their edge cases already found rather than imagined. The
+extraction kept the rendered output identical — a few deliberate exceptions to
+the spacing grid survive where parity with the shipped app beat grid purity,
+and they are commented where they occur.
 
-Two components stayed behind because they were coupled to the app's framework:
-`SceneLoadingOverlay` and `ImageWithFallback`.
 
 ## Develop
 

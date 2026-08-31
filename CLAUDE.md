@@ -11,11 +11,9 @@ Co-Authored-By or AI-attribution trailers.
   token-grid guard suites — permanent invariants).
 - Ladle gallery in `apps/docs`, deployed: https://space-components.vercel.app
   (Vercel project "docs", output dir pinned via apps/docs/vercel.json).
-- **Not yet published to npm.** The release workflow is gated on the
-  NPM_TOKEN secret (deliberately unset). A staged major changeset makes the
-  first release 1.0.0. Publish only when Chris approves the gallery; then
-  planet-builder swaps its local ui/ for the package (see
-  docs/extraction-plan.md §7).
+- **Published: 1.0.0 on npm** (2026-08-31), public with provenance. Releases
+  are automated: a merged changeset opens a "Version Packages" PR; merging
+  that publishes and tags.
 - Stayed behind in planet-builder: SceneLoadingOverlay, ImageWithFallback
   (app/Next-coupled).
 

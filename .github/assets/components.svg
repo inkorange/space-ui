@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="300" viewBox="0 0 880 300" role="img"
+     aria-label="SpaceUI components: a lit-glass button, select, badges, slider and progress bar on a dark ground">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f1428" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#05070f" stop-opacity="0.94"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"    stop-color="#96beff" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="#96beff" stop-opacity="0.10"/>
+      <stop offset="0.55" stop-color="#96beff" stop-opacity="0.03"/>
+      <stop offset="0.85" stop-color="#96beff" stop-opacity="0.40"/>
+      <stop offset="1"    stop-color="#96beff" stop-opacity="0.95"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.22" cy="0" r="1">
+      <stop offset="0" stop-color="#6096fa" stop-opacity="0.22"/>
+      <stop offset="0.5" stop-color="#6096fa" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#466ed2" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#96beff" stop-opacity="0.95"/>
+    </linearGradient>
+    <radialGradient id="thumb" cx="0.32" cy="0.28" r="0.8">
+      <stop offset="0" stop-color="#e6f0ff"/>
+      <stop offset="0.42" stop-color="#86abe8"/>
+      <stop offset="0.78" stop-color="#23386b"/>
+      <stop offset="1" stop-color="#0b1330"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .t  { font-family: ui-sans-serif, system-ui, sans-serif; }
+      .lbl{ fill:#696e77; font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+    </style>
+  </defs>
+
+  <rect width="880" height="300" fill="#111113"/>
+  <circle cx="120" cy="42"  r="1.1" fill="#cfe4ff" opacity=".5"/>
+  <circle cx="640" cy="70"  r="1.4" fill="#cfe4ff" opacity=".35"/>
+  <circle cx="806" cy="196" r="1"   fill="#cfe4ff" opacity=".45"/>
+  <circle cx="330" cy="250" r="1.2" fill="#cfe4ff" opacity=".3"/>
+
+  <!-- Button -->
+  <text class="t lbl" x="40" y="44">Button</text>
+  <g filter="url(#glow)">
+    <rect x="40" y="58" width="188" height="40" rx="20" fill="url(#glass)" stroke="url(#rim)"/>
+    <rect x="40" y="58" width="188" height="40" rx="20" fill="url(#sheen)"/>
+  </g>
+  <text class="t" x="134" y="83" fill="#eaf2ff" font-size="15" font-weight="600" text-anchor="middle">Build planet</text>
+
+  <!-- Select -->
+  <text class="t lbl" x="266" y="44">Select</text>
+  <rect x="266" y="58" width="200" height="40" rx="20" fill="url(#glass)" stroke="url(#rim)"/>
+  <rect x="266" y="58" width="200" height="40" rx="20" fill="url(#sheen)"/>
+  <text class="t" x="290" y="83" fill="#eaf2ff" font-size="14" font-weight="500">G-type star</text>
+  <path d="M436 74 l6 6 6-6" fill="none" stroke="#eaf2ff" stroke-width="1.4" opacity=".7"/>
+
+  <!-- Badges -->
+  <text class="t lbl" x="504" y="44">Badge</text>
+  <g class="t" font-size="12" font-weight="500">
+    <rect x="504" y="64" width="74" height="26" rx="13" fill="#0077ff3a"/>
+    <text x="541" y="81" fill="#70b8ff" text-anchor="middle">primary</text>
+    <rect x="588" y="64" width="78" height="26" rx="13" fill="#22ff991e"/>
+    <text x="627" y="81" fill="#3dd68c" text-anchor="middle">success</text>
+    <rect x="676" y="64" width="76" height="26" rx="13" fill="#fa820022"/>
+    <text x="714" y="81" fill="#ffca16" text-anchor="middle">warning</text>
+    <rect x="762" y="64" width="70" height="26" rx="13" fill="#ff173f2d"/>
+    <text x="797" y="81" fill="#ff9592" text-anchor="middle">danger</text>
+  </g>
+
+  <!-- Slider -->
+  <text class="t lbl" x="40" y="150">Slider</text>
+  <rect x="40" y="166" width="380" height="8" rx="4" fill="#070a14" stroke="#96beff" stroke-opacity=".25"/>
+  <rect x="40" y="166" width="228" height="8" rx="4" fill="url(#trail)"/>
+  <circle cx="268" cy="170" r="11" fill="url(#thumb)" stroke="#a0c3ff" stroke-opacity=".75"/>
+
+  <!-- Progress -->
+  <text class="t lbl" x="470" y="150">Progress</text>
+  <rect x="470" y="167" width="362" height="6" rx="3" fill="#070a14" stroke="#96beff" stroke-opacity=".25"/>
+  <rect x="470" y="167" width="252" height="6" rx="3" fill="url(#trail)"/>
+  <circle cx="540" cy="170" r="1" fill="#fff" opacity=".85"/>
+  <circle cx="640" cy="171" r=".9" fill="#fff" opacity=".6"/>
+
+  <!-- Tabs -->
+  <text class="t lbl" x="40" y="222">Tabs</text>
+  <g class="t" font-size="13">
+    <path d="M40 244 h140 a12 12 0 0 1 12 12 v-1 0 h0 v20 h-164 v-20 a12 12 0 0 1 12 -12 z"
+          fill="#1e284c" fill-opacity=".9" stroke="#96beff" stroke-opacity=".42"/>
+    <text x="122" y="270" fill="#ffffff" text-anchor="middle" font-weight="600">Elements</text>
+    <path d="M212 250 h140 a12 12 0 0 1 12 12 v14 h-164 v-14 a12 12 0 0 1 12 -12 z"
+          fill="#0f1428" fill-opacity=".6" stroke="#96beff" stroke-opacity=".22"/>
+    <text x="294" y="270" fill="#b0b4ba" text-anchor="middle">Environment</text>
+    <path d="M384 250 h120 a12 12 0 0 1 12 12 v14 h-144 v-14 a12 12 0 0 1 12 -12 z"
+          fill="#0f1428" fill-opacity=".6" stroke="#96beff" stroke-opacity=".22"/>
+    <text x="456" y="270" fill="#b0b4ba" text-anchor="middle">Moons</text>
+  </g>
+  <rect x="40" y="276" width="792" height="24" fill="#16181b"/>
+  <line x1="204" y1="276.5" x2="832" y2="276.5" stroke="#96beff" stroke-opacity=".18"/>
+</svg>

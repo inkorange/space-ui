@@ -2,3 +2,9 @@ node_modules/
 dist/
 .DS_Store
 *.tsbuildinfo
+
+# Copied into the package at pack time by its prepack script — npm only picks
+# these up from the package directory, and the canonical files live at the
+# repo root so GitHub renders them too.
+packages/space-ui/README.md
+packages/space-ui/LICENSE

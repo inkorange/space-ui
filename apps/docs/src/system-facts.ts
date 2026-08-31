@@ -36,8 +36,8 @@ export const iconCount = iconNames.length;
  */
 export const version = "1.0.0";
 
-/** Published state. Flip to `true` on the first successful npm publish. */
-export const isPublished = false;
+/** Published state. 1.0.0 went to npm on 2026-08-31. */
+export const isPublished = true;
 
 export const packageName = "@inkorange/space-ui";
 export const repoUrl = "https://github.com/inkorange/space-ui";
