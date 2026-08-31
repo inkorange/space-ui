@@ -66,49 +66,6 @@ SelectStory.meta = {
     "A single-choice menu for lists too long to show inline. The trigger renders the selected item's own content.",
 };
 
-/**
- * `animated` is the one motion switch. It stills the ambient loops — the
- * orbiting rim, the glint, the twinkling stars — and leaves the glass,
- * gradients and rim shading exactly as they are.
- */
-export const Animation = () => {
-  const [a, setA] = useState("G");
-  const [b, setB] = useState("G");
-  return (
-    <div style={{ display: "grid", gap: 28, maxWidth: 420 }}>
-      <div style={{ display: "grid", gap: 10 }}>
-        <code style={{ fontSize: 12, opacity: 0.7 }}>animated (default)</code>
-        <TextField.Root placeholder="Planet name…" />
-        <Select.Root value={a} onValueChange={setA}>
-          <Select.Trigger style={{ minWidth: 180 }} />
-          <Select.Content>
-            {STAR_TYPES.map((s) => (
-              <Select.Item key={s} value={s}>{s}-type star</Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
-      </div>
-
-      <div style={{ display: "grid", gap: 10 }}>
-        <code style={{ fontSize: 12, opacity: 0.7 }}>animated={"{false}"}</code>
-        <TextField.Root animated={false} placeholder="Planet name…" />
-        <Select.Root value={b} onValueChange={setB}>
-          <Select.Trigger animated={false} style={{ minWidth: 180 }} />
-          <Select.Content animated={false}>
-            {STAR_TYPES.map((s) => (
-              <Select.Item key={s} value={s}>{s}-type star</Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
-      </div>
-    </div>
-  );
-};
-Animation.meta = {
-  description:
-    "The same controls with ambient motion stilled. Only the loops stop — the glass, gradients and rim shading are the component, not a layer. prefers-reduced-motion does this automatically.",
-};
-
 export const RadioGroupStory = () => {
   const [v, setV] = useState("public");
   return (

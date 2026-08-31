@@ -19,6 +19,20 @@ export const EXPECTED_TOKENS = [
   "--sp-warning-10", "--sp-warning-11",
   "--sp-danger-9", "--sp-danger-11",
   "--sp-accent-11",
+  "--sp-muted-a3", "--sp-danger-a3", "--sp-warning-a3", "--sp-accent-a3",
+  "--sp-on-solid",
+  "--sp-select-panel-color", "--sp-radio-orb-highlight-color", "--sp-radio-orb-mid-color", "--sp-radio-orb-rim-color", "--sp-radio-orb-glow-color", "--sp-radio-orb-halo-color", "--sp-icon-toggle-label-color", "--sp-icon-toggle-label-dim-color", "--sp-icon-toggle-active-from-color", "--sp-icon-toggle-active-rim-color", "--sp-icon-toggle-active-to-color", "--sp-slider-thumb-highlight-color", "--sp-slider-thumb-mid-color", "--sp-slider-thumb-shade-color", "--sp-slider-thumb-limb-color", "--sp-slider-thumb-rim-color", "--sp-slider-thumb-rim-hover-color", "--sp-slider-thumb-glow-hover-color", "--sp-slider-range-from-color", "--sp-panel-item-highlight-color",
+  // Categorical — hue is the identity, so these keep hue names.
+  "--sp-category-cyan-a3", "--sp-category-cyan-11",
+  "--sp-category-purple-a3", "--sp-category-purple-11",
+  "--sp-category-orange-a3", "--sp-category-orange-11",
+  "--sp-category-yellow-a3", "--sp-category-yellow-11",
+  // Lit-glass surfaces, stored as channels so alpha stays local.
+  "--sp-glass-rgb", "--sp-glass-deep-rgb", "--sp-sheen-rgb", "--sp-rim-rgb",
+  "--sp-glow-rgb", "--sp-glint-rgb", "--sp-star-rgb", "--sp-shadow-rgb",
+  "--sp-glass-text", "--sp-focus-ring",
+  "--sp-ember-glass-rgb", "--sp-ember-glass-deep-rgb", "--sp-ember-sheen-rgb",
+  "--sp-ember-rim-rgb", "--sp-ember-glow-rgb",
   "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl",
   "--sp-font-xs", "--sp-font-sm", "--sp-font-md", "--sp-font-xl",
   "--sp-font-family",
@@ -108,6 +122,22 @@ describe("design tokens", () => {
           `${file}: ${token} must end in one of ${TYPES.join(", ")}`,
         ).toBe(true);
       }
+    }
+  });
+
+  // A raw colour in a component stylesheet is a value no theme can reach, which
+  // breaks the promise that swapping one token file restyles everything.
+  it("component styles contain no raw colour literals", () => {
+    for (const file of walk(SCSS_ROOT)) {
+      if (!file.endsWith(".scss")) continue;
+      const offenders = readFileSync(file, "utf8")
+        .split("\n")
+        .map((line, i) => [line, i + 1] as const)
+        // Mask stencils read only the alpha channel — not a themeable colour.
+        .filter(([line]) => !/mask/.test(line))
+        .filter(([line]) => /#[0-9a-fA-F]{3,8}\b|rgba?\(\s*\d/.test(line))
+        .map(([line, n]) => `${n}: ${line.trim()}`);
+      expect(offenders, `${file} has raw colours:\n${offenders.join("\n")}`).toHaveLength(0);
     }
   });
 

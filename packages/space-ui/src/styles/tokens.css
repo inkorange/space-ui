@@ -40,6 +40,78 @@
   --sp-danger-11: #ff9592;
   --sp-accent-11: #baa7ff;
 
+  /* ---- Component colours --------------------------------------------
+     Values specific to one component's identity rather than a shared role.
+     They live here, not in the component, so the promise holds: every colour
+     in the system is in this file and swapping it restyles everything. */
+  --sp-select-panel-color: #101216;
+
+  --sp-radio-orb-highlight-color: #cfe0ff;
+  --sp-radio-orb-mid-color: #8fb4ff;
+  --sp-radio-orb-rim-color: rgba(150, 195, 255, 0.9);
+  --sp-radio-orb-glow-color: rgba(190, 215, 255, 0.85);
+  --sp-radio-orb-halo-color: rgba(120, 170, 255, 0.55);
+
+  --sp-icon-toggle-label-color: #dbe6ef;
+  --sp-icon-toggle-label-dim-color: rgba(219, 230, 239, 0.55);
+  --sp-icon-toggle-active-from-color: rgba(90, 130, 220, 0.28);
+  --sp-icon-toggle-active-rim-color: rgba(140, 170, 255, 0.45);
+  --sp-icon-toggle-active-to-color: rgba(90, 130, 220, 0.35);
+
+  --sp-slider-thumb-highlight-color: #e6f0ff;
+  --sp-slider-thumb-mid-color: #86abe8;
+  --sp-slider-thumb-shade-color: #23386b;
+  --sp-slider-thumb-limb-color: #0b1330;
+  --sp-slider-thumb-rim-color: rgba(160, 195, 255, 0.75);
+  --sp-slider-thumb-rim-hover-color: rgba(190, 215, 255, 0.9);
+  --sp-slider-thumb-glow-hover-color: rgba(130, 175, 255, 0.75);
+  --sp-slider-range-from-color: rgba(70, 110, 210, 0.85);
+  --sp-panel-item-highlight-color: rgba(220, 230, 255, 0.45);
+
+  /* Soft alpha fills, for badge-style backgrounds carrying a status. */
+  --sp-muted-a3: #ffffff12;
+  --sp-danger-a3: #ff173f2d;
+  --sp-warning-a3: #fa820022;
+  --sp-accent-a3: #8354fe36;
+  --sp-on-solid: #ffffff;          /* text on a solid accent fill */
+
+  /* ---- Categorical --------------------------------------------------
+     For telling data apart — star classes, planet types — where colour
+     distinguishes rather than signals. These keep hue names on purpose:
+     in a categorical scale the hue IS the identity, and a ranking word
+     like "tertiary" would imply an order that does not exist. */
+  --sp-category-cyan-a3: #00befd28;
+  --sp-category-cyan-11: #4ccce6;
+  --sp-category-purple-a3: #c150ff2d;
+  --sp-category-purple-11: #d19dff;
+  --sp-category-orange-a3: #fb6a0025;
+  --sp-category-orange-11: #ffa057;
+  --sp-category-yellow-a3: #ffaa001e;
+  --sp-category-yellow-11: #f5e147;
+
+  /* ---- Lit-glass surfaces -------------------------------------------
+     Stored as raw channels, not colours, so a component can vary alpha
+     locally — `rgb(var(--sp-rim-rgb) / 0.4)` — while the hue stays a
+     single system-level decision. Alpha is about layering; hue is brand.
+     Change one line here and every glass surface moves with it. */
+  --sp-glass-rgb: 15 20 40;        /* panel/button fill, upper stop     */
+  --sp-glass-deep-rgb: 5 7 15;     /* the same fill, lower stop         */
+  --sp-sheen-rgb: 96 150 250;      /* top-left light catching the glass */
+  --sp-rim-rgb: 150 190 255;       /* the lit atmosphere limb           */
+  --sp-glow-rgb: 110 160 255;      /* hover/focus bloom                 */
+  --sp-glint-rgb: 225 238 255;     /* the sweep across the surface      */
+  --sp-star-rgb: 255 255 255;      /* speck highlights                  */
+  --sp-shadow-rgb: 0 0 0;          /* ambient drop shadow               */
+  --sp-glass-text: #eaf2ff;        /* text sitting on a glass surface   */
+  --sp-focus-ring: #9cc0ff;        /* keyboard focus outline            */
+
+  /* Ember — the warm variant, for destructive-leaning controls. */
+  --sp-ember-glass-rgb: 30 16 14;
+  --sp-ember-glass-deep-rgb: 12 6 5;
+  --sp-ember-sheen-rgb: 250 150 96;
+  --sp-ember-rim-rgb: 255 180 130;
+  --sp-ember-glow-rgb: 255 150 100;
+
   /* Spacing — 8pt grid, xs = 4px half-step */
   --spacing-xs: 4px;
   --spacing-sm: 8px;

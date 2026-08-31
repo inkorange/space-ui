@@ -27,12 +27,12 @@
   max-height: calc(100vh - 64px);
   overflow-y: auto; // content taller than max-height scrolls inside the panel, like Radix
   box-shadow:
-    0 12px 60px rgba(0, 0, 0, 0.2),
-    0 16px 64px rgba(0, 0, 0, 0.4),
-    0 16px 36px -20px rgba(0, 0, 0, 0.9);
+    0 12px 60px rgb(var(--sp-shadow-rgb) / 0.2),
+    0 16px 64px rgb(var(--sp-shadow-rgb) / 0.4),
+    0 16px 36px -20px rgb(var(--sp-shadow-rgb) / 0.9);
 
   &::backdrop {
-    background: rgba(0, 0, 0, 0.6); // measured: dark-theme --color-overlay (--black-a8)
+    background: rgb(var(--sp-shadow-rgb) / 0.6); // measured: dark-theme --color-overlay (--black-a8)
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -66,19 +66,19 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(var(--sp-star-rgb) / 0.05);
   color: var(--sp-gray-muted);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #eaf2ff;
+    background: rgb(var(--sp-star-rgb) / 0.12);
+    color: var(--sp-glass-text);
   }
 
   &:focus-visible {
     outline: 2px solid var(--sp-primary-8);
     outline-offset: 2px;
-    color: #eaf2ff;
+    color: var(--sp-glass-text);
   }
 }

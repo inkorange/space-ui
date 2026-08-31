@@ -30,6 +30,7 @@ export default {
       "foundations--spacing",
       "foundations--type-scale",
       "foundations--token-usage",
+      "foundations--motion",
     ].filter((id) => stories.includes(id));
     const rest = stories.filter((id) => !pinned.includes(id)).sort();
     return [...pinned, ...rest];

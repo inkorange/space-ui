@@ -20,8 +20,8 @@ export function Progress({ value, max = 100, className, style, ...rest }: Progre
       className={cx(styles.progress, className)}
       style={style}
     >
-      {/* Plain div on purpose: HabitabilityMeter.module.scss styles
-          `.progress > div` (fill color via --progress-color). */}
+      {/* Unclassed on purpose: a consumer can target `.progress > div`
+          without knowing the hashed module class. */}
       <div style={{ width: `${pct}%`, height: "100%" }} />
     </div>
   );
