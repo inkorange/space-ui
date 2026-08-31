@@ -45,25 +45,78 @@ SliderStory.meta = {
     "A range control for continuous values. Takes and returns an array so it can support multiple thumbs without an API change. The track is a glass tube, the thumb a limb-lit planet.",
 };
 
+const LONG_OPTIONS = [
+  { value: "g", label: "G-type main-sequence star" },
+  {
+    value: "k",
+    label: "K-type orange dwarf, long-lived and unusually stable",
+  },
+  {
+    value: "m",
+    label:
+      "M-type red dwarf with frequent flare activity that can strip a planetary atmosphere",
+  },
+  { value: "o", label: "O-type blue supergiant" },
+];
+
 export const SelectStory = () => {
   const [v, setV] = useState("G");
+  const [capped, setCapped] = useState("m");
+  const [wide, setWide] = useState("m");
+
   return (
-    <Select.Root value={v} onValueChange={setV}>
-      <Select.Trigger />
-      <Select.Content>
-        {STAR_TYPES.map((s) => (
-          <Select.Item key={s} value={s}>
-            {s}-type star
-          </Select.Item>
-        ))}
-      </Select.Content>
-    </Select.Root>
+    <div style={{ display: "grid", gap: 28, maxWidth: 560 }}>
+      <Select.Root value={v} onValueChange={setV}>
+        <Select.Trigger />
+        <Select.Content>
+          {STAR_TYPES.map((s) => (
+            <Select.Item key={s} value={s}>
+              {s}-type star
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
+
+      {/* The width behaviour only shows at the extremes: the trigger sizes to
+          its widest option, so a long list is what the cap exists for. */}
+      <div style={{ display: "grid", gap: 8 }}>
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          long options — capped at --sp-select-trigger-max-width (20rem)
+        </code>
+        <Select.Root value={capped} onValueChange={setCapped}>
+          <Select.Trigger />
+          <Select.Content>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
+
+      <div style={{ display: "grid", gap: 8 }} className="story-wide-select">
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          same options, cap raised to 34rem on an ancestor
+        </code>
+        <Select.Root value={wide} onValueChange={setWide}>
+          <Select.Trigger />
+          <Select.Content>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
+    </div>
   );
 };
 SelectStory.storyName = "Select";
 SelectStory.meta = {
   description:
-    "A single-choice menu for lists too long to show inline. The trigger renders the selected item's own content.",
+    "A single-choice menu for lists too long to show inline. The trigger sizes itself to its widest option, so it never changes width as you select — the cap is what stops a long label producing an absurd control. Past the cap the trigger ellipsizes while the panel wraps, so you can always read an option in full before choosing it.",
 };
 
 export const RadioGroupStory = () => {

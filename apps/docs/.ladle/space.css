@@ -1755,6 +1755,12 @@ html[data-docs-page="marketing"] .ladle-addons {
   padding: 1px 5px;
 }
 
+/* Used by the Select long-options story to show the cap being raised the way
+   a consumer would do it: a class on an ancestor, not an inline style. */
+.story-wide-select {
+  --sp-select-trigger-max-width: 34rem;
+}
+
 /* ============================================================
    QUALITY FLOOR
    ============================================================ */

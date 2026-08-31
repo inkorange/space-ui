@@ -42,6 +42,14 @@
   white-space: nowrap;
 }
 
+/* Every label occupies the SAME cell, so the sizer is as wide as the widest
+   and only one line tall. Without this they become one grid row each, and a
+   seven-option Select renders seven lines tall — the width is right and the
+   height destroys the control. */
+.sizer > * {
+  grid-area: 1 / 1;
+}
+
 .triggerLabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chevron { flex-shrink: 0; opacity: 0.7; }
 
