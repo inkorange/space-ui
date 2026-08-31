@@ -348,10 +348,11 @@ export const Introduction = () => (
 
         <h3 className="docs-subhead">Retheme by redefining</h3>
         <p className="docs-section__intro">
-          Because every component reads the same roles, rebranding is one block
-          of overrides rather than a pass through the component tree. This is
-          the payoff for consolidating fifteen grays into seven: a theme change
-          is a short diff.
+          Because every component reads the same roles and nothing else, a whole
+          theme — light mode, a brand palette — is one block loaded after the
+          library. You override only what you want to change; anything you leave
+          out keeps the shipped default, so a theme file is a short diff rather
+          than a full palette.
         </p>
         <Code
           label="theme.css \u2014 loaded after tokens.css"
@@ -501,13 +502,13 @@ npm install ${packageName}`}
         <div className="docs-section__label">Step two</div>
         <h2 className="docs-section__title">Import the styles once</h2>
         <p className="docs-section__intro">
-          Load the tokens and the compiled stylesheet at your app's entry point.
-          The CSS ships precompiled, so no Sass toolchain is required
-          downstream.
+          One stylesheet, loaded once. The default token values ship inside it,
+          so there is nothing else to wire up — and no Sass toolchain is
+          required downstream.
         </p>
         <Code
           label="app entry"
-          code={`import "${packageName}/tokens.css";
+          code={`// one import — default token values are baked in
 import "${packageName}/styles.css";`}
         />
       </section>

@@ -1,3 +1,11 @@
+// The default token values ship WITH the components, so `styles.css` alone
+// renders a working library. A consuming app overrides by loading its own
+// :root block afterwards — same specificity, later source order — which is
+// what makes a whole theme (light mode, a brand palette) a one-file swap
+// rather than a fork. tokens.css is still exported separately for anyone who
+// wants to read or extend the defaults.
+import "./styles/tokens.css";
+
 export { Text, type TextProps } from "./components/Text";
 export { Heading, type HeadingProps } from "./components/Heading";
 export { Link, type LinkProps } from "./components/Link";

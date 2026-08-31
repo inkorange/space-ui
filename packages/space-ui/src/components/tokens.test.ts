@@ -86,6 +86,15 @@ describe("design tokens", () => {
     }
   });
 
+  // The whole theming model rests on this: styles.css must carry default
+  // values, so a consumer who never supplies a token file still gets a working
+  // library, and supplying one is a swap rather than a requirement.
+  it("ships default token values with the components", () => {
+    const entry = readFileSync(path.join(__dirname, "..", "index.ts"), "utf8");
+    expect(entry, "index.ts must import tokens.css so styles.css carries the defaults")
+      .toMatch(/import\s+["']\.\/styles\/tokens\.css["']/);
+  });
+
   it("component tokens follow --sp-<component>-<modifier>-<type>", () => {
     const TYPES = ["size", "color", "timer", "angle", "width", "height"];
     for (const file of walk(SCSS_ROOT)) {

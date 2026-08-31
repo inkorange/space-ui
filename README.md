@@ -20,8 +20,7 @@ pnpm add @inkorange/space-ui
 ```
 
 ```tsx
-// once, at your app entry
-import "@inkorange/space-ui/tokens.css";
+// once, at your app entry — one import, defaults included
 import "@inkorange/space-ui/styles.css";
 
 import { SpaceButton, Card, Heading } from "@inkorange/space-ui";
@@ -36,10 +35,30 @@ export function Planet() {
 }
 ```
 
-`tokens.css` defines the `--sp-*` design tokens; `styles.css` is the
-precompiled component CSS. Both are plain CSS — no Sass, CSS modules, or
-framework tooling required downstream. All components are client components
-(`"use client"` is baked into the bundle).
+`styles.css` is the precompiled component CSS **with the default token values
+baked in**, so that single import gives you a working library. Plain CSS — no
+Sass, CSS modules, or framework tooling required downstream. All components are
+client components (`"use client"` is baked into the bundle).
+
+### Theming is a one-file swap
+
+Every component reads role-named tokens and nothing else, so a whole theme —
+light mode, a brand palette — is one `:root` block loaded *after* the library:
+
+```css
+/* theme.css, imported after styles.css */
+:root {
+  --sp-gray-panel: #ffffff;
+  --sp-gray-text: #14161c;
+  --sp-primary-9: #7c5cff;
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}
+```
+
+Same specificity, later source order, so your values win. You only override
+what you want to change — anything you leave out keeps the shipped default.
+`@inkorange/space-ui/tokens.css` is exported separately if you want to read or
+extend the full default set.
 
 **Requirements:** React 19 as a peer dependency, and a dark surface —
 components are built for the space-dark ground (`#111113`) and assume it.
