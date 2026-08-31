@@ -56,19 +56,41 @@
 
   /* A Select sizes itself to its widest option, so it never changes width as
      you select. This caps that, past which the label ellipsizes. */
+  /* One height for every single-line control, so a field, a select and a
+     button line up in a row. Shared as a token because two stylesheets used
+     to state it separately with a "keep in sync" comment — and had already
+     drifted, the field having no height at all. */
+  --sp-control-height: 40px;
+
   --sp-select-trigger-max-width: 20rem;
+
+  /* The option panel grows past the trigger to fit its longest option, so a
+     label need not wrap just because the control is narrow. min() keeps it on
+     screen on a small viewport. */
+  --sp-select-panel-max-width: min(90vw, 28rem);
 
   /* ---- Component colours --------------------------------------------
      Values specific to one component's identity rather than a shared role.
      They live here, not in the component, so the promise holds: every colour
      in the system is in this file and swapping it restyles everything. */
+  /* Tabs are folder-shaped: they seat onto the surface below and the active
+     one breaks through its top border, so the component needs to know that
+     surface's colour to recreate it. Set this to whatever the tabs sit on. */
+  --sp-tabs-surface-color: #16181b;
+  --sp-tabs-rest-from-color: rgba(15, 20, 40, 0.6);
+  --sp-tabs-rest-to-color: rgba(7, 10, 20, 0.3);
+  --sp-tabs-hover-from-color: rgba(24, 32, 62, 0.75);
+  --sp-tabs-hover-to-color: rgba(10, 14, 28, 0.45);
+  --sp-tabs-active-from-color: rgba(30, 40, 76, 0.9);
+  --sp-tabs-active-edge-color: rgba(190, 215, 255, 0.45);
+
   --sp-select-panel-color: #101216;
 
-  --sp-radio-orb-highlight-color: #cfe0ff;
-  --sp-radio-orb-mid-color: #8fb4ff;
-  --sp-radio-orb-rim-color: rgba(150, 195, 255, 0.9);
-  --sp-radio-orb-glow-color: rgba(190, 215, 255, 0.85);
-  --sp-radio-orb-halo-color: rgba(120, 170, 255, 0.55);
+  --sp-radio-group-orb-highlight-color: #cfe0ff;
+  --sp-radio-group-orb-mid-color: #8fb4ff;
+  --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);
+  --sp-radio-group-orb-glow-color: rgba(190, 215, 255, 0.85);
+  --sp-radio-group-orb-halo-color: rgba(120, 170, 255, 0.55);
 
   --sp-icon-toggle-label-color: #dbe6ef;
   --sp-icon-toggle-label-dim-color: rgba(219, 230, 239, 0.55);
