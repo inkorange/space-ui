@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Button, Select, TextField } from "@inkorange/space-ui";
 import { Code } from "./docs-code";
 import { components as componentDocs, skinTokens } from "virtual:space-docs";
 
@@ -388,3 +390,114 @@ export const TokenUsage = () => {
 };
 
 TokenUsage.meta = { fullBleed: true };
+
+/* ---------------------------------------------------------------
+   MOTION
+   --------------------------------------------------------------- */
+
+const STAR_TYPES = ["O", "B", "A", "F", "G", "K", "M"];
+
+/**
+ * Motion sits here rather than under a component because `animated` behaves
+ * identically wherever it appears — it is a system-level switch, in the same
+ * category as colour and spacing.
+ */
+export const Motion = () => {
+  const [live, setLive] = useState("G");
+  const [still, setStill] = useState("G");
+
+  return (
+    <div className="docs-page">
+      <h1
+        className="docs-hero__title"
+        style={{ fontSize: "clamp(28px, 4vw, 40px)" }}
+      >
+        Motion
+      </h1>
+      <p className="docs-hero__lede">
+        The lit glass is not optional — it is what a component is. Its ambient
+        motion is, because loops that suit a hero button distract in a dense
+        form or a long list.
+      </p>
+
+      <section className="docs-section" style={{ marginTop: 32 }}>
+        <div className="docs-section__label">The switch</div>
+        <h2 className="docs-section__title">One prop, one meaning</h2>
+        <p className="docs-section__intro">
+          <code>animated={"{false}"}</code> stills the orbiting rim, the glint
+          sweep and the twinkling stars. Every gradient, rim and shadow stays
+          exactly where it was — the look does not change, only its movement.
+        </p>
+
+        <div className="docs-skindemo">
+          <section className="docs-skindemo__pane docs-skindemo__pane--lit">
+            <header className="docs-skindemo__head">
+              <span className="docs-skindemo__badge docs-skindemo__badge--lit">
+                Motion on
+              </span>
+              <span className="docs-skindemo__note">default</span>
+            </header>
+            <div className="docs-skindemo__stack">
+              <Button>Build planet</Button>
+              <TextField.Root placeholder="Planet name…" />
+              <Select.Root value={live} onValueChange={setLive}>
+                <Select.Trigger style={{ minWidth: 160 }} />
+                <Select.Content>
+                  {STAR_TYPES.map((t) => (
+                    <Select.Item key={t} value={t}>
+                      {t}-type star
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </section>
+
+          <section className="docs-skindemo__pane">
+            <header className="docs-skindemo__head">
+              <span className="docs-skindemo__badge">Motion stilled</span>
+              <span className="docs-skindemo__note">animated={"{false}"}</span>
+            </header>
+            <div className="docs-skindemo__stack">
+              <Button animated={false}>Build planet</Button>
+              <TextField.Root animated={false} placeholder="Planet name…" />
+              <Select.Root value={still} onValueChange={setStill}>
+                <Select.Trigger animated={false} style={{ minWidth: 160 }} />
+                <Select.Content animated={false}>
+                  {STAR_TYPES.map((t) => (
+                    <Select.Item key={t} value={t}>
+                      {t}-type star
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="docs-section__label">Accessibility</div>
+        <h2 className="docs-section__title">Reduced motion always wins</h2>
+        <p className="docs-section__intro">
+          A reader who sets <code>prefers-reduced-motion</code> gets the stilled
+          treatment regardless of the prop. The prop is for design judgement;
+          the media query is not overridable, and should not be.
+        </p>
+        <Code
+          label="Which components take it"
+          code={`<Button animated={false}>Build planet</Button>
+<TextField.Root animated={false} />
+<TextArea animated={false} />
+<Select.Trigger animated={false} />
+<Select.Content animated={false} />
+<Tabs.Trigger animated={false} />
+
+// Slider has no ambient loop, so it takes no animated prop.`}
+        />
+      </section>
+    </div>
+  );
+};
+
+Motion.meta = { fullBleed: true };
