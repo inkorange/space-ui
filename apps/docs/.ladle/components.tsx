@@ -149,7 +149,16 @@ const PropRow = ({ prop: p, inherited }: { prop: PropDoc; inherited?: boolean })
   </div>
 );
 
-const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
+const INHERITED_PREVIEW = 4;
+
+const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
+  const [showAllInherited, setShowAllInherited] = useState(false);
+  const shown = showAllInherited
+    ? doc.inherited
+    : doc.inherited.slice(0, INHERITED_PREVIEW);
+  const hidden = doc.inherited.length - shown.length;
+
+  return (
   <div className="docs-api">
     <div className="docs-api__head">
       <span className="docs-api__name">{`<${doc.name}>`}</span>
@@ -171,13 +180,28 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
       {doc.inherited.length > 0 && (
         <>
           <div className="docs-api__row docs-api__row--section" role="row">
-            <span>
-              Inherited — {doc.inherited.length} of {doc.inheritedCount} shown
-            </span>
+            <span>Inherited from {doc.file.replace(".tsx", "")}'s element</span>
           </div>
-          {doc.inherited.map((p) => (
+          {shown.map((p) => (
             <PropRow key={p.name} prop={p} inherited />
           ))}
+          <div className="docs-api__row docs-api__row--more" role="row">
+            <button
+              type="button"
+              className="docs-api__more"
+              aria-expanded={showAllInherited}
+              onClick={() => setShowAllInherited((v) => !v)}
+            >
+              {showAllInherited
+                ? "Show fewer"
+                : `Show all ${doc.inherited.length}`}
+            </button>
+            <span className="docs-api__morenote">
+              {showAllInherited
+                ? `${doc.inheritedCount - doc.inherited.length} more inherited props are not listed`
+                : `${hidden} more listed, ${doc.inheritedCount} inherited in total`}
+            </span>
+          </div>
         </>
       )}
     </div>
@@ -207,8 +231,9 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
         ))}
       </div>
     )}
-  </div>
-);
+    </div>
+  );
+};
 
 export const Provider: GlobalProvider = ({
   children,

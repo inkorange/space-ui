@@ -56,24 +56,27 @@ export type ComponentDoc = {
 const NOTABLE_INHERITED: Record<string, string> = {
   onClick: "Click handler. Forwarded straight to the underlying element.",
   onChange: "Fires on every edit; pair with `value` for a controlled input.",
+  disabled: "Blocks interaction and removes the element from the tab order.",
+  placeholder: "Hint shown while the field is empty.",
+  value: "Controlled value.",
+  type: "Native element type, e.g. `button` vs `submit`.",
+  required: "Marks the field as required for form validation.",
+  readOnly: "Value is visible and selectable but cannot be edited.",
+  name: "Field name used on form submission.",
   onFocus: "Fires when the element gains focus.",
   onBlur: "Fires when the element loses focus.",
   onKeyDown: "Key handler, for shortcuts beyond the built-in keyboard support.",
-  disabled: "Blocks interaction and removes the element from the tab order.",
-  readOnly: "Value is visible and selectable but cannot be edited.",
-  required: "Marks the field as required for form validation.",
-  type: "Native element type, e.g. `button` vs `submit`.",
-  name: "Field name used on form submission.",
-  value: "Controlled value.",
-  defaultValue: "Initial value for an uncontrolled element.",
-  placeholder: "Hint shown while the field is empty.",
   maxLength: "Maximum accepted character count.",
-  autoFocus: "Focus on mount. Use sparingly — it moves focus without asking.",
-  tabIndex: "Tab order position.",
   id: "Element id, e.g. to pair a control with a label's htmlFor.",
-  title: "Native tooltip text. Not a substitute for a visible label.",
   "aria-label": "Accessible name where no visible label exists.",
+  tabIndex: "Tab order position.",
+  title: "Native tooltip text. Not a substitute for a visible label.",
+  autoFocus: "Focus on mount. Use sparingly — it moves focus without asking.",
+  defaultValue: "Initial value for an uncontrolled element.",
 };
+
+/** Priority order for the inherited list, taken from the map's key order. */
+const INHERITED_ORDER = Object.keys(NOTABLE_INHERITED);
 
 const isSourceFile = (f: string) =>
   f.endsWith(".tsx") && !f.includes(".test.") && f !== "icons.tsx";
@@ -238,7 +241,10 @@ const buildDocs = (): ComponentDoc[] => {
                 defaultValue: null,
               };
             })
-            .sort((a, b) => a.name.localeCompare(b.name));
+            .sort(
+              (a, b) =>
+                INHERITED_ORDER.indexOf(a.name) - INHERITED_ORDER.indexOf(b.name),
+            );
         } catch {
           inherited = [];
         }

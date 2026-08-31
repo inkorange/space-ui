@@ -1403,6 +1403,39 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   padding: 8px 14px;
 }
 
+.docs-api__row--more {
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+  background: var(--docs-stage);
+}
+
+.docs-api__more {
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.docs-api__more:hover {
+  background: #0090ff26;
+  border-color: var(--docs-terminator);
+}
+
+/* States the omission rather than hiding it — a table that silently
+   truncates is a table you cannot trust. */
+.docs-api__morenote {
+  font-family: var(--docs-font-display);
+  font-size: 11.5px;
+  color: var(--docs-muted);
+}
+
 .docs-api__row--inherited .docs-api__prop,
 .docs-api__row--inherited .docs-api__type {
   opacity: 0.72;
