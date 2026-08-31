@@ -1,41 +1,25 @@
-import { SpaceButton, Text } from "@inkorange/space-ui";
-import { SpaceLoader, IconToggle, Progress } from "@inkorange/space-ui";
+import { SpaceButton, SpaceLoader, IconToggle, Progress } from "@inkorange/space-ui";
 import { useState } from "react";
 
 export default {
   title: "Components/Buttons",
 };
 
-export const Buttons = () => {
-  // Wired to real state so the story demonstrates that SpaceButton forwards
-  // every standard button attribute — onClick included — rather than leaving
-  // a reader to infer it from the prop table, which lists only its own props.
-  const [builds, setBuilds] = useState(0);
-  const count = () => setBuilds((n) => n + 1);
-
-  return (
-    <div style={{ display: "grid", gap: 16 }}>
-      <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <SpaceButton onClick={count}>Build Planet</SpaceButton>
-        <SpaceButton size="sm" onClick={count}>Small</SpaceButton>
-        <SpaceButton size="lg" onClick={count}>Large</SpaceButton>
-        {/* micro is sized for tiny steppers, so it only fits a glyph or two. */}
-        <SpaceButton size="micro" onClick={count} aria-label="Micro">M</SpaceButton>
-        <SpaceButton ember onClick={count}>Ember</SpaceButton>
-        <SpaceButton iconOnly aria-label="Share" onClick={count}>↗</SpaceButton>
-        <SpaceButton disabled onClick={count}>Disabled</SpaceButton>
-      </div>
-
-      <SpaceButton fullWidth onClick={count}>Full width</SpaceButton>
-
-      <Text size="2" color="gray">
-        {builds === 0
-          ? "Click any button — disabled is wired up too, and correctly does nothing."
-          : `${builds} ${builds === 1 ? "planet" : "planets"} built.`}
-      </Text>
+export const Buttons = () => (
+  <div style={{ display: "grid", gap: 16 }}>
+    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+      <SpaceButton>Build Planet</SpaceButton>
+      <SpaceButton size="sm">Small</SpaceButton>
+      <SpaceButton size="lg">Large</SpaceButton>
+      <SpaceButton size="micro" aria-label="Micro">M</SpaceButton>
+      <SpaceButton ember>Ember</SpaceButton>
+      <SpaceButton iconOnly aria-label="Share">↗</SpaceButton>
+      <SpaceButton disabled>Disabled</SpaceButton>
     </div>
-  );
-};
+
+    <SpaceButton fullWidth>Full width</SpaceButton>
+  </div>
+);
 
 export const Loader = () => <SpaceLoader label="Terraforming…" />;
 
