@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "ladle serve",
-    "build": "ladle build"
+    "build": "ladle build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@inkorange/space-ui": "workspace:*",
@@ -13,6 +14,8 @@
   },
   "devDependencies": {
     "@ladle/react": "^5.0.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
     "prism-react-renderer": "^2.4.1",
     "sass": "^1.89.0",
     "typescript": "^5.8.0",

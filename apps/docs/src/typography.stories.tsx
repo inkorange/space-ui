@@ -6,7 +6,11 @@ export default {
 
 export const Headings = () => (
   <div style={{ display: "grid", gap: 12 }}>
-    {(["9", "8", "7", "6", "5", "4", "3", "2", "1"] as const).map((s) => (
+    {/* Heading's scale starts at 4 — steps 1-3 belong to Text, which shares
+        4-6 with Heading so the two can sit on a line and match. The story
+        used to render 9 down to 1, so three of those "sizes" were invalid
+        and silently fell back to the default. */}
+    {(["9", "8", "7", "6", "5", "4"] as const).map((s) => (
       <Heading key={s} size={s}>Heading size {s}</Heading>
     ))}
   </div>

@@ -38,3 +38,6 @@ declare module "*.module.scss" {
   const classes: Record<string, string>;
   export default classes;
 }
+
+/** Side-effect stylesheet imports. */
+declare module "*.css";
