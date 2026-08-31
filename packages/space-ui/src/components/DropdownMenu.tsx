@@ -232,7 +232,7 @@ export function Label({ children }: { children?: ReactNode }) {
 
 export interface ItemProps {
   asChild?: boolean;
-  color?: "red";
+  color?: "danger";
   onSelect?: () => void | Promise<void>;
   children?: ReactNode;
 }
@@ -240,7 +240,7 @@ export interface ItemProps {
 export function Item({ asChild, color, onSelect, children }: ItemProps) {
   const m = useMenu();
   const itemClosedRef = useItemClosedRef();
-  const cls = cx(styles.item, color === "red" && styles.danger);
+  const cls = cx(styles.item, color === "danger" && styles.danger);
   const activate = () => {
     markItemInitiatedClose(itemClosedRef);
     m.setOpen(false);

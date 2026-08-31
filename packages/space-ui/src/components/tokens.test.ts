@@ -8,17 +8,17 @@ import path from "node:path";
 const TOKENS_PATH = path.join(__dirname, "..", "styles", "tokens.css");
 
 export const EXPECTED_TOKENS = [
+  // Grays are role-named: what the colour is FOR, not where it sits on a ramp.
   "--sp-gray-text", "--sp-gray-text-dim", "--sp-gray-muted",
   "--sp-gray-border", "--sp-gray-surface", "--sp-gray-panel", "--sp-gray-track",
-  "--sp-blue-2", "--sp-blue-8", "--sp-blue-9", "--sp-blue-11", "--sp-blue-12",
-  "--sp-blue-a2", "--sp-blue-a3", "--sp-blue-a6",
-  "--sp-amber-10", "--sp-amber-11",
-  "--sp-green-9", "--sp-green-11", "--sp-green-a3", "--sp-green-a6",
-  "--sp-red-9",
-  "--sp-red-11",
-  "--sp-violet-11",
-  "--sp-yellow-9",
-  "--sp-orange-9",
+  // Accents run on two axes. Emphasis:
+  "--sp-primary-2", "--sp-primary-8", "--sp-primary-9", "--sp-primary-11",
+  "--sp-primary-12", "--sp-primary-a2", "--sp-primary-a3", "--sp-primary-a6",
+  // and status:
+  "--sp-success-9", "--sp-success-11", "--sp-success-a3", "--sp-success-a6",
+  "--sp-warning-10", "--sp-warning-11",
+  "--sp-danger-9", "--sp-danger-11",
+  "--sp-accent-11",
   "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl",
   "--sp-font-xs", "--sp-font-sm", "--sp-font-md", "--sp-font-xl",
   "--sp-font-family",

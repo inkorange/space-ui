@@ -40,10 +40,10 @@ describe("Text", () => {
     expect(html(<Text as="label">hi</Text>)).toMatch(/^<label/);
   });
   it("applies size, weight, color classes and merges className", () => {
-    const out = html(<Text size="2" weight="bold" color="gray" className="mine">x</Text>);
+    const out = html(<Text size="2" weight="bold" color="muted" className="mine">x</Text>);
     expect(out).toContain("size2");
     expect(out).toContain("bold");
-    expect(out).toContain("colorGray");
+    expect(out).toContain("colorMuted");
     expect(out).toContain("mine");
   });
   it("maps mt/mb to spacing tokens as inline style, merging user style", () => {
@@ -135,17 +135,17 @@ describe("Grid", () => {
 
 describe("Badge", () => {
   it("applies color and size classes with soft default", () => {
-    const out = html(<Badge color="green" size="2">Life</Badge>);
+    const out = html(<Badge color="success" size="2">Life</Badge>);
     expect(out).toMatch(/^<span/);
-    for (const c of ["badge", "colorGreen", "size2"]) expect(out).toContain(c);
+    for (const c of ["badge", "colorSuccess", "size2"]) expect(out).toContain(c);
   });
   it("supports every inventoried color incl. dynamic sources", () => {
-    for (const c of ["gray","blue","green","red","amber","cyan","purple","orange","violet","yellow"] as const) {
+    for (const c of ["muted","primary","success","danger","warning","cyan","purple","orange","accent","yellow"] as const) {
       expect(html(<Badge color={c}>x</Badge>)).toContain(`color${c[0].toUpperCase()}${c.slice(1)}`);
     }
   });
-  it("defaults to the app accent color (blue), the regression the sweep caught", () => {
-    expect(html(<Badge>x</Badge>)).toContain("colorBlue");
+  it("defaults to primary, the regression the sweep caught", () => {
+    expect(html(<Badge>x</Badge>)).toContain("colorPrimary");
   });
   it("is single-line by default; wrap opts long free-text into wrapping", () => {
     expect(html(<Badge>x</Badge>)).not.toContain("wrap");
@@ -429,7 +429,7 @@ describe("DropdownMenu", () => {
           <DropdownMenu.Label>you@x.test</DropdownMenu.Label>
           <DropdownMenu.Item asChild><a href="/account">Account</a></DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item color="red" onSelect={() => {}}>Sign out</DropdownMenu.Item>
+          <DropdownMenu.Item color="danger" onSelect={() => {}}>Sign out</DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     );

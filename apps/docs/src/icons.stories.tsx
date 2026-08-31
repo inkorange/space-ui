@@ -20,7 +20,7 @@ export const AllIcons = () => {
         <div key={name} style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {/* @ts-expect-error dynamic component */}
           <Icon width={18} height={18} />
-          <Text size="1" color="gray">{name}</Text>
+          <Text size="1" color="muted">{name}</Text>
         </div>
       ))}
     </div>

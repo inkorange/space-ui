@@ -38,33 +38,38 @@ const GRAY_ROLES = [
 
 const ACCENT_GROUPS = [
   {
-    name: "Blue — primary action, focus, selection",
+    name: "Primary — interactive, focus, selection",
     tokens: [
-      "--sp-blue-2",
-      "--sp-blue-8",
-      "--sp-blue-9",
-      "--sp-blue-11",
-      "--sp-blue-12",
-      "--sp-blue-a2",
-      "--sp-blue-a3",
-      "--sp-blue-a6",
+      "--sp-primary-2",
+      "--sp-primary-8",
+      "--sp-primary-9",
+      "--sp-primary-11",
+      "--sp-primary-12",
+      "--sp-primary-a2",
+      "--sp-primary-a3",
+      "--sp-primary-a6",
     ],
   },
   {
-    name: "Green — success and safe states",
-    tokens: ["--sp-green-9", "--sp-green-11", "--sp-green-a3", "--sp-green-a6"],
+    name: "Success — safe and completed states",
+    tokens: [
+      "--sp-success-9",
+      "--sp-success-11",
+      "--sp-success-a3",
+      "--sp-success-a6",
+    ],
   },
   {
-    name: "Amber and yellow — warning, pending",
-    tokens: ["--sp-amber-10", "--sp-amber-11", "--sp-yellow-9"],
+    name: "Warning — pending and cautionary states",
+    tokens: ["--sp-warning-10", "--sp-warning-11"],
   },
   {
-    name: "Red and orange — destructive, hot",
-    tokens: ["--sp-red-9", "--sp-red-11", "--sp-orange-9"],
+    name: "Danger — destructive and error states",
+    tokens: ["--sp-danger-9", "--sp-danger-11"],
   },
   {
-    name: "Violet — accent, rare",
-    tokens: ["--sp-violet-11"],
+    name: "Accent — decorative, carries no status",
+    tokens: ["--sp-accent-11"],
   },
 ];
 

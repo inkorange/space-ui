@@ -18,7 +18,10 @@ export interface TextProps
   /** Semantic colour role. `gray` is the standard secondary-text token;
    *  the rest carry meaning, so avoid them for emphasis alone. Omit for
    *  primary text. */
-  color?: "gray" | "red" | "green" | "amber";
+  /** Semantic colour role. `muted` is the standard secondary-text token;
+   *  the rest carry meaning, so avoid them for emphasis alone. Omit for
+   *  primary text. */
+  color?: "muted" | "danger" | "success" | "warning";
   /** Id of the control this labels. Only meaningful with `as="label"`. */
   htmlFor?: string;
   children?: ReactNode;

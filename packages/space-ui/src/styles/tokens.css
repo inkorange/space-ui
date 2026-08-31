@@ -22,25 +22,23 @@
                                      tracks need the old solid, not 19% alpha */
 
   /* Accents (Radix dark values, 1:1) */
-  --sp-blue-2: #111927;
-  --sp-blue-8: #2870bd;
-  --sp-blue-9: #0090ff;
-  --sp-blue-11: #70b8ff;
-  --sp-blue-12: #c2e6ff;
-  --sp-blue-a2: #1166fb18;
-  --sp-blue-a3: #0077ff3a;
-  --sp-blue-a6: #0f89fd7f;
-  --sp-amber-10: #ffd60a;
-  --sp-amber-11: #ffca16;
-  --sp-green-9: #30a46c;
-  --sp-green-11: #3dd68c;
-  --sp-green-a3: #22ff991e;
-  --sp-green-a6: #44ffaa4b;
-  --sp-red-9: #e5484d;
-  --sp-red-11: #ff9592;
-  --sp-violet-11: #baa7ff;
-  --sp-yellow-9: #ffe629;
-  --sp-orange-9: #f76b15;
+  --sp-primary-2: #111927;
+  --sp-primary-8: #2870bd;
+  --sp-primary-9: #0090ff;
+  --sp-primary-11: #70b8ff;
+  --sp-primary-12: #c2e6ff;
+  --sp-primary-a2: #1166fb18;
+  --sp-primary-a3: #0077ff3a;
+  --sp-primary-a6: #0f89fd7f;
+  --sp-warning-10: #ffd60a;
+  --sp-warning-11: #ffca16;
+  --sp-success-9: #30a46c;
+  --sp-success-11: #3dd68c;
+  --sp-success-a3: #22ff991e;
+  --sp-success-a6: #44ffaa4b;
+  --sp-danger-9: #e5484d;
+  --sp-danger-11: #ff9592;
+  --sp-accent-11: #baa7ff;
 
   /* Spacing — 8pt grid, xs = 4px half-step */
   --spacing-xs: 4px;

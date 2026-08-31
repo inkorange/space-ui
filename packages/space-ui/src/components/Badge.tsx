@@ -3,9 +3,30 @@ import { forwardRef, type ReactNode } from "react";
 import { cx, spacingStyle, type SpacingProps } from "./propShared";
 import styles from "./Badge.module.scss";
 
-export type BadgeColor =
-  | "gray" | "blue" | "green" | "red" | "amber"
-  | "cyan" | "purple" | "orange" | "violet" | "yellow";
+/**
+ * Roles whose colour carries meaning — status and emphasis.
+ */
+export type BadgeSemanticColor =
+  | "muted"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger";
+
+/**
+ * Categorical hues for telling data apart — star classes, planet types — where
+ * the colour distinguishes rather than signals. These deliberately keep hue
+ * names: for a categorical scale the hue IS the identity, and calling one
+ * "tertiary" would imply a ranking that does not exist.
+ */
+export type BadgeCategoricalColor =
+  | "cyan"
+  | "purple"
+  | "orange"
+  | "yellow"
+  | "accent";
+
+export type BadgeColor = BadgeSemanticColor | BadgeCategoricalColor;
 
 export interface BadgeProps
   extends SpacingProps,
@@ -25,10 +46,10 @@ const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 // Default color is "blue" (not "gray") to match Radix's behavior: Badge's
 // `color` prop had no hardcoded default there either — it inherited the
 // surrounding Theme's `accentColor`, which this app sets to "blue" (see the
-// single <Theme accentColor="blue"> in src/app/layout.tsx). A caller that
-// wants a neutral badge should pass color="gray" explicitly.
+// single <Theme accentColor> in the host app). A caller that wants a
+// neutral badge should pass color="muted" explicitly.
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
-  { color = "blue", variant = "soft", size = "1", wrap, className, style, m, mt, mb, p, pb, ...rest },
+  { color = "primary", variant = "soft", size = "1", wrap, className, style, m, mt, mb, p, pb, ...rest },
   ref,
 ) {
   return (

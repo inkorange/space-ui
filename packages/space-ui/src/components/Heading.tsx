@@ -14,7 +14,7 @@ export interface HeadingProps
    *  same line and match. */
   size?: "4" | "5" | "6" | "7" | "8" | "9";
   /** Semantic colour role. Omit for primary heading colour. */
-  color?: "gray" | "red";
+  color?: "muted" | "danger";
   /** Centres the text. There is no `left`/`right` — headings are
    *  start-aligned unless deliberately centred. */
   align?: "center";
@@ -31,8 +31,8 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Hea
     className: cx(
       styles.heading,
       size && styles[`size${size}`],
-      color === "gray" && styles.colorGray,
-      color === "red" && styles.colorRed,
+      color === "muted" && styles.colorMuted,
+      color === "danger" && styles.colorDanger,
       align === "center" && styles.alignCenter,
       className,
     ),

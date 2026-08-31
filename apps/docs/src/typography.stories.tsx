@@ -21,17 +21,17 @@ export const TextSizes = () => (
     {(["5", "4", "3", "2", "1"] as const).map((s) => (
       <Text key={s} size={s}>Text size {s} — the quick brown fox jumps over the lazy dog.</Text>
     ))}
-    <Text color="gray">Gray text for secondary copy.</Text>
+    <Text color="muted">Gray text for secondary copy.</Text>
     <Link href="#">An inline link</Link>
   </div>
 );
 
 export const Badges = () => (
   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-    {(["gray", "blue", "green", "amber", "red"] as const).map((c) => (
+    {(["muted", "primary", "success", "warning", "danger"] as const).map((c) => (
       <Badge key={c} color={c}>{c}</Badge>
     ))}
-    <Badge color="green" variant="soft">soft</Badge>
+    <Badge color="success" variant="soft">soft</Badge>
   </div>
 );
 

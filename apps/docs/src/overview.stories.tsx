@@ -31,10 +31,10 @@ const PlanetCard = () => {
     <Card style={{ padding: 20 }}>
       <div className="docs-demo__head">
         <Heading size="5">Kepler-442b</Heading>
-        <Badge color="green">Temperate</Badge>
+        <Badge color="success">Temperate</Badge>
       </div>
 
-      <Text size="2" color="gray">
+      <Text size="2" color="muted">
         A super-earth in the habitable zone, 1,206 light years out.
       </Text>
 
@@ -56,7 +56,7 @@ const PlanetCard = () => {
       </dl>
 
       <div className="docs-demo__field">
-        <Text size="1" color="gray">
+        <Text size="1" color="muted">
           Host star
         </Text>
         <Select.Root value={star} onValueChange={setStar}>

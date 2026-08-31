@@ -64,8 +64,8 @@
   height: var(--_planet);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle at 35% 30%, var(--sp-blue-11), var(--sp-blue-9) 60%, var(--sp-blue-2) 100%);
-  box-shadow: 0 0 6px var(--sp-blue-a6);
+  background: radial-gradient(circle at 35% 30%, var(--sp-primary-11), var(--sp-primary-9) 60%, var(--sp-primary-2) 100%);
+  box-shadow: 0 0 6px var(--sp-primary-a6);
   animation: sp-loader-planet-pulse 2.2s ease-in-out infinite;
 }
 
@@ -86,8 +86,8 @@
     height: var(--_moon);
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    background: var(--sp-blue-11);
-    box-shadow: 0 0 4px var(--sp-blue-a6);
+    background: var(--sp-primary-11);
+    box-shadow: 0 0 4px var(--sp-primary-a6);
   }
 }
 
