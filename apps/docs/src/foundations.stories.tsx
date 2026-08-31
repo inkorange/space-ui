@@ -273,7 +273,7 @@ TypeScale.meta = { fullBleed: true };
 const usageByToken = () => {
   const map = new Map<string, string[]>();
   for (const doc of componentDocs) {
-    for (const token of doc.tokens) {
+    for (const token of doc.paletteTokens) {
       const list = map.get(token) ?? [];
       // Namespaced parts share one stylesheet, so collapse to the file's
       // component: Select.Trigger and Select.Content are one entry.

@@ -9,8 +9,19 @@
   gap: var(--spacing-sm);
 }
 
-/* Public tokens: --sp-loader-{orbit,planet,moon}-size.
-   These are READ here with a per-size fallback, never declared outright. A
+/**
+ * Public tokens. Documented with @token so the gallery can render them as a
+ * table — the same contract JSDoc gives props.
+ *
+ * @token --sp-loader-orbit-size Diameter of the ring the moon travels. Sets the
+ *   loader's overall footprint; the planet and moon do not scale with it.
+ * @token --sp-loader-planet-size Diameter of the pulsing disc at the centre.
+ *   Raise it for a denser loader, lower it for a thinner ring-led one.
+ * @token --sp-loader-moon-size Diameter of the dot orbiting the ring. Stays
+ *   centred on the ring's edge at any size.
+ */
+
+/* These are READ with a per-size fallback, never declared outright. A
    custom property declared on an element shadows any value inherited from an
    ancestor, so `--sp-loader-moon-size: 20px` on a parent would be ignored if
    the size class set it directly. Reading it keeps the token overridable from

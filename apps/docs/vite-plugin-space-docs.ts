@@ -32,7 +32,9 @@ export type ComponentDoc = {
   file: string;
   props: PropDoc[];
   /** Component-scoped custom properties a consumer can override. */
-  tokens: string[];
+  tokens: TokenDoc[];
+  /** Global palette tokens the stylesheet reads. A system view, not API. */
+  paletteTokens: string[];
   /**
    * What the props interface extends. Most components pass through a DOM
    * attribute set, so onClick/disabled/type/aria-* are all accepted but
@@ -124,14 +126,21 @@ const collectDefaults = (source: ts.SourceFile): Map<string, string> => {
   return defaults;
 };
 
+export type TokenDoc = {
+  name: string;
+  /** From an `@token` line in the component's stylesheet. */
+  description: string;
+  /** Every distinct fallback the component supplies, i.e. its defaults. */
+  defaults: string[];
+};
+
 /**
  * Component-scoped custom properties — the knobs a consumer can turn on THIS
  * component, e.g. `--sp-loader-moon-size`.
  *
- * The global palette is excluded by reading tokens.css and subtracting what it
- * defines, rather than by matching the `--sp-` prefix: component tokens carry
- * that prefix too, since it is the library's public namespace. Private `--_`
- * vars are implementation detail and never listed.
+ * The global palette is excluded by subtracting what tokens.css actually
+ * defines, not by prefix: component tokens carry `--sp-` too, since that is the
+ * library's public namespace. Private `--_` vars are implementation detail.
  */
 const globalTokenNames = (): Set<string> => {
   try {
@@ -144,18 +153,60 @@ const globalTokenNames = (): Set<string> => {
 
 const GLOBAL_TOKENS = globalTokenNames();
 
-const tokensIn = (css: string): string[] => {
+const isComponentToken = (t: string) =>
+  !GLOBAL_TOKENS.has(t) && !t.startsWith("--_") && !/^--spacing-/.test(t);
+
+/** Global palette tokens a stylesheet reads — a system-level view, not API. */
+const paletteIn = (css: string): string[] => {
   const found = new Set<string>();
-  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) found.add(m[1]);
-  for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)) found.add(m[1]);
-  return [...found]
-    .filter(
-      (t) =>
-        !GLOBAL_TOKENS.has(t) &&
-        !t.startsWith("--_") &&
-        !/^--spacing-/.test(t),
-    )
-    .sort();
+  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) {
+    if (GLOBAL_TOKENS.has(m[1]) || /^--spacing-/.test(m[1])) found.add(m[1]);
+  }
+  return [...found].sort();
+};
+
+/** `@token --name description…` lines, continuation-indented lines included. */
+const tokenDescriptions = (css: string): Map<string, string> => {
+  const out = new Map<string, string>();
+  for (const m of css.matchAll(
+    /@token\s+(--[a-zA-Z0-9-]+)\s+([\s\S]*?)(?=\n\s*\*\s*@token|\n\s*\*\/)/g,
+  )) {
+    const text = m[2]
+      .split("\n")
+      .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    out.set(m[1], text);
+  }
+  return out;
+};
+
+const tokensIn = (css: string): TokenDoc[] => {
+  const described = tokenDescriptions(css);
+  const defaults = new Map<string, Set<string>>();
+  const names = new Set<string>();
+
+  // A component token is always read with a fallback; capture both.
+  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)\s*(?:,\s*([^)]+))?\)/g)) {
+    const [, name, fallback] = m;
+    if (!isComponentToken(name)) continue;
+    names.add(name);
+    if (fallback) {
+      const set = defaults.get(name) ?? new Set<string>();
+      set.add(fallback.trim());
+      defaults.set(name, set);
+    }
+  }
+  for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)) {
+    if (isComponentToken(m[1])) names.add(m[1]);
+  }
+
+  return [...names].sort().map((name) => ({
+    name,
+    description: described.get(name) ?? "",
+    defaults: [...(defaults.get(name) ?? [])],
+  }));
 };
 
 const readStyles = (fileBase: string): string => {
@@ -204,7 +255,9 @@ const buildDocs = (): ComponentDoc[] => {
       tc?.program.getSourceFile(resolve(COMPONENTS_DIR, file)) ??
       ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     const defaults = collectDefaults(source);
-    const tokens = tokensIn(readStyles(fileBase));
+    const styleSource = readStyles(fileBase);
+    const tokens = tokensIn(styleSource);
+    const paletteTokens = paletteIn(styleSource);
 
     source.forEachChild((node) => {
       if (!ts.isInterfaceDeclaration(node) && !ts.isTypeAliasDeclaration(node)) return;
@@ -281,7 +334,10 @@ const buildDocs = (): ComponentDoc[] => {
           )
         : [];
 
-      docs.push({ name, file, props, tokens, extendsFrom, inherited, inheritedCount });
+      docs.push({
+        name, file, props, tokens, paletteTokens,
+        extendsFrom, inherited, inheritedCount,
+      });
       seen.add(name);
     });
 
@@ -328,7 +384,10 @@ const buildDocs = (): ComponentDoc[] => {
       }
       if (!props.length) return;
 
-      docs.push({ name, file, props, tokens, extendsFrom: [], inherited: [], inheritedCount: 0 });
+      docs.push({
+        name, file, props, tokens, paletteTokens,
+        extendsFrom: [], inherited: [], inheritedCount: 0,
+      });
       seen.add(name);
     });
   }

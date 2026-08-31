@@ -1514,6 +1514,22 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   padding: 2px 6px;
 }
 
+.docs-api__customprops {
+  border-top: 1px solid var(--docs-hairline);
+}
+
+/* Three columns rather than the prop table's four: a custom property has no
+   type to state — it is whatever CSS value the declaration accepts. */
+.docs-api__row--token {
+  grid-template-columns: minmax(180px, 1.2fr) minmax(90px, 0.6fr) minmax(0, 2fr);
+}
+
+@media (max-width: 860px) {
+  .docs-api__row--token {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .docs-api__tokens {
   display: flex;
   flex-wrap: wrap;

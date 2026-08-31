@@ -7,11 +7,17 @@ declare module "virtual:space-docs" {
     description: string;
     defaultValue: string | null;
   };
+  export type TokenDoc = {
+    name: string;
+    description: string;
+    defaults: string[];
+  };
   export type ComponentDoc = {
     name: string;
     file: string;
     props: PropDoc[];
-    tokens: string[];
+    tokens: TokenDoc[];
+    paletteTokens: string[];
     extendsFrom: string[];
     inherited: PropDoc[];
     inheritedCount: number;

@@ -227,11 +227,33 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
         every component is built, not something you tune per component — it is
         documented once under Foundations. */}
     {doc.tokens.length > 0 && (
-      <div className="docs-api__tokens">
-        <span className="docs-api__tokenlabel">Custom properties</span>
-        {doc.tokens.map((t) => (
-          <code key={t}>{t}</code>
-        ))}
+      <div className="docs-api__customprops">
+        <div className="docs-api__head">
+          <span className="docs-api__name">Custom properties</span>
+          <span className="docs-api__file">
+            set on the component or any ancestor
+          </span>
+        </div>
+        <div className="docs-api__table" role="table">
+          <div className="docs-api__row docs-api__row--head docs-api__row--token" role="row">
+            <span role="columnheader">Property</span>
+            <span role="columnheader">Default</span>
+            <span role="columnheader">Effect when overridden</span>
+          </div>
+          {doc.tokens.map((t) => (
+            <div className="docs-api__row docs-api__row--token" role="row" key={t.name}>
+              <span className="docs-api__prop" role="cell">
+                {t.name}
+              </span>
+              <span className="docs-api__default" role="cell">
+                {t.defaults.length ? t.defaults.join(" / ") : "—"}
+              </span>
+              <span className="docs-api__desc" role="cell">
+                {t.description || <em>—</em>}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     )}
     </div>
