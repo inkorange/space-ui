@@ -6,6 +6,9 @@
 .root { position: relative; display: inline-block; }
 
 .trigger {
+  /* Width comes from the widest option (see .sizer), capped here so a long
+     label cannot produce an absurd control. */
+  max-width: var(--sp-select-trigger-max-width);
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
@@ -19,6 +22,24 @@
   font: inherit;
 
   &:disabled { cursor: not-allowed; opacity: 0.55; }
+}
+
+/* Visible label and hidden sizer stack in one cell: the cell takes the width
+   of the widest, which is what makes the trigger stop resizing on select. */
+.labelWrap {
+  display: grid;
+  min-width: 0;
+}
+
+.labelWrap > * {
+  grid-area: 1 / 1;
+}
+
+.sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .triggerLabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

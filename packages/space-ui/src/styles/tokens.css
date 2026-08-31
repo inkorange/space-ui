@@ -51,6 +51,13 @@
   --sp-accent-text: #baa7ff;
   --sp-accent-soft: #8354fe36;
 
+  /* ---- Component sizing ---------------------------------------------
+     Defaults a consumer can move without touching a component. */
+
+  /* A Select sizes itself to its widest option, so it never changes width as
+     you select. This caps that, past which the label ellipsizes. */
+  --sp-select-trigger-max-width: 20rem;
+
   /* ---- Component colours --------------------------------------------
      Values specific to one component's identity rather than a shared role.
      They live here, not in the component, so the promise holds: every colour

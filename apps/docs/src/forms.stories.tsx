@@ -49,7 +49,7 @@ export const SelectStory = () => {
   const [v, setV] = useState("G");
   return (
     <Select.Root value={v} onValueChange={setV}>
-      <Select.Trigger style={{ minWidth: 180 }} />
+      <Select.Trigger />
       <Select.Content>
         {STAR_TYPES.map((s) => (
           <Select.Item key={s} value={s}>

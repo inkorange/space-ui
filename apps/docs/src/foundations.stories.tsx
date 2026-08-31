@@ -188,11 +188,9 @@ export const Spacing = () => (
           <div className="docs-scale__row" key={token}>
             <div className="docs-scale__name">{token.replace("--spacing-", "")}</div>
             <div className="docs-scale__value">{readToken(token)}</div>
-            <div
-              style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}
-            >
+            <div className="docs-scale__meta">
               <div className="docs-scale__bar" style={{ width: `var(${token})` }} />
-              <span className="docs-swatch__role" style={{ minWidth: 0 }}>
+              <span className="docs-swatch__role">
                 {use}
                 <span className="docs-swatch__was">{steps}</span>
               </span>
@@ -450,7 +448,7 @@ export const Motion = () => {
               <Button>Build planet</Button>
               <TextField.Root placeholder="Planet name…" />
               <Select.Root value={live} onValueChange={setLive}>
-                <Select.Trigger style={{ minWidth: 160 }} />
+                <Select.Trigger />
                 <Select.Content>
                   {STAR_TYPES.map((t) => (
                     <Select.Item key={t} value={t}>
@@ -471,7 +469,7 @@ export const Motion = () => {
               <Button animated={false}>Build planet</Button>
               <TextField.Root animated={false} placeholder="Planet name…" />
               <Select.Root value={still} onValueChange={setStill}>
-                <Select.Trigger animated={false} style={{ minWidth: 160 }} />
+                <Select.Trigger animated={false} />
                 <Select.Content animated={false}>
                   {STAR_TYPES.map((t) => (
                     <Select.Item key={t} value={t}>

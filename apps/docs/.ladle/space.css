@@ -1259,6 +1259,19 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   padding: 12px 16px;
 }
 
+/* min-width: 0 lets the description ellipsize instead of forcing the row
+   wider than its column. */
+.docs-scale__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.docs-scale__meta .docs-swatch__role {
+  min-width: 0;
+}
+
 .docs-scale__name {
   font-family: var(--docs-font-mono);
   font-size: 12px;

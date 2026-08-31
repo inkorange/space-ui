@@ -157,7 +157,7 @@ const MotionDemo = () => {
         <div className="docs-skindemo__stack">
           <Button>Build planet</Button>
           <Select.Root value={liveStar} onValueChange={setLiveStar}>
-            <Select.Trigger style={{ minWidth: 160 }} />
+            <Select.Trigger />
             <Select.Content>
               {STAR_TYPES.map((t) => (
                 <Select.Item key={t} value={t}>
@@ -178,7 +178,7 @@ const MotionDemo = () => {
         <div className="docs-skindemo__stack">
           <Button animated={false}>Build planet</Button>
           <Select.Root value={stillStar} onValueChange={setStillStar}>
-            <Select.Trigger animated={false} style={{ minWidth: 160 }} />
+            <Select.Trigger animated={false} />
             <Select.Content animated={false}>
               {STAR_TYPES.map((t) => (
                 <Select.Item key={t} value={t}>

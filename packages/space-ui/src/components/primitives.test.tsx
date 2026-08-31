@@ -207,8 +207,16 @@ describe("Select", () => {
         </Select.Content>
       </Select.Root>
     );
-    expect(out).toContain("M - Red Dwarf");
-    expect(out).not.toContain("Pick one");
+    // The trigger renders a hidden sizer holding every label AND the
+    // placeholder, so it is as wide as its widest possible content and never
+    // jumps width on select. Assert on the visible label specifically —
+    // "markup does not contain the placeholder" is no longer the same
+    // question, since the sizer legitimately holds it.
+    const visibleLabel = out.split('class="triggerLabel">')[1]?.split("</span>")[0];
+    expect(visibleLabel).toBe("M - Red Dwarf");
+    // Present, but only inside the aria-hidden sizer.
+    expect(out).toContain('data-sizer=""');
+    expect(out).toContain("Pick one");
   });
   it("renders a hidden listbox with options and aria-selected", () => {
     const out = html(

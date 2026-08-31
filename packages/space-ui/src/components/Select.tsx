@@ -25,6 +25,8 @@ interface RootCtx {
   setHighlighted: (v: string | null) => void;
   listboxId: string;
   values: string[];
+  /** Every item's label, disabled included — used to size the trigger. */
+  itemLabels: ReactNode[];
   labelFor: (v: string) => ReactNode;
 }
 const Ctx = createContext<RootCtx | null>(null);
@@ -99,6 +101,7 @@ export function Root({ value, onValueChange, disabled, children }: RootProps) {
   }, [children]);
   const items = useMemo(() => collectItems(contentChildren), [contentChildren]);
   const values = useMemo(() => items.filter((i) => !i.disabled).map((i) => i.value), [items]);
+  const itemLabels = useMemo(() => items.map((i) => i.label), [items]);
   const labelFor = useCallback(
     (v: string) => items.find((i) => i.value === v)?.label ?? null,
     [items],
@@ -116,7 +119,7 @@ export function Root({ value, onValueChange, disabled, children }: RootProps) {
 
   return (
     <Ctx.Provider
-      value={{ value, onValueChange, disabled, open, setOpen, highlighted, setHighlighted, listboxId, values, labelFor }}
+      value={{ value, onValueChange, disabled, open, setOpen, highlighted, setHighlighted, listboxId, values, itemLabels, labelFor }}
     >
       <RefCtx.Provider value={triggerRef}>
         <div ref={rootRef} className={styles.root}>
@@ -163,7 +166,20 @@ export function Trigger({ placeholder, animated = true, className, ...rest }: Tr
         }
       }}
     >
-      <span className={styles.triggerLabel}>{label ?? placeholder ?? ""}</span>
+      {/* The visible label and a hidden copy of every option share one grid
+          cell, so the button is as wide as its widest choice and never jumps
+          width when the selection changes. Capped by
+          --sp-select-trigger-max-width, past which the label ellipsizes. */}
+      <span className={styles.labelWrap}>
+        <span className={styles.sizer} data-sizer="" aria-hidden="true">
+          {s.itemLabels.map((l, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <span key={i}>{l}</span>
+          ))}
+          {placeholder && <span>{placeholder}</span>}
+        </span>
+        <span className={styles.triggerLabel}>{label ?? placeholder ?? ""}</span>
+      </span>
       <svg className={styles.chevron} width="9" height="9" viewBox="0 0 9 9" aria-hidden="true">
         <path d="M0.5 3 L4.5 7 L8.5 3" fill="none" stroke="currentColor" strokeWidth="1.2" />
       </svg>

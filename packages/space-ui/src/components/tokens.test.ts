@@ -18,7 +18,7 @@ export const EXPECTED_TOKENS = [
   "--sp-accent-text",
   "--sp-muted-soft", "--sp-danger-soft", "--sp-warning-soft", "--sp-accent-soft",
   "--sp-on-solid",
-  "--sp-select-panel-color", "--sp-radio-orb-highlight-color", "--sp-radio-orb-mid-color", "--sp-radio-orb-rim-color", "--sp-radio-orb-glow-color", "--sp-radio-orb-halo-color", "--sp-icon-toggle-label-color", "--sp-icon-toggle-label-dim-color", "--sp-icon-toggle-active-from-color", "--sp-icon-toggle-active-rim-color", "--sp-icon-toggle-active-to-color", "--sp-slider-thumb-highlight-color", "--sp-slider-thumb-mid-color", "--sp-slider-thumb-shade-color", "--sp-slider-thumb-limb-color", "--sp-slider-thumb-rim-color", "--sp-slider-thumb-rim-hover-color", "--sp-slider-thumb-glow-hover-color", "--sp-slider-range-from-color", "--sp-panel-item-highlight-color",
+  "--sp-select-trigger-max-width", "--sp-select-panel-color", "--sp-radio-orb-highlight-color", "--sp-radio-orb-mid-color", "--sp-radio-orb-rim-color", "--sp-radio-orb-glow-color", "--sp-radio-orb-halo-color", "--sp-icon-toggle-label-color", "--sp-icon-toggle-label-dim-color", "--sp-icon-toggle-active-from-color", "--sp-icon-toggle-active-rim-color", "--sp-icon-toggle-active-to-color", "--sp-slider-thumb-highlight-color", "--sp-slider-thumb-mid-color", "--sp-slider-thumb-shade-color", "--sp-slider-thumb-limb-color", "--sp-slider-thumb-rim-color", "--sp-slider-thumb-rim-hover-color", "--sp-slider-thumb-glow-hover-color", "--sp-slider-range-from-color", "--sp-panel-item-highlight-color",
   // Categorical — hue is the identity, so these keep hue names.
   "--sp-category-cyan-soft", "--sp-category-cyan-text",
   "--sp-category-purple-soft", "--sp-category-purple-text",
