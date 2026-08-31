@@ -92,6 +92,12 @@ $glass:
     opacity: 0.45;
     cursor: default;
   }
+
+  /* `animated={false}` stops the ambient orbit. The skin itself is never
+     optional — only its motion is. */
+  &[data-animated="false"] {
+    animation: none;
+  }
 }
 
 /* Slider in the same language: the track is a slim glass tube, the filled
@@ -182,6 +188,12 @@ $glass:
     background: rgba(110, 160, 255, 0.2);
     color: #ffffff;
   }
+
+  /* `animated={false}` stops the ambient orbit. The skin itself is never
+     optional — only its motion is. */
+  &[data-animated="false"] {
+    animation: none;
+  }
 }
 
 /* Text input in the same language: limb-lit glass capsule with the orbiting rim,
@@ -236,6 +248,12 @@ $glass:
     box-shadow:
       0 4px 18px rgba(0, 0, 0, 0.45),
       0 0 18px rgba(110, 160, 255, 0.3);
+  }
+
+  /* `animated={false}` stops the ambient orbit. The skin itself is never
+     optional — only its motion is. */
+  &[data-animated="false"] {
+    animation: none;
   }
 }
 

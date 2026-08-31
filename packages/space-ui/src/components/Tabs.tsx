@@ -7,6 +7,7 @@ import type * as React from "react";
 import { createContext, useContext, useId, type ReactNode } from "react";
 import { cx } from "./propShared";
 import styles from "./Tabs.module.scss";
+import ctl from "../styles/spaceControls.module.scss";
 
 interface TabsCtx {
   value: string;
@@ -56,8 +57,11 @@ export function List({ children }: { children?: ReactNode }) {
   );
 }
 
-export function Trigger({ value, className, children, ...rest }: {
-  value: string; className?: string; children?: ReactNode;
+export function Trigger({ value, className, animated = true, children, ...rest }: {
+  value: string; className?: string;
+  /** Ambient motion on the rim. Default true. */
+  animated?: boolean;
+  children?: ReactNode;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const t = useTabs();
   const active = t.value === value;
@@ -71,7 +75,8 @@ export function Trigger({ value, className, children, ...rest }: {
       aria-controls={`${t.id}-panel-${value}`}
       tabIndex={active ? 0 : -1}
       data-state={active ? "active" : "inactive"}
-      className={cx(styles.trigger, "spTabsTrigger", className)}
+      className={cx(styles.trigger, ctl.spaceControl, "spTabsTrigger", className)}
+      data-animated={animated ? undefined : "false"}
       onClick={() => t.onValueChange(value)}
     >
       {children}

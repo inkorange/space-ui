@@ -238,6 +238,15 @@
   100% { left: calc(100% + 30px); }
 }
 
+/* `animated={false}` stills the orbiting rim, the glint sweep and the stars.
+   The glass, rim and shading stay — the look is the component, only its
+   motion is a choice. Mirrors the reduced-motion block below. */
+.spaceButton[data-animated="false"],
+.spaceButton[data-animated="false"]::after,
+.spaceButton[data-animated="false"] .star {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spaceButton,
   .spaceButton::after,

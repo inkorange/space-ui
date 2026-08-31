@@ -28,6 +28,7 @@ import * as Dialog from "./Dialog";
 import * as AlertDialog from "./AlertDialog";
 import * as DropdownMenu from "./DropdownMenu";
 import * as Tabs from "./Tabs";
+import { SpaceButton } from "./SpaceButton";
 import * as Icons from "./icons";
 
 const html = (el: ReactElement) => renderToStaticMarkup(el);
@@ -498,4 +499,37 @@ describe("icons", () => {
   it("matches the installed Radix output verbatim (spot check)", () => {
     expect(html(<Icons.CheckIcon />)).toContain('d="M11.4669');
   });
+});
+
+/**
+ * `animated` is opt-out ambient motion. It is wired by a data attribute the
+ * stylesheets key off, so a component can declare the prop, destructure it,
+ * and silently drop it — TypeScript sees nothing wrong and the button keeps
+ * spinning. That shipped once; this is the guard.
+ */
+describe("animated prop", () => {
+  const cases: Array<[string, (animated?: boolean) => ReactElement]> = [
+    ["SpaceButton", (a) => <SpaceButton animated={a}>go</SpaceButton>],
+    ["Select.Trigger", (a) => (
+      <Select.Root value="x" onValueChange={() => {}}>
+        <Select.Trigger animated={a} />
+        <Select.Content><Select.Item value="x">x</Select.Item></Select.Content>
+      </Select.Root>
+    )],
+    ["TextField.Root", (a) => <TextField.Root animated={a} />],
+    ["TextArea", (a) => <TextArea animated={a} />],
+    ["Tabs.Trigger", (a) => (
+      <Tabs.Root value="x" onValueChange={() => {}}>
+        <Tabs.List><Tabs.Trigger value="x" animated={a}>x</Tabs.Trigger></Tabs.List>
+      </Tabs.Root>
+    )],
+  ];
+
+  for (const [name, render] of cases) {
+    it(`${name} emits data-animated="false" only when animated is false`, () => {
+      expect(html(render(false))).toContain('data-animated="false"');
+      expect(html(render(undefined))).not.toContain("data-animated");
+      expect(html(render(true))).not.toContain("data-animated");
+    });
+  }
 });
