@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Button, Select, TextField } from "@inkorange/space-ui";
 import { Code } from "./docs-code";
 import { components as componentDocs, skinTokens } from "virtual:space-docs";
@@ -13,6 +13,15 @@ export default {
  * rather than typed in beside it. The survey therefore cannot drift from
  * tokens.css — if a token changes, this page changes with it.
  */
+/**
+ * Paints a swatch from a token name. The gallery renders these from a list, so
+ * a static class per token is not possible — but the value is ours, never
+ * user input, and the cast is confined to this one helper rather than repeated
+ * inline at every call site.
+ */
+const chipStyle = (token: string): CSSProperties =>
+  ({ "--chip": `var(${token})` }) as CSSProperties;
+
 const readToken = (name: string) =>
   typeof document === "undefined"
     ? ""
@@ -105,7 +114,7 @@ export const Color = () => (
           <div className="docs-swatch" key={token}>
             <div
               className="docs-swatch__chip"
-              style={{ ["--chip" as string]: `var(${token})` }}
+              style={chipStyle(token)}
             />
             <div className="docs-swatch__name">{token}</div>
             <div className="docs-swatch__value">{readToken(token)}</div>
@@ -127,7 +136,7 @@ export const Color = () => (
             <div className="docs-accent" key={token}>
               <div
                 className="docs-accent__chip"
-                style={{ ["--chip" as string]: `var(${token})` }}
+                style={chipStyle(token)}
               />
               <div className="docs-accent__meta">
                 <div className="docs-accent__name">{token.replace("--sp-", "")}</div>

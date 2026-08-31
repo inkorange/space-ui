@@ -29,17 +29,12 @@ export const ProgressStory = () => (
     <Progress value={12} />
     <Progress value={45} />
     <Progress value={88} />
-    <Progress value={64} style={{ ["--sp-progress-height" as string]: "12px" }} />
-    <Progress
-      value={92}
-      style={{ ["--sp-progress-fill-color" as string]: "var(--sp-danger-text)" }}
-    />
   </div>
 );
 ProgressStory.storyName = "Progress";
 ProgressStory.meta = {
   description:
-    "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable per instance.",
+    "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable through custom properties — see the table below.",
 };
 
 export const IconToggleStory = () => {
