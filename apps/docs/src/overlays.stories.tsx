@@ -38,6 +38,9 @@ export const AlertDialogStory = () => (
 );
 AlertDialogStory.storyName = "AlertDialog";
 AlertDialogStory.meta = {
+  // AlertDialog re-exports Dialog's parts, so Dialog is what there is to
+  // document; Button is only the thing that opens it.
+  components: ["Dialog"],
   description:
     "A modal for destructive or irreversible actions. Unlike Dialog, it requires an explicit choice — no escape-to-dismiss.",
 };
@@ -59,36 +62,38 @@ DropdownStory.meta = {
     "A menu of actions anchored to a trigger. Separators group related items.",
 };
 
-const TAB_PANELS = [
-  { value: "elements", label: "Elements", body: "Element mixing panel." },
-  { value: "environment", label: "Environment", body: "Star and orbit controls." },
-  { value: "moons", label: "Moons", body: "Moon designer." },
-];
-
 // Tabs.Root is fully controlled — it takes `value`/`onValueChange` and has no
 // `defaultValue`. An earlier version of this story passed defaultValue, which
 // the component ignores, so no tab was ever active.
-const TabsDemo = () => {
+export const TabsStory = () => {
   const [tab, setTab] = useState("elements");
   return (
-    <Tabs.Root value={tab} onValueChange={setTab}>
-      <Tabs.List>
-        {TAB_PANELS.map((t) => (
-          <Tabs.Trigger key={t.value} value={t.value}>
-            {t.label}
-          </Tabs.Trigger>
-        ))}
-      </Tabs.List>
-      {TAB_PANELS.map((t) => (
-        <Tabs.Content key={t.value} value={t.value}>
-          <Text>{t.body}</Text>
-        </Tabs.Content>
-      ))}
-    </Tabs.Root>
+    // Folder tabs are drawn to CONNECT to the surface below: the active tab
+    // drops its bottom border and punches a gap in that surface's top line.
+    // Floating in open space the effect is invisible, so give them a panel.
+    <div className="docs-tabs-demo">
+      <Tabs.Root value={tab} onValueChange={setTab}>
+        <Tabs.List>
+          <Tabs.Trigger value="elements">Elements</Tabs.Trigger>
+          <Tabs.Trigger value="environment">Environment</Tabs.Trigger>
+          <Tabs.Trigger value="moons">Moons</Tabs.Trigger>
+        </Tabs.List>
+
+        <div className="docs-tabs-demo__panel">
+          <Tabs.Content value="elements">
+            <Text>Element mixing panel.</Text>
+          </Tabs.Content>
+          <Tabs.Content value="environment">
+            <Text>Star and orbit controls.</Text>
+          </Tabs.Content>
+          <Tabs.Content value="moons">
+            <Text>Moon designer.</Text>
+          </Tabs.Content>
+        </div>
+      </Tabs.Root>
+    </div>
   );
 };
-
-export const TabsStory = () => <TabsDemo />;
 TabsStory.storyName = "Tabs";
 TabsStory.meta = {
   description:

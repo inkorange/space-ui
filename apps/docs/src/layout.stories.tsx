@@ -51,6 +51,8 @@ ScrollAreaStory.meta = {
 };
 
 FlexAndGrid.meta = {
+  // Box and Text appear only as things to lay out.
+  components: ["Flex", "Grid"],
   description:
     "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it.",
 };

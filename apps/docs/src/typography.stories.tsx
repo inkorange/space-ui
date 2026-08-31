@@ -54,6 +54,7 @@ Headings.meta = {
 };
 
 TextSizes.meta = {
+  components: ["Text", "Link"],
   description:
     "Five body sizes plus the gray color role for secondary copy.",
 };

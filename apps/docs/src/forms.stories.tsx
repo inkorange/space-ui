@@ -62,10 +62,11 @@ const LONG_OPTIONS = [
 export const SelectStory = () => {
   const [v, setV] = useState("G");
   const [capped, setCapped] = useState("m");
+  const [narrow, setNarrow] = useState("m");
   const [wide, setWide] = useState("m");
 
   return (
-    <div style={{ display: "grid", gap: 28, maxWidth: 560 }}>
+    <div style={{ display: "grid", gap: 28, justifyItems: "start", maxWidth: 560 }}>
       <Select.Root value={v} onValueChange={setV}>
         <Select.Trigger />
         <Select.Content>
@@ -79,7 +80,7 @@ export const SelectStory = () => {
 
       {/* The width behaviour only shows at the extremes: the trigger sizes to
           its widest option, so a long list is what the cap exists for. */}
-      <div style={{ display: "grid", gap: 8 }}>
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>
         <code style={{ fontSize: 12, opacity: 0.7 }}>
           long options — capped at --sp-select-trigger-max-width (20rem)
         </code>
@@ -95,7 +96,23 @@ export const SelectStory = () => {
         </Select.Root>
       </div>
 
-      <div style={{ display: "grid", gap: 8 }} className="story-wide-select">
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-narrow-select">
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          fixed 220px width — the label ellipsizes, the panel still wraps
+        </code>
+        <Select.Root value={narrow} onValueChange={setNarrow}>
+          <Select.Trigger />
+          <Select.Content>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
+
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-wide-select">
         <code style={{ fontSize: 12, opacity: 0.7 }}>
           same options, cap raised to 34rem on an ancestor
         </code>
