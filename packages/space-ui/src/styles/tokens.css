@@ -49,6 +49,18 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
+  /* Font family. The library does NOT set a family on any component —
+     everything inherits the host app's font, and nothing portals out of
+     the tree, so inheritance always reaches it. Badge is the sole
+     exception: Radix deliberately pinned badges to the system stack and
+     the port kept that for parity. This token IS that pin, exposed so a
+     consumer can bring badges onto their own brand font instead of being
+     stuck on the system stack. Override it and only Badge changes;
+     everything else already follows your app. */
+  --sp-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI (Custom)", Roboto,
+    "Helvetica Neue", "Open Sans (Custom)", system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+
   /* Type scale (seeded from Radix font-size steps in use) */
   --sp-font-xs: 12px;
   --sp-font-sm: 14px;

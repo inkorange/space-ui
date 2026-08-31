@@ -3,12 +3,13 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  // Radix Badge pins the system stack (does NOT inherit the app font) and
-  // both sizes use the 12px type step — only padding/radius differ. Metrics
+  // Radix Badge pins a stack rather than inheriting the app font, and both
+  // sizes use the 12px type step — only padding/radius differ. Metrics
   // lifted verbatim from rt-Badge so badges match pre-migration rendering.
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI (Custom)", Roboto,
-    "Helvetica Neue", "Open Sans (Custom)", system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
+  // The stack now comes from --sp-font-family, whose default IS the Radix
+  // stack: rendering is unchanged, but a consumer can point badges at their
+  // own font instead of being the one component that ignores it.
+  font-family: var(--sp-font-family);
   font-weight: 500;
   white-space: nowrap;
 }
