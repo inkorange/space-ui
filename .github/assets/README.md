@@ -7,9 +7,9 @@ Images referenced by the repo README, which npm also renders.
 | File | What it should show |
 | --- | --- |
 | `components.svg` | Hand-authored component sampler. Colours come from `tokens.css` — update it if the palette changes. |
-| `gallery.png` | The documentation site: sidebar plus a component page, so the shape of the docs is obvious at a glance. |
-| `tokens.png` | *(optional)* Foundations → Color, showing the token tables. |
-| `api.png` | *(optional)* A generated API table with props, defaults and descriptions. |
+| `doc-screen.jpg` | The documentation site: sidebar plus a component page, so the shape of the docs is obvious at a glance. |
+| `tokens.jpg` | *(optional)* Foundations → Color, showing the token tables. |
+| `api.jpg` | *(optional)* A generated API table with props, defaults and descriptions. |
 
 ## Capturing
 

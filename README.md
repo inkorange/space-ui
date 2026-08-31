@@ -14,17 +14,11 @@ runtime dependencies.
 📖 **[Browse the gallery →](https://space-components.vercel.app)** — every
 component, its props, its tokens, and the source for each example.
 
-<!-- SCREENSHOT SLOTS — see .github/assets/README.md for what to capture.
-     Drop the file in, delete the surrounding comment markers, done.
-
-<img alt="The SpaceUI documentation gallery"
-     src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/gallery.png"
-     width="100%">
-
-<img alt="Foundations: the colour tokens and the components that read them"
-     src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/tokens.png"
-     width="100%">
--->
+<a href="https://space-components.vercel.app">
+  <img alt="The SpaceUI documentation gallery: components, their props, tokens and source"
+       src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/doc-screen.jpg"
+       width="100%">
+</a>
 
 ## Install
 
