@@ -355,15 +355,20 @@ export const Introduction = () => (
           than a full palette.
         </p>
         <Code
-          label="theme.css \u2014 loaded after tokens.css"
+          label="theme.css \u2014 loaded after styles.css"
           language="css"
           code={`:root {
   /* surfaces */
   --sp-gray-panel: #14161c;
   --sp-gray-border: #8ab4ff2e;
 
-  /* primary action, focus, selection */
-  --sp-blue-9: #7c5cff;
+  /* emphasis \u2014 one line moves every interactive surface */
+  --sp-primary-solid: #7c5cff;
+  --sp-primary-text: #b9a4ff;
+
+  /* the lit glass, stored as channels so alpha stays local */
+  --sp-rim-rgb: 190 160 255;
+  --sp-glow-rgb: 160 130 255;
 
   /* the one family pin \u2014 see Foundations */
   --sp-font-family: "Inter", system-ui, sans-serif;
