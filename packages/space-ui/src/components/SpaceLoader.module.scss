@@ -9,29 +9,37 @@
   gap: var(--spacing-sm);
 }
 
+/* Public tokens: --sp-loader-{orbit,planet,moon}-size.
+   These are READ here with a per-size fallback, never declared outright. A
+   custom property declared on an element shadows any value inherited from an
+   ancestor, so `--sp-loader-moon-size: 20px` on a parent would be ignored if
+   the size class set it directly. Reading it keeps the token overridable from
+   anywhere above the loader, with the size prop supplying the default.
+   The resolved values are held in private --_ vars so the public names appear
+   exactly once each. */
 .sm {
-  --loader-size: 24px;
-  --loader-planet: 8px;
-  --loader-moon: 4px;
+  --_orbit: var(--sp-loader-orbit-size, 24px);
+  --_planet: var(--sp-loader-planet-size, 8px);
+  --_moon: var(--sp-loader-moon-size, 4px);
 }
 
 .md {
-  --loader-size: 40px;
-  --loader-planet: 12px;
-  --loader-moon: 5px;
+  --_orbit: var(--sp-loader-orbit-size, 40px);
+  --_planet: var(--sp-loader-planet-size, 12px);
+  --_moon: var(--sp-loader-moon-size, 5px);
 }
 
 .lg {
-  --loader-size: 64px;
-  --loader-planet: 18px;
-  --loader-moon: 7px;
+  --_orbit: var(--sp-loader-orbit-size, 64px);
+  --_planet: var(--sp-loader-planet-size, 18px);
+  --_moon: var(--sp-loader-moon-size, 7px);
 }
 
 /* Static ring the moon travels around. */
 .orbit {
   position: relative;
-  width: var(--loader-size);
-  height: var(--loader-size);
+  width: var(--_orbit);
+  height: var(--_orbit);
   border-radius: 50%;
   border: 1px solid var(--sp-gray-border);
 }
@@ -41,8 +49,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: var(--loader-planet);
-  height: var(--loader-planet);
+  width: var(--_planet);
+  height: var(--_planet);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   background: radial-gradient(circle at 35% 30%, var(--sp-blue-11), var(--sp-blue-9) 60%, var(--sp-blue-2) 100%);
@@ -63,8 +71,8 @@
     position: absolute;
     top: 0;
     left: 50%;
-    width: var(--loader-moon);
-    height: var(--loader-moon);
+    width: var(--_moon);
+    height: var(--_moon);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     background: var(--sp-blue-11);

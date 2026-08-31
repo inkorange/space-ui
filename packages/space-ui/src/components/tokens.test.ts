@@ -55,11 +55,37 @@ describe("design tokens", () => {
       return e.isDirectory() ? walk(p) : /\.(scss|css|tsx|ts)$/.test(e.name) && !p.endsWith("tokens.css") ? [p] : [];
     });
 
-  it("every --sp-*/--spacing-* var referenced in styles is a defined token", () => {
+  // Two kinds of --sp-* name exist: the global palette promised above, and
+  // component tokens like --sp-loader-moon-size, which live in the component's
+  // own stylesheet by design. A component token is only safe if it carries a
+  // fallback — without one, a consumer who never sets it gets an empty value
+  // and the component renders broken.
+  it("every --sp-*/--spacing-* var is a promised token, or a component token with a fallback", () => {
     for (const file of walk(SCSS_ROOT)) {
-      const used = [...readFileSync(file, "utf8").matchAll(/var\((--(?:sp|spacing)-[a-zA-Z0-9-]+)\)/g)].map((m) => m[1]);
-      for (const token of used) {
-        expect(EXPECTED_TOKENS, `${file} uses undefined token ${token}`).toContain(token);
+      const css = readFileSync(file, "utf8");
+      for (const m of css.matchAll(/var\(\s*(--(?:sp|spacing)-[a-zA-Z0-9-]+)\s*(,?)/g)) {
+        const [, token, comma] = m;
+        if ((EXPECTED_TOKENS as readonly string[]).includes(token)) continue;
+        expect(
+          comma,
+          `${file}: ${token} is not a promised token, so it must declare a fallback`,
+        ).toBe(",");
+      }
+    }
+  });
+
+  it("component tokens follow --sp-<component>-<modifier>-<type>", () => {
+    const TYPES = ["size", "color", "timer", "angle", "width", "height"];
+    for (const file of walk(SCSS_ROOT)) {
+      const css = readFileSync(file, "utf8");
+      for (const m of css.matchAll(/var\(\s*(--sp-[a-zA-Z0-9-]+)\s*,/g)) {
+        const token = m[1];
+        if ((EXPECTED_TOKENS as readonly string[]).includes(token)) continue;
+        const parts = token.replace("--sp-", "").split("-");
+        expect(
+          parts.length >= 2 && TYPES.includes(parts[parts.length - 1]),
+          `${file}: ${token} must end in one of ${TYPES.join(", ")}`,
+        ).toBe(true);
       }
     }
   });

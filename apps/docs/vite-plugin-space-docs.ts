@@ -125,23 +125,36 @@ const collectDefaults = (source: ts.SourceFile): Map<string, string> => {
 };
 
 /**
- * Component-scoped custom properties — the knobs a consumer can actually turn
- * on THIS component, e.g. `--loader-planet`.
+ * Component-scoped custom properties — the knobs a consumer can turn on THIS
+ * component, e.g. `--sp-loader-moon-size`.
  *
- * Deliberately excludes the global `--sp-*` / `--spacing-*` palette. Those are
- * how a colour or a gap is written in this system, consumed internally by
- * every component; listing them per component implies a local knob that does
- * not exist, and overriding one is a system-wide decision documented once
- * under Foundations. Only properties namespaced to the component are API.
+ * The global palette is excluded by reading tokens.css and subtracting what it
+ * defines, rather than by matching the `--sp-` prefix: component tokens carry
+ * that prefix too, since it is the library's public namespace. Private `--_`
+ * vars are implementation detail and never listed.
  */
+const globalTokenNames = (): Set<string> => {
+  try {
+    const css = readFileSync(resolve(STYLES_DIR, "tokens.css"), "utf8");
+    return new Set([...css.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)].map((m) => m[1]));
+  } catch {
+    return new Set();
+  }
+};
+
+const GLOBAL_TOKENS = globalTokenNames();
+
 const tokensIn = (css: string): string[] => {
   const found = new Set<string>();
-  // Read with var(), and defined as a declaration — a component both
-  // consuming and defaulting its own property is the normal shape.
   for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) found.add(m[1]);
   for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)) found.add(m[1]);
   return [...found]
-    .filter((t) => !/^--(sp|spacing)-/.test(t))
+    .filter(
+      (t) =>
+        !GLOBAL_TOKENS.has(t) &&
+        !t.startsWith("--_") &&
+        !/^--spacing-/.test(t),
+    )
     .sort();
 };
 
