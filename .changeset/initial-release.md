@@ -3,6 +3,6 @@
 ---
 
 Initial release: the SpaceUI design system extracted from planet-builder.
-25 components (typography, layout, forms, overlays, buttons), icons, design
-tokens, and the spaceControls class map — precompiled CSS, zero runtime
-dependencies, React 19.
+24 components (typography, layout, forms, overlays, buttons), 20 icons,
+design tokens, and the spaceControls class map — precompiled CSS, zero
+runtime dependencies, React 19.
