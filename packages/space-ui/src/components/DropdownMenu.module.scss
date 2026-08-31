@@ -7,7 +7,7 @@
   color: var(--sp-gray-text);
   border: 1px solid var(--sp-gray-border);
   border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgb(var(--sp-shadow-rgb) / 0.5);
 
   &:not(:popover-open) { display: none; }
 }
@@ -36,10 +36,10 @@
   cursor: pointer;
   text-decoration: none;
 
-  &:hover, &:focus-visible { background: rgba(110, 160, 255, 0.2); outline: none; }
+  &:hover, &:focus-visible { background: rgb(var(--sp-glow-rgb) / 0.2); outline: none; }
 }
 
-.danger { color: var(--sp-red-11); }
+.danger { color: var(--sp-danger-text); }
 
 .separator {
   height: 1px;

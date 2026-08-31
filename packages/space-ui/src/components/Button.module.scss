@@ -6,7 +6,7 @@
 /* Registered as a real <angle> so the browser interpolates it smoothly —
    drives the `from` of every rim conic gradient so the sunlit arc can orbit
    the pill's edge instead of sitting fixed at the upper-left terminator. */
-@property --rim-angle {
+@property --_rim-angle {
   syntax: "<angle>";
   inherits: true;
   initial-value: 210deg;
@@ -21,17 +21,19 @@
   padding: 14px 32px;
   border: none;
   border-radius: 999px;
-  font: 600 15px/1 var(--font-roboto, ui-sans-serif, system-ui);
+  // Typeface comes from the system token, never a per-component hook:
+  // one place decides the font for every component.
+  font: 600 15px/1 var(--sp-font-family);
   letter-spacing: 0.02em;
-  color: #eaf2ff;
+  color: var(--sp-glass-text);
   cursor: pointer;
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(130% 200% at 22% -20%, rgba(96, 150, 250, 0.22), transparent 50%),
-    linear-gradient(180deg, rgba(15, 20, 40, 0.88), rgba(5, 7, 15, 0.94));
+    radial-gradient(130% 200% at 22% -20%, rgb(var(--sp-sheen-rgb) / 0.22), transparent 50%),
+    linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.88), rgb(var(--sp-glass-deep-rgb) / 0.94));
   backdrop-filter: blur(6px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 4px 24px rgb(var(--sp-shadow-rgb) / 0.55);
   transition: transform 0.18s ease, box-shadow 0.35s ease;
   /* The lit arc slowly orbits the rim, like the sun tracking around the limb. */
   animation: rimRotate 12s linear infinite;
@@ -46,13 +48,15 @@
     border-radius: inherit;
     padding: 1px;
     background: conic-gradient(
-      from var(--rim-angle),
-      rgba(150, 190, 255, 0.95),
-      rgba(150, 190, 255, 0.1) 35%,
-      rgba(150, 190, 255, 0.03) 55%,
-      rgba(150, 190, 255, 0.4) 85%,
-      rgba(150, 190, 255, 0.95)
+      from var(--_rim-angle),
+      rgb(var(--sp-rim-rgb) / 0.95),
+      rgb(var(--sp-rim-rgb) / 0.1) 35%,
+      rgb(var(--sp-rim-rgb) / 0.03) 55%,
+      rgb(var(--sp-rim-rgb) / 0.4) 85%,
+      rgb(var(--sp-rim-rgb) / 0.95)
     );
+    /* Not a colour: a mask stencil, where only the alpha channel is read.
+       Tokenising it would imply it is themeable, which it is not. */
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -72,7 +76,7 @@
        button) left half the streak visible inside small buttons when idle. */
     left: -64px;
     width: 34px;
-    background: linear-gradient(105deg, transparent, rgba(225, 238, 255, 0.38), transparent);
+    background: linear-gradient(105deg, transparent, rgb(var(--sp-glint-rgb) / 0.38), transparent);
     transform: skewX(-18deg);
     /* linear: ease-in-out decelerated the streak near the right edge, which on
        small buttons (short travel) read as the glint lingering on the right. */
@@ -83,8 +87,8 @@
   &:hover {
     transform: translateY(-1px);
     box-shadow:
-      0 4px 28px rgba(0, 0, 0, 0.55),
-      0 0 22px rgba(110, 160, 255, 0.35);
+      0 4px 28px rgb(var(--sp-shadow-rgb) / 0.55),
+      0 0 22px rgb(var(--sp-glow-rgb) / 0.35);
   }
 
   &:active {
@@ -92,7 +96,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid #9cc0ff;
+    outline: 2px solid var(--sp-focus-ring);
     outline-offset: 2px;
   }
 
@@ -103,7 +107,7 @@
 
     &:hover {
       transform: none;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 4px 24px rgb(var(--sp-shadow-rgb) / 0.55);
     }
   }
 }
@@ -145,11 +149,11 @@
     /* Fixed sunlit-arc angle instead of the animated one. */
     background: conic-gradient(
       from 210deg,
-      rgba(150, 190, 255, 0.95),
-      rgba(150, 190, 255, 0.1) 35%,
-      rgba(150, 190, 255, 0.03) 55%,
-      rgba(150, 190, 255, 0.4) 85%,
-      rgba(150, 190, 255, 0.95)
+      rgb(var(--sp-rim-rgb) / 0.95),
+      rgb(var(--sp-rim-rgb) / 0.1) 35%,
+      rgb(var(--sp-rim-rgb) / 0.03) 55%,
+      rgb(var(--sp-rim-rgb) / 0.4) 85%,
+      rgb(var(--sp-rim-rgb) / 0.95)
     );
   }
 
@@ -171,24 +175,24 @@
    red-dwarf limb instead of a blue-white one. */
 .ember {
   background:
-    radial-gradient(130% 200% at 22% -20%, rgba(250, 150, 96, 0.18), transparent 50%),
-    linear-gradient(180deg, rgba(30, 16, 14, 0.88), rgba(12, 6, 5, 0.94));
+    radial-gradient(130% 200% at 22% -20%, rgb(var(--sp-ember-sheen-rgb) / 0.18), transparent 50%),
+    linear-gradient(180deg, rgb(var(--sp-ember-glass-rgb) / 0.88), rgb(var(--sp-ember-glass-deep-rgb) / 0.94));
 
   &::before {
     background: conic-gradient(
-      from var(--rim-angle),
-      rgba(255, 180, 130, 0.9),
-      rgba(255, 180, 130, 0.1) 35%,
-      rgba(255, 180, 130, 0.03) 55%,
-      rgba(255, 180, 130, 0.35) 85%,
-      rgba(255, 180, 130, 0.9)
+      from var(--_rim-angle),
+      rgb(var(--sp-ember-rim-rgb) / 0.9),
+      rgb(var(--sp-ember-rim-rgb) / 0.1) 35%,
+      rgb(var(--sp-ember-rim-rgb) / 0.03) 55%,
+      rgb(var(--sp-ember-rim-rgb) / 0.35) 85%,
+      rgb(var(--sp-ember-rim-rgb) / 0.9)
     );
   }
 
   &:hover {
     box-shadow:
-      0 4px 28px rgba(0, 0, 0, 0.55),
-      0 0 22px rgba(255, 150, 100, 0.3);
+      0 4px 28px rgb(var(--sp-shadow-rgb) / 0.55),
+      0 0 22px rgb(var(--sp-ember-glow-rgb) / 0.3);
   }
 }
 
@@ -212,8 +216,8 @@
   width: 2.5px;
   height: 2.5px;
   border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.7);
+  background: rgb(var(--sp-star-rgb));
+  box-shadow: 0 0 5px 1px rgb(var(--sp-star-rgb) / 0.7);
   opacity: 0.15;
   /* Position, delay, and duration come inline from the component — seeded per
      button instance so no two buttons share a star arrangement. */
@@ -226,8 +230,8 @@
 }
 
 @keyframes rimRotate {
-  from { --rim-angle: 210deg; }
-  to { --rim-angle: 570deg; }
+  from { --_rim-angle: 210deg; }
+  to { --_rim-angle: 570deg; }
 }
 
 @keyframes glintSweep {

@@ -6,7 +6,11 @@ export default {
 
 export const Headings = () => (
   <div style={{ display: "grid", gap: 12 }}>
-    {(["9", "8", "7", "6", "5", "4", "3", "2", "1"] as const).map((s) => (
+    {/* Heading's scale starts at 4 — steps 1-3 belong to Text, which shares
+        4-6 with Heading so the two can sit on a line and match. The story
+        used to render 9 down to 1, so three of those "sizes" were invalid
+        and silently fell back to the default. */}
+    {(["9", "8", "7", "6", "5", "4"] as const).map((s) => (
       <Heading key={s} size={s}>Heading size {s}</Heading>
     ))}
   </div>
@@ -17,17 +21,17 @@ export const TextSizes = () => (
     {(["5", "4", "3", "2", "1"] as const).map((s) => (
       <Text key={s} size={s}>Text size {s} — the quick brown fox jumps over the lazy dog.</Text>
     ))}
-    <Text color="gray">Gray text for secondary copy.</Text>
+    <Text color="muted">Gray text for secondary copy.</Text>
     <Link href="#">An inline link</Link>
   </div>
 );
 
 export const Badges = () => (
   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-    {(["gray", "blue", "green", "amber", "red"] as const).map((c) => (
+    {(["muted", "primary", "success", "warning", "danger"] as const).map((c) => (
       <Badge key={c} color={c}>{c}</Badge>
     ))}
-    <Badge color="green" variant="soft">soft</Badge>
+    <Badge color="success" variant="soft">soft</Badge>
   </div>
 );
 
@@ -50,6 +54,7 @@ Headings.meta = {
 };
 
 TextSizes.meta = {
+  components: ["Text", "Link"],
   description:
     "Five body sizes plus the gray color role for secondary copy.",
 };

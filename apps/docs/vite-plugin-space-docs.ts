@@ -27,13 +27,60 @@ export type PropDoc = {
 };
 
 export type ComponentDoc = {
-  /** "SpaceButton", or "Select.Trigger" for a namespaced part. */
+  /** "Button", or "Select.Trigger" for a namespaced part. */
   name: string;
+  /** JSDoc written above the component itself — what it is, not what it takes. */
+  description: string;
   file: string;
   props: PropDoc[];
-  /** Tokens the component's own stylesheet references. */
-  tokens: string[];
+  /** Component-scoped custom properties a consumer can override. */
+  tokens: TokenDoc[];
+  /** Global palette tokens the stylesheet reads. A system view, not API. */
+  paletteTokens: string[];
+  /**
+   * What the props interface extends. Most components pass through a DOM
+   * attribute set, so onClick/disabled/type/aria-* are all accepted but
+   * appear nowhere in `props` — without this the tables imply an API far
+   * smaller than the real one.
+   */
+  extendsFrom: string[];
+  /** Notable props inherited from a DOM attribute set, verified by the checker. */
+  inherited: PropDoc[];
+  /** How many props are inherited in total, most of which are not worth listing. */
+  inheritedCount: number;
 };
+
+/**
+ * Inherited DOM props worth showing as real rows. A component extending
+ * React.ButtonHTMLAttributes inherits 288 properties — 168 of them event
+ * handlers — so listing all of them buries the handful the component actually
+ * declares. These are the ones people reach for; each is only emitted if the
+ * type checker confirms it genuinely exists on that component.
+ */
+const NOTABLE_INHERITED: Record<string, string> = {
+  onClick: "Click handler. Forwarded straight to the underlying element.",
+  onChange: "Fires on every edit; pair with `value` for a controlled input.",
+  disabled: "Blocks interaction and removes the element from the tab order.",
+  placeholder: "Hint shown while the field is empty.",
+  value: "Controlled value.",
+  type: "Native element type, e.g. `button` vs `submit`.",
+  required: "Marks the field as required for form validation.",
+  readOnly: "Value is visible and selectable but cannot be edited.",
+  name: "Field name used on form submission.",
+  onFocus: "Fires when the element gains focus.",
+  onBlur: "Fires when the element loses focus.",
+  onKeyDown: "Key handler, for shortcuts beyond the built-in keyboard support.",
+  maxLength: "Maximum accepted character count.",
+  id: "Element id, e.g. to pair a control with a label's htmlFor.",
+  "aria-label": "Accessible name where no visible label exists.",
+  tabIndex: "Tab order position.",
+  title: "Native tooltip text. Not a substitute for a visible label.",
+  autoFocus: "Focus on mount. Use sparingly — it moves focus without asking.",
+  defaultValue: "Initial value for an uncontrolled element.",
+};
+
+/** Priority order for the inherited list, taken from the map's key order. */
+const INHERITED_ORDER = Object.keys(NOTABLE_INHERITED);
 
 const isSourceFile = (f: string) =>
   f.endsWith(".tsx") && !f.includes(".test.") && f !== "icons.tsx";
@@ -81,13 +128,133 @@ const collectDefaults = (source: ts.SourceFile): Map<string, string> => {
   return defaults;
 };
 
-/** Every `var(--sp-*)` / `var(--spacing-*)` a stylesheet references. */
-const tokensIn = (css: string): string[] => {
+export type TokenDoc = {
+  name: string;
+  /** From an `@token` line in the component's stylesheet. */
+  description: string;
+  /** Every distinct fallback the component supplies, i.e. its defaults. */
+  defaults: string[];
+};
+
+/**
+ * Component-scoped custom properties — the knobs a consumer can turn on THIS
+ * component, e.g. `--sp-loader-moon-size`.
+ *
+ * The global palette is excluded by subtracting what tokens.css actually
+ * defines, not by prefix: component tokens carry `--sp-` too, since that is the
+ * library's public namespace. Private `--_` vars are implementation detail.
+ */
+const globalTokenNames = (): Set<string> => {
+  try {
+    const css = readFileSync(resolve(STYLES_DIR, "tokens.css"), "utf8");
+    return new Set([...css.matchAll(/(--[a-zA-Z0-9-]+)\s*:/g)].map((m) => m[1]));
+  } catch {
+    return new Set();
+  }
+};
+
+const GLOBAL_TOKENS = globalTokenNames();
+
+const isComponentToken = (t: string) =>
+  !GLOBAL_TOKENS.has(t) && !t.startsWith("--_") && !/^--spacing-/.test(t);
+
+/** Global palette tokens a stylesheet reads — a system-level view, not API. */
+const paletteIn = (css: string): string[] => {
   const found = new Set<string>();
-  for (const m of css.matchAll(/var\(\s*(--(?:sp|spacing)-[a-zA-Z0-9-]+)/g)) {
-    found.add(m[1]);
+  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) {
+    if (GLOBAL_TOKENS.has(m[1]) || /^--spacing-/.test(m[1])) found.add(m[1]);
   }
   return [...found].sort();
+};
+
+/** `@token --name description…` lines, continuation-indented lines included. */
+const tokenDescriptions = (css: string): Map<string, string> => {
+  const out = new Map<string, string>();
+  for (const m of css.matchAll(
+    /@token\s+(--[a-zA-Z0-9-]+)\s+([\s\S]*?)(?=\n\s*\*\s*@token|\n\s*\*\/)/g,
+  )) {
+    const text = m[2]
+      .split("\n")
+      .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    out.set(m[1], text);
+  }
+  return out;
+};
+
+const tokensIn = (css: string): TokenDoc[] => {
+  const described = tokenDescriptions(css);
+  const defaults = new Map<string, Set<string>>();
+  const names = new Set<string>();
+
+  // A component token is always read with a fallback; capture both.
+  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)\s*(?:,\s*([^)]+))?\)/g)) {
+    const [, name, fallback] = m;
+    if (!isComponentToken(name)) continue;
+    names.add(name);
+    if (fallback) {
+      // Gradients span several lines in the source; collapse them and cap the
+      // length, so the table shows a readable default rather than a wall.
+      const flat = fallback.replace(/\s+/g, " ").trim();
+      const shown = flat.length > 48 ? `${flat.slice(0, 45)}…` : flat;
+      const set = defaults.get(name) ?? new Set<string>();
+      set.add(shown);
+      defaults.set(name, set);
+    }
+  }
+  for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)) {
+    if (isComponentToken(m[1])) names.add(m[1]);
+  }
+
+  return [...names].sort().map((name) => ({
+    name,
+    description: described.get(name) ?? "",
+    defaults: [...(defaults.get(name) ?? [])],
+  }));
+};
+
+/**
+ * kebab-cases a component file name so it can be matched against a token's
+ * component segment: TextField → text-field, SpaceButton → space-button.
+ */
+const kebab = (name: string) =>
+  name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+/**
+ * A component's tokens, wherever they are declared.
+ *
+ * Component colours live in tokens.css so a single file holds the whole
+ * palette — which means "not in tokens.css" cannot be the test for what
+ * belongs to a component, or every relocated token vanishes from its own
+ * table. The naming convention is the test instead: `--sp-tabs-*` belongs to
+ * Tabs no matter which file declares it. That is the convention paying for
+ * itself.
+ */
+const declaredTokensFor = (fileBase: string): TokenDoc[] => {
+  const prefix = `--sp-${kebab(fileBase)}-`;
+  const out = new Map<string, TokenDoc>();
+
+  for (const file of ["tokens.css", "spaceControls.module.scss"]) {
+    try {
+      const css = readFileSync(resolve(STYLES_DIR, file), "utf8");
+      const described = tokenDescriptions(css);
+      for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/gm)) {
+        const [, name, value] = m;
+        if (!name.startsWith(prefix)) continue;
+        const flat = value.replace(/\s+/g, " ").trim();
+        out.set(name, {
+          name,
+          description: described.get(name) ?? "",
+          defaults: [flat.length > 48 ? `${flat.slice(0, 45)}…` : flat],
+        });
+      }
+    } catch {
+      /* ignore a missing file */
+    }
+  }
+  return [...out.values()];
 };
 
 const readStyles = (fileBase: string): string => {
@@ -98,20 +265,93 @@ const readStyles = (fileBase: string): string => {
   }
 };
 
+/** `TriggerProps` in Select.tsx documents the `Trigger` export. */
+const stemName = (declName: string, fileBase: string) => {
+  const stem = declName.slice(0, -"Props".length);
+  return stem === fileBase ? fileBase : stem;
+};
+
+/**
+ * JSDoc written above the component itself. Prop docs answer "what does this
+ * take"; this answers "what is it and when do I reach for it", which a table
+ * of props cannot say.
+ */
+const findDeclaration = (source: ts.SourceFile, exportName: string): ts.Node | null => {
+  let found: ts.Node | null = null;
+  source.forEachChild((node) => {
+    if (found) return;
+    if (ts.isFunctionDeclaration(node) && node.name?.text === exportName) found = node;
+    else if (ts.isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && ts.isIdentifier(decl.name) && decl.name.text === exportName) found = node;
+    }
+  });
+  return found;
+};
+
+const componentDoc = (source: ts.SourceFile, exportName: string): string => {
+  let found = "";
+  source.forEachChild((node) => {
+    if (found) return;
+    if (ts.isFunctionDeclaration(node) && node.name?.text === exportName) {
+      found = docOf(node);
+    } else if (ts.isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && ts.isIdentifier(decl.name) && decl.name.text === exportName) {
+        // forwardRef(...) keeps its doc on the statement, not the declarator.
+        found = docOf(node) || docOf(decl);
+      }
+    }
+  });
+  return found;
+};
+
 const isExported = (node: ts.Node): boolean =>
   !!ts.getCombinedModifierFlags(node as ts.Declaration) &&
   (ts.getCombinedModifierFlags(node as ts.Declaration) & ts.ModifierFlags.Export) !== 0;
 
+/**
+ * A full Program (not a bare createSourceFile) so the checker can follow
+ * `extends` into React's type definitions. Syntax-only parsing cannot see
+ * inherited members at all, which is why onClick was missing from the tables.
+ */
+const createChecker = () => {
+  try {
+    const pkgRoot = resolve(__dirname, "../../packages/space-ui");
+    const cfgPath = resolve(pkgRoot, "tsconfig.json");
+    const cfg = ts.readConfigFile(cfgPath, ts.sys.readFile).config;
+    const parsed = ts.parseJsonConfigFileContent(cfg, ts.sys, pkgRoot);
+    const entries = readdirSync(COMPONENTS_DIR)
+      .filter(isSourceFile)
+      .map((f) => resolve(COMPONENTS_DIR, f));
+    const program = ts.createProgram(entries, parsed.options);
+    return { program, checker: program.getTypeChecker() };
+  } catch {
+    // Fall back to syntax-only extraction rather than failing the build.
+    return null;
+  }
+};
+
 const buildDocs = (): ComponentDoc[] => {
   const docs: ComponentDoc[] = [];
   const seen = new Set<string>();
+  const tc = createChecker();
 
   for (const file of readdirSync(COMPONENTS_DIR).filter(isSourceFile)) {
     const fileBase = basename(file, ".tsx");
     const code = readFileSync(resolve(COMPONENTS_DIR, file), "utf8");
-    const source = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const source =
+      tc?.program.getSourceFile(resolve(COMPONENTS_DIR, file)) ??
+      ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     const defaults = collectDefaults(source);
-    const tokens = tokensIn(readStyles(fileBase));
+    const styleSource = readStyles(fileBase);
+    const described = tokenDescriptions(styleSource);
+    const tokens = [...tokensIn(styleSource), ...declaredTokensFor(fileBase)]
+      // A description written beside the component wins over none elsewhere.
+      .map((t) => ({ ...t, description: t.description || described.get(t.name) || "" }))
+      .filter((t, i, all) => all.findIndex((o) => o.name === t.name) === i)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    const paletteTokens = paletteIn(styleSource);
 
     source.forEachChild((node) => {
       if (!ts.isInterfaceDeclaration(node) && !ts.isTypeAliasDeclaration(node)) return;
@@ -144,7 +384,63 @@ const buildDocs = (): ComponentDoc[] => {
       const stem = declName.slice(0, -"Props".length);
       const name = stem === fileBase ? fileBase : `${fileBase}.${stem}`;
 
-      docs.push({ name, file, props, tokens });
+      // Inherited props the checker confirms exist, so the table can never
+      // claim a prop the component does not actually accept.
+      let inherited: PropDoc[] = [];
+      let inheritedCount = 0;
+      if (tc && ts.isInterfaceDeclaration(node)) {
+        try {
+          const type = tc.checker.getTypeAtLocation(node.name);
+          const ownNames = new Set(props.map((pr) => pr.name));
+          const all = type.getProperties();
+          inheritedCount = all.filter((sym) => !ownNames.has(sym.getName())).length;
+          inherited = all
+            .filter(
+              (sym) =>
+                !ownNames.has(sym.getName()) &&
+                sym.getName() in NOTABLE_INHERITED,
+            )
+            .map((sym) => {
+              const t = tc.checker.getTypeOfSymbolAtLocation(sym, node.name);
+              let typeText = tc.checker.typeToString(t);
+              // React's handler types are unreadable when fully expanded.
+              if (typeText.length > 60) typeText = typeText.slice(0, 57) + "…";
+              return {
+                name: sym.getName(),
+                type: typeText,
+                required: false,
+                description: NOTABLE_INHERITED[sym.getName()],
+                defaultValue: null,
+              };
+            })
+            .sort(
+              (a, b) =>
+                INHERITED_ORDER.indexOf(a.name) - INHERITED_ORDER.indexOf(b.name),
+            );
+        } catch {
+          inherited = [];
+        }
+      }
+
+      // A `*Props` interface is not proof of a public component: Tooltip has
+      // an internal TriggerProps for a helper it never exports, which was
+      // being published in the reference as though it were API.
+      const exportName = stemName(declName, fileBase);
+      const decl = findDeclaration(source, exportName);
+      if (!decl || !isExported(decl)) return;
+
+      const description = componentDoc(source, exportName);
+
+      const extendsFrom = ts.isInterfaceDeclaration(node)
+        ? (node.heritageClauses ?? []).flatMap((h) =>
+            h.types.map((t) => t.getText(source).replace(/\s+/g, " ")),
+          )
+        : [];
+
+      docs.push({
+        name, description, file, props, tokens, paletteTokens,
+        extendsFrom, inherited, inheritedCount,
+      });
       seen.add(name);
     });
 
@@ -171,14 +467,30 @@ const buildDocs = (): ComponentDoc[] => {
         }
       }
 
+      // Several components declare props as an INTERSECTION — an inline
+      // literal plus a DOM attribute set, e.g. `{ value: string } &
+      // ButtonHTMLAttributes<HTMLButtonElement>`. Handling only the plain
+      // literal dropped those components from the reference entirely.
       const typeNode = params?.[0]?.type;
-      if (!fnName || !typeNode || !ts.isTypeLiteralNode(typeNode)) return;
+      if (!fnName || !typeNode) return;
+
+      const literals: ts.TypeLiteralNode[] = [];
+      const intersected: string[] = [];
+      if (ts.isTypeLiteralNode(typeNode)) {
+        literals.push(typeNode);
+      } else if (ts.isIntersectionTypeNode(typeNode)) {
+        for (const part of typeNode.types) {
+          if (ts.isTypeLiteralNode(part)) literals.push(part);
+          else intersected.push(part.getText(source).replace(/\s+/g, " "));
+        }
+      }
+      if (!literals.length) return;
 
       const name = fnName === fileBase ? fileBase : `${fileBase}.${fnName}`;
       if (seen.has(name)) return;
 
       const props: PropDoc[] = [];
-      for (const member of typeNode.members) {
+      for (const member of literals.flatMap((l) => [...l.members])) {
         if (!ts.isPropertySignature(member) || !member.name) continue;
         const propName = member.name.getText(source).replace(/^["']|["']$/g, "");
         props.push({
@@ -191,7 +503,10 @@ const buildDocs = (): ComponentDoc[] => {
       }
       if (!props.length) return;
 
-      docs.push({ name, file, props, tokens });
+      docs.push({
+        name, description: docOf(node), file, props, tokens, paletteTokens,
+        extendsFrom: intersected, inherited: [], inheritedCount: 0,
+      });
       seen.add(name);
     });
   }

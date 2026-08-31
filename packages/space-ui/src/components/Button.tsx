@@ -1,10 +1,10 @@
 "use client";
 
 import { forwardRef, useId, useMemo } from "react";
-import styles from "./SpaceButton.module.scss";
+import styles from "./Button.module.scss";
 import { mulberry32, hashString } from "../internal/seededRandom";
 
-interface SpaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Circular, icon-only sizing (e.g. the share glyph). */
   iconOnly?: boolean;
   /** Warm red-dwarf rim for destructive-ish actions (e.g. Clear). */
@@ -25,8 +25,8 @@ interface SpaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
  * sunlit atmosphere limb, with twinkling stars inside and a periodic glint
  * sweep. Plain <button>, so it composes with Radix Dialog.Trigger (Slot).
  */
-export const SpaceButton = forwardRef<HTMLButtonElement, SpaceButtonProps>(
-  function SpaceButton({ iconOnly, ember, size = "md", fullWidth, animated = true, className, children, ...rest }, ref) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  function Button({ iconOnly, ember, size = "md", fullWidth, animated = true, className, children, ...rest }, ref) {
     const id = useId();
 
     // Unique-per-instance star field: positions and timing vary button to

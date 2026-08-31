@@ -1,3 +1,6 @@
+import { useState, type CSSProperties } from "react";
+import { Button, Select, TextField } from "@inkorange/space-ui";
+import { Code } from "./docs-code";
 import { components as componentDocs, skinTokens } from "virtual:space-docs";
 
 export default {
@@ -10,6 +13,15 @@ export default {
  * rather than typed in beside it. The survey therefore cannot drift from
  * tokens.css — if a token changes, this page changes with it.
  */
+/**
+ * Paints a swatch from a token name. The gallery renders these from a list, so
+ * a static class per token is not possible — but the value is ours, never
+ * user input, and the cast is confined to this one helper rather than repeated
+ * inline at every call site.
+ */
+const chipStyle = (token: string): CSSProperties =>
+  ({ "--chip": `var(${token})` }) as CSSProperties;
+
 const readToken = (name: string) =>
   typeof document === "undefined"
     ? ""
@@ -37,33 +49,44 @@ const GRAY_ROLES = [
 
 const ACCENT_GROUPS = [
   {
-    name: "Blue — primary action, focus, selection",
+    name: "Emphasis — interactive, focus, selection",
     tokens: [
-      "--sp-blue-2",
-      "--sp-blue-8",
-      "--sp-blue-9",
-      "--sp-blue-11",
-      "--sp-blue-12",
-      "--sp-blue-a2",
-      "--sp-blue-a3",
-      "--sp-blue-a6",
+      "--sp-primary-solid",
+      "--sp-primary-text",
+      "--sp-primary-soft",
+      "--sp-primary-border",
+      "--sp-primary-glow",
+      "--sp-primary-deep",
     ],
   },
   {
-    name: "Green — success and safe states",
-    tokens: ["--sp-green-9", "--sp-green-11", "--sp-green-a3", "--sp-green-a6"],
+    name: "Success — safe and completed states",
+    tokens: ["--sp-success-solid", "--sp-success-text", "--sp-success-soft"],
   },
   {
-    name: "Amber and yellow — warning, pending",
-    tokens: ["--sp-amber-10", "--sp-amber-11", "--sp-yellow-9"],
+    name: "Warning — pending and cautionary states",
+    tokens: ["--sp-warning-text", "--sp-warning-soft"],
   },
   {
-    name: "Red and orange — destructive, hot",
-    tokens: ["--sp-red-9", "--sp-red-11", "--sp-orange-9"],
+    name: "Danger — destructive and error states",
+    tokens: ["--sp-danger-text", "--sp-danger-soft"],
   },
   {
-    name: "Violet — accent, rare",
-    tokens: ["--sp-violet-11"],
+    name: "Accent and neutral — decorative, carries no status",
+    tokens: ["--sp-accent-text", "--sp-accent-soft", "--sp-muted-soft"],
+  },
+  {
+    name: "Categorical — telling data apart, where hue is the identity",
+    tokens: [
+      "--sp-category-cyan-text",
+      "--sp-category-cyan-soft",
+      "--sp-category-purple-text",
+      "--sp-category-purple-soft",
+      "--sp-category-orange-text",
+      "--sp-category-orange-soft",
+      "--sp-category-yellow-text",
+      "--sp-category-yellow-soft",
+    ],
   },
 ];
 
@@ -91,7 +114,7 @@ export const Color = () => (
           <div className="docs-swatch" key={token}>
             <div
               className="docs-swatch__chip"
-              style={{ ["--chip" as string]: `var(${token})` }}
+              style={chipStyle(token)}
             />
             <div className="docs-swatch__name">{token}</div>
             <div className="docs-swatch__value">{readToken(token)}</div>
@@ -113,7 +136,7 @@ export const Color = () => (
             <div className="docs-accent" key={token}>
               <div
                 className="docs-accent__chip"
-                style={{ ["--chip" as string]: `var(${token})` }}
+                style={chipStyle(token)}
               />
               <div className="docs-accent__meta">
                 <div className="docs-accent__name">{token.replace("--sp-", "")}</div>
@@ -165,11 +188,9 @@ export const Spacing = () => (
           <div className="docs-scale__row" key={token}>
             <div className="docs-scale__name">{token.replace("--spacing-", "")}</div>
             <div className="docs-scale__value">{readToken(token)}</div>
-            <div
-              style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}
-            >
+            <div className="docs-scale__meta">
               <div className="docs-scale__bar" style={{ width: `var(${token})` }} />
-              <span className="docs-swatch__role" style={{ minWidth: 0 }}>
+              <span className="docs-swatch__role">
                 {use}
                 <span className="docs-swatch__was">{steps}</span>
               </span>
@@ -208,12 +229,12 @@ export const TypeScale = () => (
       <div className="docs-section__label">Family</div>
       <h2 className="docs-section__title">Inherited, with one pin</h2>
       <p className="docs-section__intro">
-        No component declares a font-family, and nothing in the library renders
-        through a portal, so your app's font reaches every component by plain
-        inheritance. Badge is the one exception: it pins a stack, inherited from
-        Radix, which otherwise leaves badges on the system font while the rest of
-        your UI follows your brand. That pin reads from a token, so you can move
-        it.
+        Almost nothing declares a font-family, and nothing in the library
+        renders through a portal, so your app's font reaches components by plain
+        inheritance. Two pin a stack instead — Badge and Button — and both
+        read <code>--sp-font-family</code>. There is deliberately no
+        per-component font hook: typeface is a system decision made in one
+        place, and a test fails the build if a component introduces its own.
       </p>
 
       <div className="docs-swatches">
@@ -227,15 +248,15 @@ export const TypeScale = () => (
         </div>
       </div>
 
-      <div className="docs-code" style={{ marginTop: 12 }}>
-        <div className="docs-code__bar">Overriding it</div>
-        <pre>
-          <span className="c">/* your app */</span>
-          {"\n"}:root {"{"}
-          {"\n  "}--sp-font-family: <span className="s">"Inter"</span>, system-ui, sans-serif;
-          {"\n"}
-          {"}"}
-        </pre>
+      <div style={{ marginTop: 12 }}>
+        <Code
+          label="Overriding it"
+          language="css"
+          code={`/* your app */
+:root {
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}`}
+        />
       </div>
     </section>
 
@@ -272,7 +293,7 @@ TypeScale.meta = { fullBleed: true };
 const usageByToken = () => {
   const map = new Map<string, string[]>();
   for (const doc of componentDocs) {
-    for (const token of doc.tokens) {
+    for (const token of doc.paletteTokens) {
       const list = map.get(token) ?? [];
       // Namespaced parts share one stylesheet, so collapse to the file's
       // component: Select.Trigger and Select.Content are one entry.
@@ -376,3 +397,114 @@ export const TokenUsage = () => {
 };
 
 TokenUsage.meta = { fullBleed: true };
+
+/* ---------------------------------------------------------------
+   MOTION
+   --------------------------------------------------------------- */
+
+const STAR_TYPES = ["O", "B", "A", "F", "G", "K", "M"];
+
+/**
+ * Motion sits here rather than under a component because `animated` behaves
+ * identically wherever it appears — it is a system-level switch, in the same
+ * category as colour and spacing.
+ */
+export const Motion = () => {
+  const [live, setLive] = useState("G");
+  const [still, setStill] = useState("G");
+
+  return (
+    <div className="docs-page">
+      <h1
+        className="docs-hero__title"
+        style={{ fontSize: "clamp(28px, 4vw, 40px)" }}
+      >
+        Motion
+      </h1>
+      <p className="docs-hero__lede">
+        The lit glass is not optional — it is what a component is. Its ambient
+        motion is, because loops that suit a hero button distract in a dense
+        form or a long list.
+      </p>
+
+      <section className="docs-section" style={{ marginTop: 32 }}>
+        <div className="docs-section__label">The switch</div>
+        <h2 className="docs-section__title">One prop, one meaning</h2>
+        <p className="docs-section__intro">
+          <code>animated={"{false}"}</code> stills the orbiting rim, the glint
+          sweep and the twinkling stars. Every gradient, rim and shadow stays
+          exactly where it was — the look does not change, only its movement.
+        </p>
+
+        <div className="docs-skindemo">
+          <section className="docs-skindemo__pane docs-skindemo__pane--lit">
+            <header className="docs-skindemo__head">
+              <span className="docs-skindemo__badge docs-skindemo__badge--lit">
+                Motion on
+              </span>
+              <span className="docs-skindemo__note">default</span>
+            </header>
+            <div className="docs-skindemo__stack">
+              <Button>Build planet</Button>
+              <TextField.Root placeholder="Planet name…" />
+              <Select.Root value={live} onValueChange={setLive}>
+                <Select.Trigger />
+                <Select.Content>
+                  {STAR_TYPES.map((t) => (
+                    <Select.Item key={t} value={t}>
+                      {t}-type star
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </section>
+
+          <section className="docs-skindemo__pane">
+            <header className="docs-skindemo__head">
+              <span className="docs-skindemo__badge">Motion stilled</span>
+              <span className="docs-skindemo__note">animated={"{false}"}</span>
+            </header>
+            <div className="docs-skindemo__stack">
+              <Button animated={false}>Build planet</Button>
+              <TextField.Root animated={false} placeholder="Planet name…" />
+              <Select.Root value={still} onValueChange={setStill}>
+                <Select.Trigger animated={false} />
+                <Select.Content animated={false}>
+                  {STAR_TYPES.map((t) => (
+                    <Select.Item key={t} value={t}>
+                      {t}-type star
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section className="docs-section">
+        <div className="docs-section__label">Accessibility</div>
+        <h2 className="docs-section__title">Reduced motion always wins</h2>
+        <p className="docs-section__intro">
+          A reader who sets <code>prefers-reduced-motion</code> gets the stilled
+          treatment regardless of the prop. The prop is for design judgement;
+          the media query is not overridable, and should not be.
+        </p>
+        <Code
+          label="Which components take it"
+          code={`<Button animated={false}>Build planet</Button>
+<TextField.Root animated={false} />
+<TextArea animated={false} />
+<Select.Trigger animated={false} />
+<Select.Content animated={false} />
+<Tabs.Trigger animated={false} />
+
+// Slider has no ambient loop, so it takes no animated prop.`}
+        />
+      </section>
+    </div>
+  );
+};
+
+Motion.meta = { fullBleed: true };

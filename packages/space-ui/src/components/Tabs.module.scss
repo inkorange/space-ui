@@ -1,4 +1,100 @@
-// Structure only — the glass tab skin lives in ConfigurationPanel.module.scss
-// (re-anchored in Task 3).
-.list { display: flex; }
-.trigger { cursor: pointer; background: none; border: none; color: inherit; font: inherit; }
+/* Folder-shaped tabs, ported from planet-builder's ConfigurationPanel where
+   this design lived after the extraction. Glass with rounded top corners
+   only, seated on the surface below; the active tab loses its bottom border
+   and breaks through the surface's top line, so tab and content read as one.
+
+   The app's outer layout (a top margin and a gutter matching the panel) is
+   deliberately NOT ported — where the tab row sits is the consumer's call.
+
+   @token --sp-tabs-surface-color The colour the tabs seat onto. The active
+     tab recreates it to punch a gap in the surface's top border, so set this
+     to match whatever sits below the tab row.
+   @token --sp-tabs-rest-from-color Top of the resting tab's glass.
+   @token --sp-tabs-rest-to-color Bottom of the resting tab's glass.
+   @token --sp-tabs-hover-from-color Top of the hovered tab's glass.
+   @token --sp-tabs-hover-to-color Bottom of the hovered tab's glass.
+   @token --sp-tabs-active-from-color Top of the active tab's glass.
+   @token --sp-tabs-active-edge-color The lit inner edge along its top rim. */
+
+.list {
+  display: flex;
+  /* Bottom-aligned so the active tab's taller body rises above its neighbours
+     — the file-folder effect — while every tab stays seated on the surface. */
+  align-items: flex-end;
+  gap: 6px;
+  width: 100%;
+}
+
+.trigger {
+  cursor: pointer;
+  font: inherit;
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px 11px;
+  color: var(--sp-gray-text-dim);
+  border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(
+    180deg,
+    var(--sp-tabs-rest-from-color),
+    var(--sp-tabs-rest-to-color)
+  );
+
+  &:hover {
+    color: var(--sp-gray-text);
+    background: linear-gradient(
+      180deg,
+      var(--sp-tabs-hover-from-color),
+      var(--sp-tabs-hover-to-color)
+    );
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Active: brighter rim and text, no bottom border, and the glass fades to
+     the surface's tint so the two read as one. */
+  &[data-state="active"] {
+    color: var(--sp-on-solid);
+    border-color: rgb(var(--sp-rim-rgb) / 0.42);
+    border-bottom: none;
+    border-top-color: rgb(var(--sp-rim-rgb) / 0.8);
+    /* Taller than its siblings: with the list bottom-aligned, the extra top
+       padding lifts this tab's rim above the rest. The bottom padding absorbs
+       the height the removed border gave back. */
+    padding-top: 16px;
+    padding-bottom: 12px;
+    background: linear-gradient(
+      180deg,
+      var(--sp-tabs-active-from-color),
+      rgb(var(--sp-rim-rgb) / 0.05)
+    );
+    box-shadow:
+      0 -8px 22px -10px rgb(var(--sp-glow-rgb) / 0.5),
+      inset 0 1px 0 var(--sp-tabs-active-edge-color);
+    /* Overlap the surface's top border so the two connect. */
+    position: relative;
+    z-index: 1;
+    margin-bottom: -1px;
+
+    /* An opaque strip recreating the surface's own composite, punching a real
+       gap in its top line within this tab's footprint. The tab's glass is
+       translucent, so geometry alone would still show the line through it. */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 -1px 0;
+      height: 2px;
+      background:
+        linear-gradient(
+          rgb(var(--sp-rim-rgb) / 0.05),
+          rgb(var(--sp-rim-rgb) / 0.05)
+        ),
+        var(--sp-tabs-surface-color);
+    }
+  }
+}

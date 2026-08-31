@@ -6,13 +6,30 @@ import styles from "./Heading.module.scss";
 export interface HeadingProps
   extends SpacingProps,
     Omit<React.HTMLAttributes<HTMLHeadingElement>, "color"> {
+  /** Heading level to render. Default `h2`. Independent of `size`, so
+   *  document outline stays correct without dictating appearance. */
   as?: "h1" | "h2" | "h3" | "h4";
+  /** Font size step: 4=18px, 5=20px, 6=24px, 7=28px, 8=35px, 9=60px.
+   *  Shares steps 4–6 with Text, so a Heading and Text can sit on the
+   *  same line and match. */
   size?: "4" | "5" | "6" | "7" | "8" | "9";
-  color?: "gray" | "red";
+  /** Semantic colour role. Omit for primary heading colour. */
+  color?: "muted" | "danger";
+  /** Centres the text. There is no `left`/`right` — headings are
+   *  start-aligned unless deliberately centred. */
   align?: "center";
+  /** The heading text. */
   children?: ReactNode;
 }
 
+/**
+ * A section heading. `as` sets the heading level and `size` sets the
+ * appearance, deliberately apart — so a visually small heading can still be
+ * an h2 where the document structure calls for one.
+ *
+ * Shares size steps 4-6 with Text, so a heading and body copy on the same
+ * line align.
+ */
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
   { as = "h2", size, color, align, className, style, m, mt, mb, p, pb, ...rest },
   ref,
@@ -23,8 +40,8 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Hea
     className: cx(
       styles.heading,
       size && styles[`size${size}`],
-      color === "gray" && styles.colorGray,
-      color === "red" && styles.colorRed,
+      color === "muted" && styles.colorMuted,
+      color === "danger" && styles.colorDanger,
       align === "center" && styles.alignCenter,
       className,
     ),

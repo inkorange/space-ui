@@ -20,26 +20,45 @@ pnpm add @inkorange/space-ui
 ```
 
 ```tsx
-// once, at your app entry
-import "@inkorange/space-ui/tokens.css";
+// once, at your app entry — one import, defaults included
 import "@inkorange/space-ui/styles.css";
 
-import { SpaceButton, Card, Heading } from "@inkorange/space-ui";
+import { Button, Card, Heading } from "@inkorange/space-ui";
 
 export function Planet() {
   return (
     <Card>
       <Heading size="4">Kepler-442b</Heading>
-      <SpaceButton>Build planet</SpaceButton>
+      <Button>Build planet</Button>
     </Card>
   );
 }
 ```
 
-`tokens.css` defines the `--sp-*` design tokens; `styles.css` is the
-precompiled component CSS. Both are plain CSS — no Sass, CSS modules, or
-framework tooling required downstream. All components are client components
-(`"use client"` is baked into the bundle).
+`styles.css` is the precompiled component CSS **with the default token values
+baked in**, so that single import gives you a working library. Plain CSS — no
+Sass, CSS modules, or framework tooling required downstream. All components are
+client components (`"use client"` is baked into the bundle).
+
+### Theming is a one-file swap
+
+Every component reads role-named tokens and nothing else, so a whole theme —
+light mode, a brand palette — is one `:root` block loaded *after* the library:
+
+```css
+/* theme.css, imported after styles.css */
+:root {
+  --sp-gray-panel: #ffffff;
+  --sp-gray-text: #14161c;
+  --sp-primary-solid: #7c5cff;
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}
+```
+
+Same specificity, later source order, so your values win. You only override
+what you want to change — anything you leave out keeps the shipped default.
+`@inkorange/space-ui/tokens.css` is exported separately if you want to read or
+extend the full default set.
 
 **Requirements:** React 19 as a peer dependency, and a dark surface —
 components are built for the space-dark ground (`#111113`) and assume it.
@@ -91,7 +110,7 @@ overrides rather than a pass through the component tree:
 /* theme.css — loaded after tokens.css */
 :root {
   --sp-gray-panel: #14161c;
-  --sp-blue-9: #7c5cff;
+  --sp-primary-solid: #7c5cff;
   --sp-font-family: "Inter", system-ui, sans-serif;
 }
 ```
@@ -102,11 +121,18 @@ components read which token.
 
 ### Fonts
 
-No component sets a `font-family` — the library inherits whatever your app
+Almost nothing sets a `font-family` — the library inherits whatever your app
 already loaded, and nothing renders through a portal, so inheritance reaches
-every component. `Badge` is the sole exception: it pins a stack (inherited from
-Radix, which deliberately kept badges off the app font). That pin reads from
-`--sp-font-family`, so overriding it brings badges onto your font too.
+every component. Two components pin a stack (`Badge` and `Button`), and
+both read the same token:
+
+```css
+:root { --sp-font-family: "Inter", system-ui, sans-serif; }
+```
+
+There is deliberately no per-component font hook. Typeface is a system-level
+decision made in one place, and a test fails the build if a component
+introduces its own.
 
 ## The look is not optional
 
@@ -118,8 +144,8 @@ What you can turn off is the **motion**, because ambient loops that suit a hero
 button distract in a dense form or a long list. One prop, one meaning:
 
 ```tsx
-<SpaceButton>Build planet</SpaceButton>                  {/* ambient motion, the default */}
-<SpaceButton animated={false}>Build planet</SpaceButton> {/* same look, no loops */}
+<Button>Build planet</Button>                  {/* ambient motion, the default */}
+<Button animated={false}>Build planet</Button> {/* same look, no loops */}
 
 <TextField.Root animated={false} />
 <Select.Trigger animated={false} />

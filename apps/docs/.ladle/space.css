@@ -986,17 +986,12 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   color: var(--docs-text);
 }
 
-.docs-code .c {
-  color: var(--docs-muted);
+/* prism-react-renderer renders each line as its own div. */
+.docs-code pre > div {
+  white-space: pre;
+  min-height: 1.7em;
 }
 
-.docs-code .k {
-  color: var(--docs-readout);
-}
-
-.docs-code .s {
-  color: #3dd68c;
-}
 
 /* ---------- Token example ----------
    Result and source, side by side. The demo pane deliberately sits on the
@@ -1264,6 +1259,19 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   padding: 12px 16px;
 }
 
+/* min-width: 0 lets the description ellipsize instead of forcing the row
+   wider than its column. */
+.docs-scale__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.docs-scale__meta .docs-swatch__role {
+  min-width: 0;
+}
+
 .docs-scale__name {
   font-family: var(--docs-font-mono);
   font-size: 12px;
@@ -1371,6 +1379,16 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   color: var(--docs-muted);
 }
 
+.docs-api__about {
+  margin: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--docs-hairline);
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+}
+
 .docs-api__table {
   display: grid;
   background: var(--docs-hairline);
@@ -1392,6 +1410,58 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--docs-muted);
+}
+
+/* Inherited props are real API and belong in the table, but they are not
+   what the component adds — dimmed and grouped under a divider so the
+   component's own surface still reads first. */
+.docs-api__row--section {
+  grid-template-columns: 1fr;
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  padding: 8px 14px;
+}
+
+.docs-api__row--more {
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: baseline;
+  background: var(--docs-stage);
+}
+
+.docs-api__more {
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.docs-api__more:hover {
+  background: #0090ff26;
+  border-color: var(--docs-terminator);
+}
+
+/* States the omission rather than hiding it — a table that silently
+   truncates is a table you cannot trust. */
+.docs-api__morenote {
+  font-family: var(--docs-font-display);
+  font-size: 11.5px;
+  color: var(--docs-muted);
+}
+
+.docs-api__row--inherited .docs-api__prop,
+.docs-api__row--inherited .docs-api__type {
+  opacity: 0.72;
 }
 
 .docs-api__prop {
@@ -1432,6 +1502,55 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
 .docs-api__desc em {
   color: var(--docs-muted);
   font-style: normal;
+}
+
+/* Inherited props matter as much as declared ones — a reader who cannot see
+   that onClick is accepted will assume it is not. */
+.docs-api__extends {
+  padding: 10px 14px;
+  background: var(--docs-raised);
+  border-top: 1px solid var(--docs-hairline);
+}
+
+.docs-api__extends ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.docs-api__extends li {
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--docs-text-dim);
+}
+
+.docs-api__extends code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.docs-api__customprops {
+  border-top: 1px solid var(--docs-hairline);
+}
+
+/* Three columns rather than the prop table's four: a custom property has no
+   type to state — it is whatever CSS value the declaration accepts. */
+.docs-api__row--token {
+  grid-template-columns: minmax(180px, 1.2fr) minmax(90px, 0.6fr) minmax(0, 2fr);
+}
+
+@media (max-width: 860px) {
+  .docs-api__row--token {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .docs-api__tokens {
@@ -1644,6 +1763,31 @@ html[data-docs-page="marketing"] .ladle-addons {
   border: 1px solid #0090ff40;
   border-radius: 4px;
   padding: 1px 5px;
+}
+
+/* Used by the Select long-options story to show the cap being raised the way
+   a consumer would do it: a class on an ancestor, not an inline style. */
+.story-wide-select {
+  --sp-select-trigger-max-width: 34rem;
+}
+
+/* A hard width rather than a cap, to show the label ellipsizing. */
+.story-narrow-select .spSelectTrigger {
+  width: 220px;
+}
+
+/* The Tabs story's content region. Its background matches
+   --sp-tabs-surface-color, which is exactly what the active tab recreates to
+   break through this border — set them together or the seam shows. */
+.docs-tabs-demo {
+  max-width: 520px;
+}
+
+.docs-tabs-demo__panel {
+  background: var(--sp-tabs-surface-color);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 0 0 12px 12px;
+  padding: 20px;
 }
 
 /* ============================================================

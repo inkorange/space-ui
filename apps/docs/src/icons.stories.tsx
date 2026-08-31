@@ -20,7 +20,7 @@ export const AllIcons = () => {
         <div key={name} style={{ display: "flex", gap: 8, alignItems: "center" }}>
           {/* @ts-expect-error dynamic component */}
           <Icon width={18} height={18} />
-          <Text size="1" color="gray">{name}</Text>
+          <Text size="1" color="muted">{name}</Text>
         </div>
       ))}
     </div>
@@ -28,6 +28,8 @@ export const AllIcons = () => {
 };
 
 AllIcons.meta = {
+  // Icons are plain SVG components with no prop surface worth tabulating.
+  components: [],
   description:
     "Every icon the package exports, rendered from the live module. Icons inherit currentColor and take width and height as props.",
 };

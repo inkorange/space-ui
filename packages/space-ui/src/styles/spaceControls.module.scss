@@ -9,37 +9,31 @@
 /* Registered as a real <angle> so the browser interpolates it smoothly —
    drives the `from` of the rim conic gradient so the sunlit arc orbits the
    control's edge (matches SpaceButton). */
-@property --rim-angle {
+@property --_rim-angle {
   syntax: "<angle>";
   inherits: true;
   initial-value: 210deg;
 }
 
 $rim: conic-gradient(
-  from var(--rim-angle),
-  rgba(150, 190, 255, 0.95),
-  rgba(150, 190, 255, 0.1) 35%,
-  rgba(150, 190, 255, 0.03) 55%,
-  rgba(150, 190, 255, 0.4) 85%,
-  rgba(150, 190, 255, 0.95)
+  from var(--_rim-angle),
+  rgb(var(--sp-rim-rgb) / 0.95),
+  rgb(var(--sp-rim-rgb) / 0.1) 35%,
+  rgb(var(--sp-rim-rgb) / 0.03) 55%,
+  rgb(var(--sp-rim-rgb) / 0.4) 85%,
+  rgb(var(--sp-rim-rgb) / 0.95)
 );
 $stars:
-  radial-gradient(1.5px 1.5px at 16% 32%, rgba(255, 255, 255, 0.65), transparent 70%),
-  radial-gradient(1.2px 1.2px at 71% 68%, rgba(255, 255, 255, 0.45), transparent 70%),
-  radial-gradient(1.2px 1.2px at 86% 26%, rgba(255, 255, 255, 0.35), transparent 70%);
+  radial-gradient(1.5px 1.5px at 16% 32%, rgb(var(--sp-star-rgb) / 0.65), transparent 70%),
+  radial-gradient(1.2px 1.2px at 71% 68%, rgb(var(--sp-star-rgb) / 0.45), transparent 70%),
+  radial-gradient(1.2px 1.2px at 86% 26%, rgb(var(--sp-star-rgb) / 0.35), transparent 70%);
 $glass:
-  radial-gradient(130% 200% at 22% -20%, rgba(96, 150, 250, 0.22), transparent 50%),
-  linear-gradient(180deg, rgba(15, 20, 40, 0.9), rgba(5, 7, 15, 0.95));
+  radial-gradient(130% 200% at 22% -20%, rgb(var(--sp-sheen-rgb) / 0.22), transparent 50%),
+  linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.9), rgb(var(--sp-glass-deep-rgb) / 0.95));
 
 .spaceControl.spaceControl {
-  /* One shared control height across the app (size-variant-proof — overrides
-     Radix's per-size --select-trigger-height). Keep in sync with .spaceInput. */
-  --select-trigger-height: 40px;
-  /* Fixed 40px so the trigger matches the TextField exactly. The `ghost` variant
-     (used so the animated rim shows instead of Radix's surface border) ignores
-     --select-trigger-height and sizes to content (~50px), so pin it here and let
-     align-items center the label/chevron within it. */
-  height: 40px;
+  /* align-items centres the label and chevron within it. */
+  height: var(--sp-control-height);
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
@@ -52,7 +46,7 @@ $glass:
   border-radius: 999px;
   font-size: 14px;
   font-weight: 500;
-  color: #eaf2ff;
+  color: var(--sp-glass-text);
   cursor: pointer;
   /* Mirror .spaceInput's layer stack EXACTLY (6 layers). The old version had a
      7th (a redundant transparent layer), which overran the 6-value clip list so
@@ -64,7 +58,7 @@ $glass:
     #{$rim} border-box;
   background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
   background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45);
   transition: box-shadow 0.3s ease;
   /* The lit arc slowly orbits the rim, in sync with SpaceButton. */
   animation: rimRotate 12s linear infinite;
@@ -73,19 +67,19 @@ $glass:
     /* Hover = the glass catching more starlight: an inner nebula glow plus an
        outer atmosphere bloom (never a flat colour swap). */
     box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.45),
-      0 0 18px rgba(110, 160, 255, 0.3),
-      inset 0 0 24px rgba(110, 160, 255, 0.14);
+      0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45),
+      0 0 18px rgb(var(--sp-glow-rgb) / 0.3),
+      inset 0 0 24px rgb(var(--sp-glow-rgb) / 0.14);
   }
 
   /* Focused or open = the same starlight glow the TextField shows on focus. */
   &:focus-visible,
   &[data-state="open"] {
-    outline: 2px solid #9cc0ff;
+    outline: 2px solid var(--sp-focus-ring);
     outline-offset: 2px;
     box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.45),
-      0 0 18px rgba(110, 160, 255, 0.3);
+      0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45),
+      0 0 18px rgb(var(--sp-glow-rgb) / 0.3);
   }
 
   &:disabled {
@@ -105,36 +99,36 @@ $glass:
    planet you drag along its orbit (with an atmosphere halo on hover/drag). */
 .spaceSlider.spaceSlider {
   :global(.spSliderTrack) {
-    background: linear-gradient(180deg, rgba(15, 20, 40, 0.92), rgba(5, 7, 15, 0.96));
+    background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.92), rgb(var(--sp-glass-deep-rgb) / 0.96));
     box-shadow:
-      inset 0 0 0 1px rgba(150, 190, 255, 0.25),
-      inset 0 1px 3px rgba(0, 0, 0, 0.65);
+      inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.25),
+      inset 0 1px 3px rgb(var(--sp-shadow-rgb) / 0.65);
   }
 
   :global(.spSliderRange) {
     background:
-      radial-gradient(1.2px 1.2px at 22% 35%, rgba(255, 255, 255, 0.85), transparent 70%),
-      radial-gradient(1px 1px at 58% 65%, rgba(255, 255, 255, 0.6), transparent 70%),
-      radial-gradient(1px 1px at 84% 40%, rgba(255, 255, 255, 0.5), transparent 70%),
-      linear-gradient(90deg, rgba(70, 110, 210, 0.85), rgba(150, 190, 255, 0.95));
-    box-shadow: 0 0 10px rgba(110, 160, 255, 0.4);
+      radial-gradient(1.2px 1.2px at 22% 35%, rgb(var(--sp-star-rgb) / 0.85), transparent 70%),
+      radial-gradient(1px 1px at 58% 65%, rgb(var(--sp-star-rgb) / 0.6), transparent 70%),
+      radial-gradient(1px 1px at 84% 40%, rgb(var(--sp-star-rgb) / 0.5), transparent 70%),
+      linear-gradient(90deg, var(--sp-slider-range-from-color), rgb(var(--sp-rim-rgb) / 0.95));
+    box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.4);
   }
 
   /* The visible ball is now a real div (no thumb pseudo-element trick needed
      natively) — shade it like a mini planet: lit upper-left, falling to a
      dark limb, ringed by a thin atmosphere. */
   :global(.spSliderThumb) {
-    background: radial-gradient(circle at 32% 28%, #e6f0ff, #86abe8 42%, #23386b 78%, #0b1330);
+    background: radial-gradient(circle at 32% 28%, var(--sp-slider-thumb-highlight-color), var(--sp-slider-thumb-mid-color) 42%, var(--sp-slider-thumb-shade-color) 78%, var(--sp-slider-thumb-limb-color));
     box-shadow:
-      0 0 0 1px rgba(160, 195, 255, 0.75),
-      0 0 10px rgba(110, 160, 255, 0.5);
+      0 0 0 1px var(--sp-slider-thumb-rim-color),
+      0 0 10px rgb(var(--sp-glow-rgb) / 0.5);
   }
 
   &:hover :global(.spSliderThumb),
   &:active :global(.spSliderThumb) {
     box-shadow:
-      0 0 0 1px rgba(190, 215, 255, 0.9),
-      0 0 16px rgba(130, 175, 255, 0.75);
+      0 0 0 1px var(--sp-slider-thumb-rim-hover-color),
+      0 0 16px var(--sp-slider-thumb-glow-hover-color);
   }
 
   /* :has() (not the brief's literal `~` combinator) because the thumb
@@ -142,10 +136,15 @@ $glass:
      combinator anchored on the input can never match an earlier thumb.
      Verified empirically (Chromium) before writing it this way. */
   :global(.spSliderThumb:has(+ .spSliderInput:focus-visible)) {
-    outline: 2px solid #9cc0ff;
+    outline: 2px solid var(--sp-focus-ring);
     outline-offset: 2px;
   }
 }
+
+/**
+ * @token --sp-select-item-height Minimum height of each option row in a
+ *   Select's panel. Raise it for touch targets, lower it for dense lists.
+ */
 
 /* Dropdown/popover panel (e.g. Radix Select.Content): glass card with a
    quieter limb rim, squared enough to hold a list. */
@@ -156,19 +155,16 @@ $glass:
   background:
     #{$glass} padding-box,
     conic-gradient(
-        from var(--rim-angle),
-        rgba(150, 190, 255, 0.55),
-        rgba(150, 190, 255, 0.08) 40%,
-        rgba(150, 190, 255, 0.03) 60%,
-        rgba(150, 190, 255, 0.3) 88%,
-        rgba(150, 190, 255, 0.55)
+        from var(--_rim-angle),
+        rgb(var(--sp-rim-rgb) / 0.55),
+        rgb(var(--sp-rim-rgb) / 0.08) 40%,
+        rgb(var(--sp-rim-rgb) / 0.03) 60%,
+        rgb(var(--sp-rim-rgb) / 0.3) 88%,
+        rgb(var(--sp-rim-rgb) / 0.55)
       )
       border-box;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-  color: #eaf2ff;
-  /* Never exceed the trigger's width, so long items (e.g. preset
-     "name - description") can't run off the screen edge on mobile. */
-  max-width: var(--select-trigger-width);
+  box-shadow: 0 12px 40px rgb(var(--sp-shadow-rgb) / 0.6);
+  color: var(--sp-glass-text);
 
   /* Let long item labels wrap to multiple lines instead of overflowing. Radix
      gives items a fixed single-line height, so also grow the height and add
@@ -177,7 +173,7 @@ $glass:
   :global(.spSelectItem) {
     white-space: normal;
     height: auto;
-    min-height: var(--select-item-height, 24px);
+    min-height: var(--sp-select-item-height, 24px);
     padding-top: 6px;
     padding-bottom: 6px;
     line-height: 1.3;
@@ -185,8 +181,8 @@ $glass:
 
   /* Item highlight, retinted to starlight blue */
   :global(.spSelectItem[data-highlighted]) {
-    background: rgba(110, 160, 255, 0.2);
-    color: #ffffff;
+    background: rgb(var(--sp-glow-rgb) / 0.2);
+    color: var(--sp-on-solid);
   }
 
   /* `animated={false}` stops the ambient orbit. The skin itself is never
@@ -200,10 +196,11 @@ $glass:
    applied to a Radix TextField.Root. The inner <input> is made transparent so
    our glass shows through instead of Radix's default field surface/border. */
 .spaceInput.spaceInput {
-  /* Shared control height (size-variant-proof — overrides Radix's per-size
-     --text-field-height) so every input matches the selects. Keep in sync with
-     .spaceControl. 4px vertical inset replaces Radix's 1px root padding. */
-  --text-field-height: 40px;
+  /* The same height a Select trigger uses, so the two line up in a form. This
+     was only ever a comment before — the field shrink-wrapped to its text and
+     stood ~13px shorter than the select beside it. */
+  height: var(--sp-control-height);
+  box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 999px;
   animation: rimRotate 12s linear infinite;
@@ -213,41 +210,43 @@ $glass:
     #{$rim} border-box;
   background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
   background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45);
 
-  /* Single-line field: vertical inset replaces Radix's 1px root padding. The
-     textarea owns its own padding (below), so scope this to the field root. */
+  /* Single-line field. The 8px here plus the input's own 8px puts text 16px
+     from the edge — the same inset as a Select trigger, so a field and a
+     select sitting side by side align. */
   &:global(.spTextFieldRoot) {
     padding-block: 4px;
+    padding-inline: 8px;
   }
 
   :global(.spTextFieldInput) {
-    color: #eaf2ff;
+    color: var(--sp-glass-text);
     /* 8pt grid: one grid unit of left/right text inset (Radix's default sits
        the text almost against the rounded edge). */
     padding-inline: 8px;
 
     &::placeholder {
-      color: rgba(220, 230, 255, 0.45);
+      color: var(--sp-panel-item-highlight-color);
     }
   }
 
   /* Multi-line textarea: a uniform 8px inset on every side (8pt grid). */
   :global(.spTextAreaInput) {
     padding: 8px;
-    color: #eaf2ff;
+    color: var(--sp-glass-text);
 
     &::placeholder {
-      color: rgba(220, 230, 255, 0.45);
+      color: var(--sp-panel-item-highlight-color);
     }
   }
 
   &:focus-within {
-    outline: 2px solid #9cc0ff;
+    outline: 2px solid var(--sp-focus-ring);
     outline-offset: 2px;
     box-shadow:
-      0 4px 18px rgba(0, 0, 0, 0.45),
-      0 0 18px rgba(110, 160, 255, 0.3);
+      0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45),
+      0 0 18px rgb(var(--sp-glow-rgb) / 0.3);
   }
 
   /* `animated={false}` stops the ambient orbit. The skin itself is never
@@ -258,8 +257,8 @@ $glass:
 }
 
 @keyframes rimRotate {
-  from { --rim-angle: 210deg; }
-  to { --rim-angle: 570deg; }
+  from { --_rim-angle: 210deg; }
+  to { --_rim-angle: 570deg; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -274,20 +273,35 @@ $glass:
    inherits the glass/rim treatment and only corrects what a pill gets wrong
    once text wraps.
    
-   .spaceInput is built for single-line controls: a fixed 40px height and a
+   .spaceInput is built for single-line controls: a fixed height and a
    999px radius, which on a 4-row textarea curves the sides into a capsule and
    pushes the first characters inward past the caret. A gentle 16px corner
    keeps it in the same family as the buttons and cards without pretending to
    be a pill. */
 .spaceTextArea.spaceTextArea {
-  --text-field-height: auto;
   height: auto;
   min-height: 92px;
-  border-radius: 16px;
-  padding: 10px 14px;
+  /* Tighter than the pill fields, but still soft — a large surface reads as
+     rounder than a small one at the same radius. */
+  border-radius: 12px;
+  /* The root contributes horizontal inset only. Its own :global(.spTextFieldRoot)
+     rule above outranks this block, so the override has to be stated at
+     matching specificity — otherwise the two stack and the text sits twice as
+     far in as intended, which is what it was doing.
+
+     Horizontal stays 16px total (8 here + 8 on the textarea) so a textarea and
+     a single-line field align in a form. Vertical drops to the textarea's 8px
+     alone: a multi-line box does not need the optical centring a 40px pill
+     does, and the extra top inset just pushed the first line down. */
+  padding: 0;
   line-height: 1.5;
   /* Vertical only: horizontal drag would break the surrounding layout. */
   resize: vertical;
+
+  &:global(.spTextFieldRoot) {
+    padding-block: 0;
+    padding-inline: 8px;
+  }
 
   textarea {
     line-height: 1.5;

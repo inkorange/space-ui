@@ -13,13 +13,22 @@ interface GroupCtx {
 const Ctx = createContext<GroupCtx | null>(null);
 
 export interface RootProps {
+  /** The selected item's value. Fully controlled. */
   value: string;
+  /** Called with the newly selected value. */
   onValueChange: (v: string) => void;
+  /** Disables every item at once. */
   disabled?: boolean;
+  /** Merged onto the group wrapper. */
   className?: string;
+  /** The Items. */
   children?: ReactNode;
 }
 
+/**
+ * A single-choice control for short lists, where seeing every option at once
+ * matters more than saving space. Reach for Select when it does not.
+ */
 export function Root({ value, onValueChange, disabled, className, children }: RootProps) {
   const name = useId();
   return (
@@ -32,8 +41,11 @@ export function Root({ value, onValueChange, disabled, className, children }: Ro
 }
 
 export interface ItemProps {
+  /** Reported to the group's onValueChange when chosen. */
   value: string;
+  /** Disables this option only. */
   disabled?: boolean;
+  /** The option's label. Part of the click target, not merely beside it. */
   children?: ReactNode;
 }
 

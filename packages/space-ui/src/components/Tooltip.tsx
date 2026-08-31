@@ -21,6 +21,8 @@ interface TooltipProps {
   label: string;
   /** Preferred side; flips automatically when there isn't room. */
   side?: "top" | "bottom";
+  /** The element the tooltip describes. Receives the hover and focus
+   *  handlers, so it must accept a ref. */
   children: React.ReactElement;
 }
 
@@ -75,6 +77,13 @@ function TooltipTrigger({ triggerRef, tooltipId, show, hide, children }: Trigger
   });
 }
 
+/**
+ * A short label revealed on hover or focus, for naming a control whose icon
+ * is not self-evident.
+ *
+ * Never put information here that a reader needs: a tooltip is unreachable on
+ * touch and easy to miss. If it must be read, put it on the page.
+ */
 export function Tooltip({ label, side = "bottom", children }: TooltipProps) {
   const tooltipId = useId();
   const [open, setOpen] = useState(false);

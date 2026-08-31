@@ -34,8 +34,8 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: linear-gradient(180deg, rgba(15, 20, 40, 0.92), rgba(5, 7, 15, 0.96));
-    box-shadow: inset 0 0 0 1px rgba(150, 190, 255, 0.35);
+    background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.92), rgb(var(--sp-glass-deep-rgb) / 0.96));
+    box-shadow: inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.35);
   }
 
   /* The star core. Always generated, revealed by scale so it can transition;
@@ -45,8 +45,8 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff, #cfe0ff 45%, #8fb4ff 80%);
-    box-shadow: 0 0 8px 1px rgba(150, 195, 255, 0.9);
+    background: radial-gradient(circle at 35% 30%, var(--sp-on-solid), var(--sp-radio-group-orb-highlight-color) 45%, var(--sp-radio-group-orb-mid-color) 80%);
+    box-shadow: 0 0 8px 1px var(--sp-radio-group-orb-rim-color);
     transform: scale(0);
     transition: transform 0.15s ease;
   }
@@ -54,8 +54,8 @@
 
 .input:checked + .orb::before {
   box-shadow:
-    inset 0 0 0 1px rgba(190, 215, 255, 0.85),
-    0 0 10px rgba(120, 170, 255, 0.55);
+    inset 0 0 0 1px var(--sp-radio-group-orb-glow-color),
+    0 0 10px var(--sp-radio-group-orb-halo-color);
 }
 
 .input:checked + .orb::after {
@@ -63,7 +63,7 @@
 }
 
 .input:focus-visible + .orb::before {
-  outline: 2px solid #9cc0ff;
+  outline: 2px solid var(--sp-focus-ring);
   outline-offset: 2px;
 }
 

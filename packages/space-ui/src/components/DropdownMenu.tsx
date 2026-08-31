@@ -85,7 +85,16 @@ function markItemInitiatedClose(ref: React.RefObject<boolean>): void {
   ref.current = true;
 }
 
-export function Root({ children }: { children?: ReactNode }) {
+/**
+ * Owns a menu's open state and closes it on an outside click or Escape.
+ * Renders nothing of its own.
+ */
+export function Root({
+  children,
+}: {
+  /** A Trigger and a Content. */
+  children?: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -105,7 +114,16 @@ export function Root({ children }: { children?: ReactNode }) {
   );
 }
 
-export function Trigger({ children }: { children?: ReactNode }) {
+/**
+ * The control that opens the menu, and the element the menu is positioned
+ * against. Wraps its child rather than rendering a button of its own.
+ */
+export function Trigger({
+  children,
+}: {
+  /** The control that opens the menu, and what the menu anchors to. */
+  children?: ReactNode;
+}) {
   const m = useMenu();
   const triggerRef = useTriggerRef();
   const lightDismissedRef = useLightDismissRef();
@@ -132,7 +150,21 @@ export function Trigger({ children }: { children?: ReactNode }) {
   });
 }
 
-export function Content({ align = "start", children }: { align?: "start" | "end"; children?: ReactNode }) {
+/**
+ * The menu surface, anchored to the trigger and aligned to its start or end
+ * edge. Owns the keyboard model: arrows move between items, Escape closes and
+ * returns focus to the trigger.
+ */
+export function Content({
+  align = "start",
+  children,
+}: {
+  /** Which edge of the trigger the menu lines up with. Use `end` when the
+   *  trigger sits near the right edge and the menu would overflow. */
+  align?: "start" | "end";
+  /** Items, Labels and Separators. */
+  children?: ReactNode;
+}) {
   const m = useMenu();
   const triggerRef = useTriggerRef();
   const menuRef = useMenuRef();
@@ -226,21 +258,42 @@ export function Content({ align = "start", children }: { align?: "start" | "end"
   );
 }
 
-export function Label({ children }: { children?: ReactNode }) {
+/**
+ * A non-interactive heading for a group of items. Skipped by arrow-key
+ * navigation, since there is nothing to activate.
+ */
+export function Label({
+  children,
+}: {
+  /** Heading text for the group beneath it. Not focusable. */
+  children?: ReactNode;
+}) {
   return <div className={styles.label}>{children}</div>;
 }
 
 export interface ItemProps {
+  /** Render the child element instead of the default item — for a link that
+   *  should stay an anchor rather than becoming a button. */
   asChild?: boolean;
-  color?: "red";
+  /** Marks a destructive action, so it reads differently before it is
+   *  chosen rather than after. */
+  color?: "danger";
+  /** Runs when the item is chosen; the menu closes either way. */
   onSelect?: () => void | Promise<void>;
+  /** The item's label. */
   children?: ReactNode;
 }
 
+/**
+ * One menu action. `onSelect` fires and the menu closes.
+ *
+ * Pass `color="danger"` for a destructive action so it reads differently from
+ * its neighbours before it is chosen, not after.
+ */
 export function Item({ asChild, color, onSelect, children }: ItemProps) {
   const m = useMenu();
   const itemClosedRef = useItemClosedRef();
-  const cls = cx(styles.item, color === "red" && styles.danger);
+  const cls = cx(styles.item, color === "danger" && styles.danger);
   const activate = () => {
     markItemInitiatedClose(itemClosedRef);
     m.setOpen(false);
@@ -288,6 +341,10 @@ export function Item({ asChild, color, onSelect, children }: ItemProps) {
   );
 }
 
+/**
+ * A rule between groups of items — for separating a destructive action from
+ * routine ones, so the two are not adjacent to a moving cursor.
+ */
 export function Separator() {
   return <div role="separator" className={styles.separator} />;
 }

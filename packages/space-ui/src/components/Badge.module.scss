@@ -23,23 +23,23 @@
   padding: 4px 8px; gap: 6px; border-radius: 4px;
 }
 
-.colorGray   { background: #ffffff12; color: var(--sp-gray-text-dim); }
-.colorBlue   { background: #0077ff3a; color: var(--sp-blue-11); }
-.colorGreen  { background: #22ff991e; color: var(--sp-green-11); }
-.colorRed    { background: #ff173f2d; color: var(--sp-red-11); }
-.colorAmber  { background: #fa820022; color: var(--sp-amber-11); }
-.colorCyan   { background: #00befd28; color: #4ccce6; }
-.colorPurple { background: #c150ff2d; color: #d19dff; }
-.colorOrange { background: #fb6a0025; color: #ffa057; }
-.colorViolet { background: #8354fe36; color: var(--sp-violet-11); }
-.colorYellow { background: #ffaa001e; color: #f5e147; }
+.colorMuted   { background: var(--sp-muted-soft); color: var(--sp-gray-text-dim); }
+.colorPrimary   { background: var(--sp-primary-soft); color: var(--sp-primary-text); }
+.colorSuccess  { background: var(--sp-success-soft); color: var(--sp-success-text); }
+.colorDanger    { background: var(--sp-danger-soft); color: var(--sp-danger-text); }
+.colorWarning  { background: var(--sp-warning-soft); color: var(--sp-warning-text); }
+.colorCyan   { background: var(--sp-category-cyan-soft); color: var(--sp-category-cyan-text); }
+.colorPurple { background: var(--sp-category-purple-soft); color: var(--sp-category-purple-text); }
+.colorOrange { background: var(--sp-category-orange-soft); color: var(--sp-category-orange-text); }
+.colorAccent { background: var(--sp-accent-soft); color: var(--sp-accent-text); }
+.colorYellow { background: var(--sp-category-yellow-soft); color: var(--sp-category-yellow-text); }
 
 /* Solid variant: only the color(s) actually used with variant="solid" get a
    rule (grep 'variant="solid"' — one site). Implement for that color:
    background = its -9 step solid, white text. Example for blue:
-   .solid.colorBlue { background: var(--sp-blue-9); color: #fff; }
+   .solid.colorPrimary { background: var(--sp-primary-solid); color: var(--sp-on-solid); }
    Replace/extend per what the grep finds and note it in the task report. */
-.solid.colorGreen { background: var(--sp-green-9); color: #fff; }
+.solid.colorSuccess { background: var(--sp-success-solid); color: var(--sp-on-solid); }
 
 /* Opt-in wrapping for long free-text badges (user-named systems). */
 .wrap { white-space: normal; min-width: 0; overflow-wrap: anywhere; }

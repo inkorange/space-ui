@@ -23,12 +23,19 @@ export interface IconToggleOption<V extends string> {
 export function IconToggle<V extends string>({
   options,
   value,
-  onChange,
+  onValueChange,
   className = "",
 }: {
+  /** The segments, in display order. Every option is always visible —
+   *  this is a segmented control, not a menu.
+   */
   options: IconToggleOption<V>[];
+  /** The selected option's value. Fully controlled. */
   value: V;
-  onChange(next: V): void;
+  /** Called with the newly selected value. Not called when the already
+   *  selected option is clicked. */
+  onValueChange(next: V): void;
+  /** Merged onto the group wrapper. */
   className?: string;
 }) {
   return (
@@ -42,7 +49,7 @@ export function IconToggle<V extends string>({
             aria-label={opt.label}
             aria-pressed={opt.value === value}
             onClick={() => {
-              if (opt.value !== value) onChange(opt.value);
+              if (opt.value !== value) onValueChange(opt.value);
             }}
           >
             {opt.icon}

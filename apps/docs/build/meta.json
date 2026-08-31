@@ -5,247 +5,405 @@
     "version": 1
   },
   "stories": {
-    "buttons--buttons": {
+    "components--buttons--buttons": {
       "name": "Buttons",
       "levels": [
+        "Components",
         "Buttons"
       ],
-      "locStart": 5,
-      "locEnd": 13,
+      "locStart": 9,
+      "locEnd": 38,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "Buttons",
-      "meta": {}
+      "meta": {
+        "description": "The primary action control. Four sizes, the ember variant for destructive-ish actions, icon-only, disabled and full-width. Sizing is driven by the spacing scale, so buttons stay on the grid wherever they land."
+      }
     },
-    "buttons--icon-toggle": {
+    "components--buttons--icon-toggle": {
       "name": "Icon toggle",
       "levels": [
+        "Components",
         "Buttons"
       ],
-      "locStart": 25,
-      "locEnd": 38,
+      "locStart": 54,
+      "locEnd": 67,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "IconToggleStory",
-      "meta": {}
+      "meta": {
+        "description": "A single-select group for switching view or mode. Options carry both an icon and a label; the label is what screen readers announce."
+      }
     },
-    "buttons--loader": {
+    "components--buttons--loader": {
       "name": "Loader",
       "levels": [
+        "Components",
         "Buttons"
       ],
-      "locStart": 15,
-      "locEnd": 15,
+      "locStart": 40,
+      "locEnd": 40,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "Loader",
-      "meta": {}
+      "meta": {
+        "description": "An indeterminate progress indicator for work with no measurable end. Pair it with a label that names the work, not the state."
+      }
     },
-    "buttons--progress": {
+    "components--buttons--progress": {
       "name": "Progress",
       "levels": [
+        "Components",
         "Buttons"
       ],
-      "locStart": 17,
-      "locEnd": 22,
+      "locStart": 42,
+      "locEnd": 47,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "ProgressStory",
-      "meta": {}
+      "meta": {
+        "description": "A determinate bar for work you can measure. The track uses the dedicated track token rather than the border token — a solid recess, not a hairline."
+      }
     },
-    "forms--radio-group": {
+    "components--forms--animation": {
+      "name": "Animation",
+      "levels": [
+        "Components",
+        "Forms"
+      ],
+      "locStart": 74,
+      "locEnd": 106,
+      "filePath": "src/forms.stories.tsx",
+      "namedExport": "Animation",
+      "meta": {
+        "description": "The same controls with ambient motion stilled. Only the loops stop — the glass, gradients and rim shading are the component, not a layer. prefers-reduced-motion does this automatically."
+      }
+    },
+    "components--forms--radio-group": {
       "name": "Radio group",
       "levels": [
+        "Components",
         "Forms"
       ],
-      "locStart": 43,
-      "locEnd": 52,
+      "locStart": 112,
+      "locEnd": 121,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "RadioGroupStory",
-      "meta": {}
+      "meta": {
+        "description": "A single-choice control for short lists where seeing every option at once matters more than saving space."
+      }
     },
-    "forms--select": {
+    "components--forms--select": {
       "name": "Select",
       "levels": [
+        "Components",
         "Forms"
       ],
-      "locStart": 28,
-      "locEnd": 40,
+      "locStart": 48,
+      "locEnd": 62,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "SelectStory",
-      "meta": {}
+      "meta": {
+        "description": "A single-choice menu for lists too long to show inline. The trigger renders the selected item's own content."
+      }
     },
-    "forms--slider": {
+    "components--forms--slider": {
       "name": "Slider",
       "levels": [
+        "Components",
         "Forms"
       ],
-      "locStart": 18,
-      "locEnd": 25,
+      "locStart": 34,
+      "locEnd": 41,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "SliderStory",
-      "meta": {}
+      "meta": {
+        "description": "A range control for continuous values. Takes and returns an array so it can support multiple thumbs without an API change. The track is a glass tube, the thumb a limb-lit planet."
+      }
     },
-    "forms--text-area": {
+    "components--forms--text-area": {
       "name": "Text area",
       "levels": [
+        "Components",
         "Forms"
       ],
-      "locStart": 13,
-      "locEnd": 15,
+      "locStart": 25,
+      "locEnd": 27,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "TextAreaStory",
-      "meta": {}
+      "meta": {
+        "description": "Multi-line entry. Rows set the initial height; the control grows with the container's width."
+      }
     },
-    "forms--text-field": {
+    "components--forms--text-field": {
       "name": "Text field",
       "levels": [
+        "Components",
         "Forms"
       ],
-      "locStart": 4,
-      "locEnd": 10,
+      "locStart": 12,
+      "locEnd": 18,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "TextFieldStory",
-      "meta": {}
+      "meta": {
+        "description": "Single-line text entry, composed as a Root so it can host slots later without a breaking change. The lit glass is part of the component — there is nothing to opt into."
+      }
     },
-    "icons--all-icons": {
+    "foundations--color": {
+      "name": "Color",
+      "levels": [
+        "Foundations"
+      ],
+      "locStart": 71,
+      "locEnd": 129,
+      "filePath": "src/foundations.stories.tsx",
+      "namedExport": "Color",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "foundations--spacing": {
+      "name": "Spacing",
+      "levels": [
+        "Foundations"
+      ],
+      "locStart": 145,
+      "locEnd": 183,
+      "filePath": "src/foundations.stories.tsx",
+      "namedExport": "Spacing",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "foundations--token-usage": {
+      "name": "Token usage",
+      "levels": [
+        "Foundations"
+      ],
+      "locStart": 297,
+      "locEnd": 377,
+      "filePath": "src/foundations.stories.tsx",
+      "namedExport": "TokenUsage",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "foundations--type-scale": {
+      "name": "Type scale",
+      "levels": [
+        "Foundations"
+      ],
+      "locStart": 198,
+      "locEnd": 264,
+      "filePath": "src/foundations.stories.tsx",
+      "namedExport": "TypeScale",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "components--icons--all-icons": {
       "name": "All icons",
       "levels": [
+        "Components",
         "Icons"
       ],
-      "locStart": 5,
-      "locEnd": 18,
+      "locStart": 10,
+      "locEnd": 28,
       "filePath": "src/icons.stories.tsx",
       "namedExport": "AllIcons",
-      "meta": {}
+      "meta": {
+        "description": "Every icon the package exports, rendered from the live module. Icons inherit currentColor and take width and height as props."
+      }
     },
-    "layout--card": {
+    "components--layout--card": {
       "name": "Card",
       "levels": [
+        "Components",
         "Layout"
       ],
-      "locStart": 3,
-      "locEnd": 8,
+      "locStart": 7,
+      "locEnd": 12,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "CardStory",
-      "meta": {}
+      "meta": {
+        "description": "A translucent panel for grouping related content. The 12px inset is a deliberate exception to the spacing grid, kept for parity with the shipped app."
+      }
     },
-    "layout--flex-and-grid": {
+    "components--layout--flex-and-grid": {
       "name": "Flex and grid",
       "levels": [
+        "Components",
         "Layout"
       ],
-      "locStart": 11,
-      "locEnd": 28,
+      "locStart": 19,
+      "locEnd": 36,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "FlexAndGrid",
-      "meta": {}
+      "meta": {
+        "description": "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it."
+      }
     },
-    "layout--scroll-area": {
+    "components--layout--scroll-area": {
       "name": "Scroll area",
       "levels": [
+        "Components",
         "Layout"
       ],
-      "locStart": 30,
-      "locEnd": 38,
+      "locStart": 38,
+      "locEnd": 46,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "ScrollAreaStory",
-      "meta": {}
+      "meta": {
+        "description": "A scroll container with styled overflow, for regions that scroll independently of the page."
+      }
     },
-    "overlays--alert-dialog": {
+    "components--overlays--alert-dialog": {
       "name": "Alert dialog",
       "levels": [
+        "Components",
         "Overlays"
       ],
-      "locStart": 17,
-      "locEnd": 29,
+      "locStart": 26,
+      "locEnd": 38,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "AlertDialogStory",
-      "meta": {}
+      "meta": {
+        "description": "A modal for destructive or irreversible actions. Unlike Dialog, it requires an explicit choice — no escape-to-dismiss."
+      }
     },
-    "overlays--dialog": {
+    "components--overlays--dialog": {
       "name": "Dialog",
       "levels": [
+        "Components",
         "Overlays"
       ],
-      "locStart": 3,
-      "locEnd": 14,
+      "locStart": 8,
+      "locEnd": 19,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "DialogStory",
-      "meta": {}
+      "meta": {
+        "description": "A modal for focused, interruptible tasks. Dismissible by escape, overlay click, and an explicit close."
+      }
     },
-    "overlays--dropdown-menu": {
+    "components--overlays--dropdown-menu": {
       "name": "Dropdown menu",
       "levels": [
-        "Overlays"
-      ],
-      "locStart": 32,
-      "locEnd": 42,
-      "filePath": "src/overlays.stories.tsx",
-      "namedExport": "DropdownStory",
-      "meta": {}
-    },
-    "overlays--tabs": {
-      "name": "Tabs",
-      "levels": [
+        "Components",
         "Overlays"
       ],
       "locStart": 45,
-      "locEnd": 56,
+      "locEnd": 55,
       "filePath": "src/overlays.stories.tsx",
-      "namedExport": "TabsStory",
-      "meta": {}
+      "namedExport": "DropdownStory",
+      "meta": {
+        "description": "A menu of actions anchored to a trigger. Separators group related items."
+      }
     },
-    "overlays--tooltip": {
-      "name": "Tooltip",
+    "components--overlays--tabs": {
+      "name": "Tabs",
       "levels": [
+        "Components",
         "Overlays"
       ],
-      "locStart": 59,
-      "locEnd": 63,
+      "locStart": 91,
+      "locEnd": 91,
+      "filePath": "src/overlays.stories.tsx",
+      "namedExport": "TabsStory",
+      "meta": {
+        "description": "Panel switching within a single view, for content that is peer-level rather than hierarchical. Fully controlled: it takes value and onValueChange, with no defaultValue."
+      }
+    },
+    "components--overlays--tooltip": {
+      "name": "Tooltip",
+      "levels": [
+        "Components",
+        "Overlays"
+      ],
+      "locStart": 98,
+      "locEnd": 102,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "TooltipStory",
-      "meta": {}
+      "meta": {
+        "description": "A short label revealed on hover or focus. For naming a control, never for content the user must read."
+      }
     },
-    "typography--badges": {
+    "overview--installation": {
+      "name": "Installation",
+      "levels": [
+        "Overview"
+      ],
+      "locStart": 458,
+      "locEnd": 561,
+      "filePath": "src/overview.stories.tsx",
+      "namedExport": "Installation",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "overview--introduction": {
+      "name": "Introduction",
+      "levels": [
+        "Overview"
+      ],
+      "locStart": 222,
+      "locEnd": 454,
+      "filePath": "src/overview.stories.tsx",
+      "namedExport": "Introduction",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "components--typography--badges": {
       "name": "Badges",
       "levels": [
+        "Components",
         "Typography"
       ],
-      "locStart": 21,
-      "locEnd": 28,
+      "locStart": 25,
+      "locEnd": 32,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "Badges",
-      "meta": {}
+      "meta": {
+        "description": "Compact status labels in five colors, solid and soft. Color carries meaning: green for safe, red for destructive, amber for pending."
+      }
     },
-    "typography--headings": {
+    "components--typography--headings": {
       "name": "Headings",
       "levels": [
+        "Components",
         "Typography"
       ],
-      "locStart": 3,
-      "locEnd": 9,
+      "locStart": 7,
+      "locEnd": 13,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "Headings",
-      "meta": {}
+      "meta": {
+        "description": "Nine heading sizes. Size is presentational and independent of heading level, so document structure stays correct."
+      }
     },
-    "typography--separator": {
+    "components--typography--separator": {
       "name": "Separator",
       "levels": [
+        "Components",
         "Typography"
       ],
-      "locStart": 30,
-      "locEnd": 36,
+      "locStart": 34,
+      "locEnd": 40,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "SeparatorStory",
-      "meta": {}
+      "meta": {
+        "description": "A hairline rule using the border token, for dividing content without introducing a panel."
+      }
     },
-    "typography--text-sizes": {
+    "components--typography--text-sizes": {
       "name": "Text sizes",
       "levels": [
+        "Components",
         "Typography"
       ],
-      "locStart": 11,
-      "locEnd": 19,
+      "locStart": 15,
+      "locEnd": 23,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "TextSizes",
-      "meta": {}
+      "meta": {
+        "description": "Five body sizes plus the gray color role for secondary copy."
+      }
     }
   }
 }

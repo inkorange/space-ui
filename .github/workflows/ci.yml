@@ -18,6 +18,10 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @inkorange/space-ui typecheck
+      # The gallery is type-checked too: it consumes the library's public API,
+      # so a story calling a prop that does not exist is a real API regression
+      # and used to pass CI silently.
+      - run: pnpm --filter docs typecheck
       - run: pnpm --filter @inkorange/space-ui test
       - run: pnpm --filter @inkorange/space-ui build
       - run: pnpm --filter docs build

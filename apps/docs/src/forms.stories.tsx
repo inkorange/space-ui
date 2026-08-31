@@ -45,58 +45,84 @@ SliderStory.meta = {
     "A range control for continuous values. Takes and returns an array so it can support multiple thumbs without an API change. The track is a glass tube, the thumb a limb-lit planet.",
 };
 
+const LONG_OPTIONS = [
+  { value: "g", label: "G-type main-sequence star" },
+  {
+    value: "k",
+    label: "K-type orange dwarf, long-lived and unusually stable",
+  },
+  {
+    value: "m",
+    label:
+      "M-type red dwarf with frequent flare activity that can strip a planetary atmosphere",
+  },
+  { value: "o", label: "O-type blue supergiant" },
+];
+
 export const SelectStory = () => {
   const [v, setV] = useState("G");
-  return (
-    <Select.Root value={v} onValueChange={setV}>
-      <Select.Trigger style={{ minWidth: 180 }} />
-      <Select.Content>
-        {STAR_TYPES.map((s) => (
-          <Select.Item key={s} value={s}>
-            {s}-type star
-          </Select.Item>
-        ))}
-      </Select.Content>
-    </Select.Root>
-  );
-};
-SelectStory.storyName = "Select";
-SelectStory.meta = {
-  description:
-    "A single-choice menu for lists too long to show inline. The trigger renders the selected item's own content.",
-};
+  const [capped, setCapped] = useState("m");
+  const [narrow, setNarrow] = useState("m");
+  const [wide, setWide] = useState("m");
 
-/**
- * `animated` is the one motion switch. It stills the ambient loops — the
- * orbiting rim, the glint, the twinkling stars — and leaves the glass,
- * gradients and rim shading exactly as they are.
- */
-export const Animation = () => {
-  const [a, setA] = useState("G");
-  const [b, setB] = useState("G");
   return (
-    <div style={{ display: "grid", gap: 28, maxWidth: 420 }}>
-      <div style={{ display: "grid", gap: 10 }}>
-        <code style={{ fontSize: 12, opacity: 0.7 }}>animated (default)</code>
-        <TextField.Root placeholder="Planet name…" />
-        <Select.Root value={a} onValueChange={setA}>
-          <Select.Trigger style={{ minWidth: 180 }} />
+    <div style={{ display: "grid", gap: 28, justifyItems: "start", maxWidth: 560 }}>
+      <Select.Root value={v} onValueChange={setV}>
+        <Select.Trigger />
+        <Select.Content>
+          {STAR_TYPES.map((s) => (
+            <Select.Item key={s} value={s}>
+              {s}-type star
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
+
+      {/* The width behaviour only shows at the extremes: the trigger sizes to
+          its widest option, so a long list is what the cap exists for. */}
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }}>
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          long options — capped at --sp-select-trigger-max-width (20rem)
+        </code>
+        <Select.Root value={capped} onValueChange={setCapped}>
+          <Select.Trigger />
           <Select.Content>
-            {STAR_TYPES.map((s) => (
-              <Select.Item key={s} value={s}>{s}-type star</Select.Item>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
             ))}
           </Select.Content>
         </Select.Root>
       </div>
 
-      <div style={{ display: "grid", gap: 10 }}>
-        <code style={{ fontSize: 12, opacity: 0.7 }}>animated={"{false}"}</code>
-        <TextField.Root animated={false} placeholder="Planet name…" />
-        <Select.Root value={b} onValueChange={setB}>
-          <Select.Trigger animated={false} style={{ minWidth: 180 }} />
-          <Select.Content animated={false}>
-            {STAR_TYPES.map((s) => (
-              <Select.Item key={s} value={s}>{s}-type star</Select.Item>
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-narrow-select">
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          fixed 220px width — the label ellipsizes, the panel still wraps
+        </code>
+        <Select.Root value={narrow} onValueChange={setNarrow}>
+          <Select.Trigger />
+          <Select.Content>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </div>
+
+      <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-wide-select">
+        <code style={{ fontSize: 12, opacity: 0.7 }}>
+          same options, cap raised to 34rem on an ancestor
+        </code>
+        <Select.Root value={wide} onValueChange={setWide}>
+          <Select.Trigger />
+          <Select.Content>
+            {LONG_OPTIONS.map((o) => (
+              <Select.Item key={o.value} value={o.value}>
+                {o.label}
+              </Select.Item>
             ))}
           </Select.Content>
         </Select.Root>
@@ -104,9 +130,10 @@ export const Animation = () => {
     </div>
   );
 };
-Animation.meta = {
+SelectStory.storyName = "Select";
+SelectStory.meta = {
   description:
-    "The same controls with ambient motion stilled. Only the loops stop — the glass, gradients and rim shading are the component, not a layer. prefers-reduced-motion does this automatically.",
+    "A single-choice menu for lists too long to show inline. The trigger sizes itself to its widest option, so it never changes width as you select — the cap is what stops a long label producing an absurd control. Past the cap the trigger ellipsizes while the panel wraps, so you can always read an option in full before choosing it.",
 };
 
 export const RadioGroupStory = () => {

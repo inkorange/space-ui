@@ -7,7 +7,7 @@ export default {
 export const CardStory = () => (
   <Card style={{ maxWidth: 360 }}>
     <Heading size="4">Kepler-442b</Heading>
-    <Text color="gray" size="2">A temperate super-earth, 1,200 ly away.</Text>
+    <Text color="muted" size="2">A temperate super-earth, 1,200 ly away.</Text>
   </Card>
 );
 CardStory.storyName = "Card";
@@ -51,6 +51,8 @@ ScrollAreaStory.meta = {
 };
 
 FlexAndGrid.meta = {
+  // Box and Text appear only as things to lay out.
+  components: ["Flex", "Grid"],
   description:
     "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it.",
 };

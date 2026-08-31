@@ -21,26 +21,133 @@
                                      split from border after visual review —
                                      tracks need the old solid, not 19% alpha */
 
-  /* Accents (Radix dark values, 1:1) */
-  --sp-blue-2: #111927;
-  --sp-blue-8: #2870bd;
-  --sp-blue-9: #0090ff;
-  --sp-blue-11: #70b8ff;
-  --sp-blue-12: #c2e6ff;
-  --sp-blue-a2: #1166fb18;
-  --sp-blue-a3: #0077ff3a;
-  --sp-blue-a6: #0f89fd7f;
-  --sp-amber-10: #ffd60a;
-  --sp-amber-11: #ffca16;
-  --sp-green-9: #30a46c;
-  --sp-green-11: #3dd68c;
-  --sp-green-a3: #22ff991e;
-  --sp-green-a6: #44ffaa4b;
-  --sp-red-9: #e5484d;
-  --sp-red-11: #ff9592;
-  --sp-violet-11: #baa7ff;
-  --sp-yellow-9: #ffe629;
-  --sp-orange-9: #f76b15;
+  /* ---- Accents ------------------------------------------------------
+     Named for the job, never the hue or a step on a ramp — the treatment
+     the grays above already had. Two axes, because emphasis and status
+     answer different questions: calling "success" a secondary colour
+     would say less than "green" did.
+
+     Suffixes are roles, not tones: -solid fills a shape, -text sits on
+     the dark ground, -soft is a wash behind it, -border outlines, -glow
+     is a halo. Values are the measured Radix dark theme, so the swap was
+     visually silent. */
+
+  /* Emphasis */
+  --sp-primary-solid: #0090ff;   /* solid fill: badges, progress          */
+  --sp-primary-text: #70b8ff;    /* links and text on the dark ground     */
+  --sp-primary-soft: #0077ff3a;  /* wash behind soft badges               */
+  --sp-primary-border: #2870bd;  /* focus outlines                        */
+  --sp-primary-glow: #0f89fd7f;  /* halo on the loader                    */
+  --sp-primary-deep: #111927;    /* deepest tint, gradient ends           */
+
+  /* Status */
+  --sp-success-solid: #30a46c;
+  --sp-success-text: #3dd68c;
+  --sp-success-soft: #22ff991e;
+  --sp-warning-text: #ffca16;
+  --sp-warning-soft: #fa820022;
+  --sp-danger-text: #ff9592;
+  --sp-danger-soft: #ff173f2d;
+  --sp-accent-text: #baa7ff;
+  --sp-accent-soft: #8354fe36;
+
+  /* ---- Component sizing ---------------------------------------------
+     Defaults a consumer can move without touching a component. */
+
+  /* A Select sizes itself to its widest option, so it never changes width as
+     you select. This caps that, past which the label ellipsizes. */
+  /* One height for every single-line control, so a field, a select and a
+     button line up in a row. Shared as a token because two stylesheets used
+     to state it separately with a "keep in sync" comment — and had already
+     drifted, the field having no height at all. */
+  --sp-control-height: 40px;
+
+  --sp-select-trigger-max-width: 20rem;
+
+  /* The option panel grows past the trigger to fit its longest option, so a
+     label need not wrap just because the control is narrow. min() keeps it on
+     screen on a small viewport. */
+  --sp-select-panel-max-width: min(90vw, 28rem);
+
+  /* ---- Component colours --------------------------------------------
+     Values specific to one component's identity rather than a shared role.
+     They live here, not in the component, so the promise holds: every colour
+     in the system is in this file and swapping it restyles everything. */
+  /* Tabs are folder-shaped: they seat onto the surface below and the active
+     one breaks through its top border, so the component needs to know that
+     surface's colour to recreate it. Set this to whatever the tabs sit on. */
+  --sp-tabs-surface-color: #16181b;
+  --sp-tabs-rest-from-color: rgba(15, 20, 40, 0.6);
+  --sp-tabs-rest-to-color: rgba(7, 10, 20, 0.3);
+  --sp-tabs-hover-from-color: rgba(24, 32, 62, 0.75);
+  --sp-tabs-hover-to-color: rgba(10, 14, 28, 0.45);
+  --sp-tabs-active-from-color: rgba(30, 40, 76, 0.9);
+  --sp-tabs-active-edge-color: rgba(190, 215, 255, 0.45);
+
+  --sp-select-panel-color: #101216;
+
+  --sp-radio-group-orb-highlight-color: #cfe0ff;
+  --sp-radio-group-orb-mid-color: #8fb4ff;
+  --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);
+  --sp-radio-group-orb-glow-color: rgba(190, 215, 255, 0.85);
+  --sp-radio-group-orb-halo-color: rgba(120, 170, 255, 0.55);
+
+  --sp-icon-toggle-label-color: #dbe6ef;
+  --sp-icon-toggle-label-dim-color: rgba(219, 230, 239, 0.55);
+  --sp-icon-toggle-active-from-color: rgba(90, 130, 220, 0.28);
+  --sp-icon-toggle-active-rim-color: rgba(140, 170, 255, 0.45);
+  --sp-icon-toggle-active-to-color: rgba(90, 130, 220, 0.35);
+
+  --sp-slider-thumb-highlight-color: #e6f0ff;
+  --sp-slider-thumb-mid-color: #86abe8;
+  --sp-slider-thumb-shade-color: #23386b;
+  --sp-slider-thumb-limb-color: #0b1330;
+  --sp-slider-thumb-rim-color: rgba(160, 195, 255, 0.75);
+  --sp-slider-thumb-rim-hover-color: rgba(190, 215, 255, 0.9);
+  --sp-slider-thumb-glow-hover-color: rgba(130, 175, 255, 0.75);
+  --sp-slider-range-from-color: rgba(70, 110, 210, 0.85);
+  --sp-panel-item-highlight-color: rgba(220, 230, 255, 0.45);
+
+  /* A faint neutral wash, for a badge carrying no status. */
+  --sp-muted-soft: #ffffff12;
+  --sp-on-solid: #ffffff;          /* text on a solid accent fill */
+
+  /* ---- Categorical --------------------------------------------------
+     For telling data apart — star classes, planet types — where colour
+     distinguishes rather than signals. These keep hue names on purpose:
+     in a categorical scale the hue IS the identity, and a ranking word
+     like "tertiary" would imply an order that does not exist. */
+  --sp-category-cyan-soft: #00befd28;
+  --sp-category-cyan-text: #4ccce6;
+  --sp-category-purple-soft: #c150ff2d;
+  --sp-category-purple-text: #d19dff;
+  --sp-category-orange-soft: #fb6a0025;
+  --sp-category-orange-text: #ffa057;
+  --sp-category-yellow-soft: #ffaa001e;
+  --sp-category-yellow-text: #f5e147;
+
+  /* ---- Lit-glass surfaces -------------------------------------------
+     Stored as raw channels, not colours, so a component can vary alpha
+     locally — `rgb(var(--sp-rim-rgb) / 0.4)` — while the hue stays a
+     single system-level decision. Alpha is about layering; hue is brand.
+     Change one line here and every glass surface moves with it. */
+  --sp-glass-rgb: 15 20 40;        /* panel/button fill, upper stop     */
+  --sp-glass-deep-rgb: 5 7 15;     /* the same fill, lower stop         */
+  --sp-sheen-rgb: 96 150 250;      /* top-left light catching the glass */
+  --sp-rim-rgb: 150 190 255;       /* the lit atmosphere limb           */
+  --sp-glow-rgb: 110 160 255;      /* hover/focus bloom                 */
+  --sp-glint-rgb: 225 238 255;     /* the sweep across the surface      */
+  --sp-star-rgb: 255 255 255;      /* speck highlights                  */
+  --sp-shadow-rgb: 0 0 0;          /* ambient drop shadow               */
+  --sp-glass-text: #eaf2ff;        /* text sitting on a glass surface   */
+  --sp-focus-ring: #9cc0ff;        /* keyboard focus outline            */
+
+  /* Ember — the warm variant, for destructive-leaning controls. */
+  --sp-ember-glass-rgb: 30 16 14;
+  --sp-ember-glass-deep-rgb: 12 6 5;
+  --sp-ember-sheen-rgb: 250 150 96;
+  --sp-ember-rim-rgb: 255 180 130;
+  --sp-ember-glow-rgb: 255 150 100;
 
   /* Spacing — 8pt grid, xs = 4px half-step */
   --spacing-xs: 4px;

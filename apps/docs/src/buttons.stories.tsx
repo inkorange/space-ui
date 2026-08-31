@@ -1,5 +1,4 @@
-import { SpaceButton } from "@inkorange/space-ui";
-import { SpaceLoader, IconToggle, Progress } from "@inkorange/space-ui";
+import { Button, Loader, IconToggle, Progress } from "@inkorange/space-ui";
 import { useState } from "react";
 
 export default {
@@ -7,27 +6,35 @@ export default {
 };
 
 export const Buttons = () => (
-  <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-    <SpaceButton>Build Planet</SpaceButton>
-    <SpaceButton size="sm">Small</SpaceButton>
-    <SpaceButton size="lg">Large</SpaceButton>
-    <SpaceButton disabled>Disabled</SpaceButton>
-    <SpaceButton fullWidth>Full width</SpaceButton>
+  <div style={{ display: "grid", gap: 16 }}>
+    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+      <Button>Build Planet</Button>
+      <Button size="sm">Small</Button>
+      <Button size="lg">Large</Button>
+      <Button size="micro" aria-label="Micro">M</Button>
+      <Button ember>Ember</Button>
+      <Button iconOnly aria-label="Share">↗</Button>
+      <Button disabled>Disabled</Button>
+    </div>
+
+    <Button fullWidth>Full width</Button>
   </div>
 );
 
-export const Loader = () => <SpaceLoader label="Terraforming…" />;
+export const LoaderStory = () => <Loader label="Terraforming…" />;
+LoaderStory.storyName = "Loader";
 
 export const ProgressStory = () => (
-  <div style={{ display: "grid", gap: 12, width: 320 }}>
-    <Progress value={30} />
-    <Progress value={72} />
+  <div style={{ display: "grid", gap: 16, width: 320 }}>
+    <Progress value={12} />
+    <Progress value={45} />
+    <Progress value={88} />
   </div>
 );
 ProgressStory.storyName = "Progress";
 ProgressStory.meta = {
   description:
-    "A determinate bar for work you can measure. The track uses the dedicated track token rather than the border token — a solid recess, not a hairline.",
+    "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable through custom properties — see the table below.",
 };
 
 export const IconToggleStory = () => {
@@ -52,10 +59,10 @@ IconToggleStory.meta = {
 
 Buttons.meta = {
   description:
-    "The primary action control, in three sizes plus disabled and full-width. Sizing is driven by the spacing scale, so buttons stay on the grid wherever they land.",
+    "The primary action control. Four sizes, the ember variant for destructive-ish actions, icon-only, disabled and full-width. Sizing is driven by the spacing scale, so buttons stay on the grid wherever they land.",
 };
 
-Loader.meta = {
+LoaderStory.meta = {
   description:
     "An indeterminate progress indicator for work with no measurable end. Pair it with a label that names the work, not the state.",
 };

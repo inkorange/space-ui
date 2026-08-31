@@ -1,1 +1,57 @@
-.progress { overflow: hidden; }
+/* The extraction left this at `overflow: hidden` alone, because the visuals
+   lived in planet-builder's HabitabilityMeter.module.scss — so the component
+   rendered an invisible zero-height div anywhere else.
+
+   It now speaks the same language as Slider, which is the right reference: a
+   progress bar and a slider track are the same object, one you drag and one
+   you watch. The track is a glass tube, the fill a starlight trail.
+
+   @token --sp-progress-height Track thickness. The fill always spans it.
+   @token --sp-progress-track-color Overrides the whole glass tube, including
+     its gradient — pass a flat colour for a plain bar.
+   @token --sp-progress-fill-color Overrides the whole starlight fill. Set it
+     per instance to signal meaning: success for a safe reading, danger for a
+     critical one. */
+.progress {
+  overflow: hidden;
+  height: var(--sp-progress-height, 6px);
+  border-radius: 999px;
+
+  /* Glass tube: the same recess as the slider track, at meter scale. */
+  background: var(
+    --sp-progress-track-color,
+    linear-gradient(
+      180deg,
+      rgb(var(--sp-glass-rgb) / 0.92),
+      rgb(var(--sp-glass-deep-rgb) / 0.96)
+    )
+  );
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.25),
+    inset 0 1px 3px rgb(var(--sp-shadow-rgb) / 0.65);
+}
+
+/* The fill is an unclassed child so a consumer can target `.progress > div`
+   without needing the hashed module class.
+
+   Star specks sit at fixed percentages rather than being seeded per instance
+   as SpaceButton's are: a progress fill changes width constantly, and specks
+   that re-randomised on every frame would shimmer rather than travel. */
+.progress > div {
+  border-radius: inherit;
+  background: var(
+    --sp-progress-fill-color,
+    radial-gradient(1.2px 1.2px at 22% 35%, rgb(var(--sp-star-rgb) / 0.85), transparent 70%),
+    radial-gradient(1px 1px at 58% 65%, rgb(var(--sp-star-rgb) / 0.6), transparent 70%),
+    radial-gradient(1px 1px at 84% 40%, rgb(var(--sp-star-rgb) / 0.5), transparent 70%),
+    linear-gradient(90deg, var(--sp-slider-range-from-color), rgb(var(--sp-rim-rgb) / 0.95))
+  );
+  box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.4);
+  transition: width 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress > div {
+    transition: none;
+  }
+}

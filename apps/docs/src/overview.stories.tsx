@@ -5,9 +5,10 @@ import {
   Heading,
   Select,
   Separator,
-  SpaceButton,
+  Button,
   Text,
 } from "@inkorange/space-ui";
+import { Code } from "./docs-code";
 import { Reveal, Starfield } from "./docs-motion";
 import { componentCount, iconCount, packageName, repoUrl } from "./system-facts";
 
@@ -19,7 +20,7 @@ export default {
 /**
  * The hero demo is a planet summary — the shape planet-builder actually
  * renders, not an invented device. Built from the components that appear in
- * most of the app's files (Text, SpaceButton, Heading, Badge, Card) plus a
+ * most of the app's files (Text, Button, Heading, Badge, Card) plus a
  * Select, with nothing composed on top: the lit glass is what the package
  * gives you, so this is exactly what a consumer would ship.
  */
@@ -30,10 +31,10 @@ const PlanetCard = () => {
     <Card style={{ padding: 20 }}>
       <div className="docs-demo__head">
         <Heading size="5">Kepler-442b</Heading>
-        <Badge color="green">Temperate</Badge>
+        <Badge color="success">Temperate</Badge>
       </div>
 
-      <Text size="2" color="gray">
+      <Text size="2" color="muted">
         A super-earth in the habitable zone, 1,206 light years out.
       </Text>
 
@@ -55,7 +56,7 @@ const PlanetCard = () => {
       </dl>
 
       <div className="docs-demo__field">
-        <Text size="1" color="gray">
+        <Text size="1" color="muted">
           Host star
         </Text>
         <Select.Root value={star} onValueChange={setStar}>
@@ -71,8 +72,8 @@ const PlanetCard = () => {
       </div>
 
       <div className="docs-demo__actions">
-        <SpaceButton>Build planet</SpaceButton>
-        <SpaceButton size="sm">View system</SpaceButton>
+        <Button>Build planet</Button>
+        <Button size="sm">View system</Button>
       </div>
     </Card>
   );
@@ -125,20 +126,11 @@ const TokenExample = () => (
       </div>
     </div>
 
-    <div className="docs-code">
-      <div className="docs-code__bar">readout.css</div>
-      <pre>
-        .readout {"{"}
-        {DEMO_RULES.map(([prop, value]) => (
-          <span key={prop}>
-            {"\n  "}
-            {prop}: <span className="k">{value}</span>;
-          </span>
-        ))}
-        {"\n"}
-        {"}"}
-      </pre>
-    </div>
+    <Code
+      label="readout.css"
+      language="css"
+      code={`.readout {\n${DEMO_RULES.map(([prop, value]) => `  ${prop}: ${value};`).join("\n")}\n}`}
+    />
   </div>
 );
 
@@ -163,9 +155,9 @@ const MotionDemo = () => {
           <span className="docs-skindemo__note">default</span>
         </header>
         <div className="docs-skindemo__stack">
-          <SpaceButton>Build planet</SpaceButton>
+          <Button>Build planet</Button>
           <Select.Root value={liveStar} onValueChange={setLiveStar}>
-            <Select.Trigger style={{ minWidth: 160 }} />
+            <Select.Trigger />
             <Select.Content>
               {STAR_TYPES.map((t) => (
                 <Select.Item key={t} value={t}>
@@ -175,7 +167,7 @@ const MotionDemo = () => {
             </Select.Content>
           </Select.Root>
         </div>
-        <pre className="docs-skindemo__code">&lt;SpaceButton /&gt;</pre>
+        <pre className="docs-skindemo__code">&lt;Button /&gt;</pre>
       </section>
 
       <section className="docs-skindemo__pane">
@@ -184,9 +176,9 @@ const MotionDemo = () => {
           <span className="docs-skindemo__note">animated={"{false}"}</span>
         </header>
         <div className="docs-skindemo__stack">
-          <SpaceButton animated={false}>Build planet</SpaceButton>
+          <Button animated={false}>Build planet</Button>
           <Select.Root value={stillStar} onValueChange={setStillStar}>
-            <Select.Trigger animated={false} style={{ minWidth: 160 }} />
+            <Select.Trigger animated={false} />
             <Select.Content animated={false}>
               {STAR_TYPES.map((t) => (
                 <Select.Item key={t} value={t}>
@@ -197,7 +189,7 @@ const MotionDemo = () => {
           </Select.Root>
         </div>
         <pre className="docs-skindemo__code">
-          &lt;SpaceButton animated={"{false}"} /&gt;
+          &lt;Button animated={"{false}"} /&gt;
         </pre>
       </section>
     </div>
@@ -284,7 +276,7 @@ export const Introduction = () => (
               guess whether it is a screenshot, a mock, or the real thing. */}
           <p className="docs-hero__caption">
             Live components — Card, Heading, Text, Badge, Separator, Select
-            and SpaceButton. Nothing composed on: this is what you get from the
+            and Button. Nothing composed on: this is what you get from the
             package.
           </p>
         </div>
@@ -335,55 +327,53 @@ export const Introduction = () => (
           eight-point grid with one 4px half-step; when a measurement falls
           between steps, round up.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">PlanetPanel.css</div>
-          <pre>
-            <span className="c">/* once, at your app entry */</span>
-            {"\n"}
-            <span className="k">@import</span>{" "}
-            <span className="s">"{packageName}/tokens.css"</span>;
-            {"\n\n"}.planet-panel {"{"}
-            {"\n  "}background: <span className="k">var(--sp-gray-panel)</span>;
-            {"\n  "}border: 1px solid <span className="k">var(--sp-gray-border)</span>;
-            {"\n  "}padding: <span className="k">var(--spacing-md)</span>;{"  "}
-            <span className="c">/* 16px — on the grid */</span>
-            {"\n  "}gap: <span className="k">var(--spacing-sm)</span>;
-            {"\n"}
-            {"}"}
-            {"\n\n"}.planet-panel__label {"{"}
-            {"\n  "}color: <span className="k">var(--sp-gray-text-dim)</span>;{"  "}
-            <span className="c">/* secondary text */</span>
-            {"\n  "}font-size: <span className="k">var(--sp-font-sm)</span>;
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="PlanetPanel.css"
+          language="css"
+          code={`/* once, at your app entry */
+@import "${packageName}/tokens.css";
+
+.planet-panel {
+  background: var(--sp-gray-panel);
+  border: 1px solid var(--sp-gray-border);
+  padding: var(--spacing-md);  /* 16px \u2014 on the grid */
+  gap: var(--spacing-sm);
+}
+
+.planet-panel__label {
+  color: var(--sp-gray-text-dim);  /* secondary text */
+  font-size: var(--sp-font-sm);
+}`}
+        />
 
         <h3 className="docs-subhead">Retheme by redefining</h3>
         <p className="docs-section__intro">
-          Because every component reads the same roles, rebranding is one block
-          of overrides rather than a pass through the component tree. This is
-          the payoff for consolidating fifteen grays into seven: a theme change
-          is a short diff.
+          Because every component reads the same roles and nothing else, a whole
+          theme — light mode, a brand palette — is one block loaded after the
+          library. You override only what you want to change; anything you leave
+          out keeps the shipped default, so a theme file is a short diff rather
+          than a full palette.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">theme.css — loaded after tokens.css</div>
-          <pre>
-            :root {"{"}
-            {"\n  "}
-            <span className="c">/* surfaces */</span>
-            {"\n  "}--sp-gray-panel: <span className="s">#14161c</span>;
-            {"\n  "}--sp-gray-border: <span className="s">#8ab4ff2e</span>;
-            {"\n\n  "}
-            <span className="c">/* primary action, focus, selection */</span>
-            {"\n  "}--sp-blue-9: <span className="s">#7c5cff</span>;
-            {"\n\n  "}
-            <span className="c">/* the one family pin — see Foundations */</span>
-            {"\n  "}--sp-font-family: <span className="s">"Inter"</span>, system-ui, sans-serif;
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="theme.css \u2014 loaded after styles.css"
+          language="css"
+          code={`:root {
+  /* surfaces */
+  --sp-gray-panel: #14161c;
+  --sp-gray-border: #8ab4ff2e;
+
+  /* emphasis \u2014 one line moves every interactive surface */
+  --sp-primary-solid: #7c5cff;
+  --sp-primary-text: #b9a4ff;
+
+  /* the lit glass, stored as channels so alpha stays local */
+  --sp-rim-rgb: 190 160 255;
+  --sp-glow-rgb: 160 130 255;
+
+  /* the one family pin \u2014 see Foundations */
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}`}
+        />
 
         <p className="docs-section__intro" style={{ marginTop: 20, marginBottom: 0 }}>
           Every token, its resolved value, and the Radix variant it replaced is
@@ -422,18 +412,16 @@ export const Introduction = () => (
           exactly where they were.
         </p>
 
-        <div className="docs-code">
-          <div className="docs-code__bar">Stilling the motion</div>
-          <pre>
-            <span className="c">{"/* ambient motion, the default */"}</span>
-            {"\n"}&lt;SpaceButton&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n\n"}
-            <span className="c">{"/* same look, no loops */"}</span>
-            {"\n"}&lt;SpaceButton animated={"{false}"}&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n"}&lt;TextField.Root animated={"{false}"} /&gt;
-            {"\n"}&lt;Select.Trigger animated={"{false}"} /&gt;
-          </pre>
-        </div>
+        <Code
+          label="Stilling the motion"
+          code={`/* ambient motion, the default */
+<Button>Build planet</Button>
+
+/* same look, no loops */
+<Button animated={false}>Build planet</Button>
+<TextField.Root animated={false} />
+<Select.Trigger animated={false} />`}
+        />
 
         <p className="docs-section__intro" style={{ marginTop: 16, marginBottom: 0 }}>
           Readers who set <code>prefers-reduced-motion</code> get this without
@@ -502,16 +490,15 @@ export const Installation = () => (
       <section className="docs-section" style={{ marginTop: 32 }}>
         <div className="docs-section__label">Step one</div>
         <h2 className="docs-section__title">Install the package</h2>
-        <div className="docs-code">
-          <div className="docs-code__bar">Terminal</div>
-          <pre>
-            <span className="c"># pnpm</span>
-            {"\n"}pnpm add {packageName}
-            {"\n\n"}
-            <span className="c"># npm</span>
-            {"\n"}npm install {packageName}
-          </pre>
-        </div>
+        <Code
+          label="Terminal"
+          language="bash"
+          code={`# pnpm
+pnpm add ${packageName}
+
+# npm
+npm install ${packageName}`}
+        />
       </section>
     </Reveal>
 
@@ -520,20 +507,15 @@ export const Installation = () => (
         <div className="docs-section__label">Step two</div>
         <h2 className="docs-section__title">Import the styles once</h2>
         <p className="docs-section__intro">
-          Load the tokens and the compiled stylesheet at your app's entry point.
-          The CSS ships precompiled, so no Sass toolchain is required
-          downstream.
+          One stylesheet, loaded once. The default token values ship inside it,
+          so there is nothing else to wire up — and no Sass toolchain is
+          required downstream.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">app entry</div>
-          <pre>
-            <span className="k">import</span>{" "}
-            <span className="s">"{packageName}/tokens.css"</span>;
-            {"\n"}
-            <span className="k">import</span>{" "}
-            <span className="s">"{packageName}/styles.css"</span>;
-          </pre>
-        </div>
+        <Code
+          label="app entry"
+          code={`// one import — default token values are baked in
+import "${packageName}/styles.css";`}
+        />
       </section>
     </Reveal>
 
@@ -541,26 +523,19 @@ export const Installation = () => (
       <section className="docs-section">
         <div className="docs-section__label">Step three</div>
         <h2 className="docs-section__title">Use a component</h2>
-        <div className="docs-code">
-          <div className="docs-code__bar">Planet.tsx</div>
-          <pre>
-            <span className="k">import</span> {"{ SpaceButton, Card, Heading }"}{" "}
-            <span className="k">from</span>{" "}
-            <span className="s">"{packageName}"</span>;
-            {"\n\n"}
-            <span className="k">export function</span> Planet() {"{"}
-            {"\n  "}
-            <span className="k">return</span> (
-            {"\n    "}&lt;Card&gt;
-            {"\n      "}&lt;Heading size=<span className="s">"4"</span>
-            &gt;Kepler-442b&lt;/Heading&gt;
-            {"\n      "}&lt;SpaceButton&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n    "}&lt;/Card&gt;
-            {"\n  "});
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="Planet.tsx"
+          code={`import { Button, Card, Heading } from "${packageName}";
+
+export function Planet() {
+  return (
+    <Card>
+      <Heading size="4">Kepler-442b</Heading>
+      <Button>Build planet</Button>
+    </Card>
+  );
+}`}
+        />
       </section>
     </Reveal>
 

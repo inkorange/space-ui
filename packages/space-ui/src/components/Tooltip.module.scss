@@ -14,13 +14,13 @@
   pointer-events: none;
 
   padding: 6px 10px;
-  border: 1px solid rgba(150, 190, 255, 0.22);
+  border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(15, 20, 40, 0.96), rgba(5, 7, 15, 0.97));
+  background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.96), rgb(var(--sp-glass-deep-rgb) / 0.97));
   backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 6px 20px rgb(var(--sp-shadow-rgb) / 0.55);
 
-  color: #eaf2ff;
+  color: var(--sp-glass-text);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.3;

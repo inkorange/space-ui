@@ -1,0 +1,124 @@
+/* Orbital spinner — a pulsing "planet" disc at the center of a static ring,
+   with a "moon" dot traveling the ring. Speaks the same rendering language
+   as Button's limb-lit rim, scaled down to a loading glyph. */
+
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/**
+ * Public tokens. Documented with @token so the gallery can render them as a
+ * table — the same contract JSDoc gives props.
+ *
+ * @token --sp-loader-orbit-size Diameter of the ring the moon travels. Sets the
+ *   loader's overall footprint; the planet and moon do not scale with it.
+ * @token --sp-loader-planet-size Diameter of the pulsing disc at the centre.
+ *   Raise it for a denser loader, lower it for a thinner ring-led one.
+ * @token --sp-loader-moon-size Diameter of the dot orbiting the ring. Stays
+ *   centred on the ring's edge at any size.
+ */
+
+/* These are READ with a per-size fallback, never declared outright. A
+   custom property declared on an element shadows any value inherited from an
+   ancestor, so `--sp-loader-moon-size: 20px` on a parent would be ignored if
+   the size class set it directly. Reading it keeps the token overridable from
+   anywhere above the loader, with the size prop supplying the default.
+   The resolved values are held in private --_ vars so the public names appear
+   exactly once each. */
+.sm {
+  --_orbit: var(--sp-loader-orbit-size, 24px);
+  --_planet: var(--sp-loader-planet-size, 8px);
+  --_moon: var(--sp-loader-moon-size, 4px);
+}
+
+.md {
+  --_orbit: var(--sp-loader-orbit-size, 40px);
+  --_planet: var(--sp-loader-planet-size, 12px);
+  --_moon: var(--sp-loader-moon-size, 5px);
+}
+
+.lg {
+  --_orbit: var(--sp-loader-orbit-size, 64px);
+  --_planet: var(--sp-loader-planet-size, 18px);
+  --_moon: var(--sp-loader-moon-size, 7px);
+}
+
+/* Static ring the moon travels around. */
+.orbit {
+  position: relative;
+  width: var(--_orbit);
+  height: var(--_orbit);
+  border-radius: 50%;
+  border: 1px solid var(--sp-gray-border);
+}
+
+/* Pulsing planet disc, centered on the ring. */
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--_planet);
+  height: var(--_planet);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at 35% 30%, var(--sp-primary-text), var(--sp-primary-solid) 60%, var(--sp-primary-deep) 100%);
+  box-shadow: 0 0 6px var(--sp-primary-glow);
+  animation: sp-loader-planet-pulse 2.2s ease-in-out infinite;
+}
+
+/* Invisible rotating carrier the same size as the ring; its ::before is the
+   visible moon dot, so rotating the carrier travels the dot around the ring. */
+.moon {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: sp-loader-orbit 2.6s linear infinite;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--_moon);
+    height: var(--_moon);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--sp-primary-text);
+    box-shadow: 0 0 4px var(--sp-primary-glow);
+  }
+}
+
+.label {
+  color: var(--sp-gray-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--sp-font-xs);
+  text-align: center;
+}
+
+@keyframes sp-loader-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sp-loader-planet-pulse {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.88); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes sp-loader-reduced-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Vestibular-safe fallback: drop the rotation and the scale pulse, keep a
+   gentle opacity breathe on both the planet and the moon dot. */
+@media (prefers-reduced-motion: reduce) {
+  .planet,
+  .moon {
+    animation: sp-loader-reduced-pulse 2.4s ease-in-out infinite;
+  }
+}

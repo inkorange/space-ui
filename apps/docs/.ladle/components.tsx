@@ -1,8 +1,13 @@
 import { ActionType, ModeState, type GlobalProvider } from "@ladle/react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { components as componentDocs, type ComponentDoc } from "virtual:space-docs";
+import {
+  components as componentDocs,
+  type ComponentDoc,
+  type PropDoc,
+} from "virtual:space-docs";
 import { storySource, stories } from "virtual:generated-list";
+import { Code } from "../src/docs-code";
 import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
@@ -89,25 +94,116 @@ const parseStoryId = (id: string) => {
 };
 
 /**
- * Which documented components a story actually renders, read from the story's
- * own source. Deriving it beats a hand-maintained list on every story: a new
- * story gets its API table for free, and one can never fall out of date with
- * what the story renders.
+ * Which components a story is ABOUT — not merely which ones it renders.
+ *
+ * A story reaches for other components as scaffolding: the Tabs story puts
+ * Text inside a panel because a tab needs contents. Documenting those would
+ * turn every page into a partial copy of its neighbours, so the set is
+ * narrowed to components the story is named for.
+ *
+ * A story can state it outright with `meta.components` where the name does
+ * not carry it — "Text sizes" is about Text, and nothing in the name says so.
  */
-const componentsInSource = (src: string): ComponentDoc[] => {
-  const tags = new Set<string>();
+const componentsInSource = (
+  src: string,
+  storyId: string,
+  declared?: string[],
+): ComponentDoc[] => {
+  const rendered = new Set<string>();
   for (const m of src.matchAll(/<([A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)?)/g)) {
-    tags.add(m[1]);
+    rendered.add(m[1]);
   }
-  return componentDocs.filter((doc) => tags.has(doc.name));
+
+  if (declared) {
+    return componentDocs.filter((doc) =>
+      declared.some((d) => doc.name === d || doc.name.startsWith(`${d}.`)),
+    );
+  }
+
+  // "components--overlays--tabs" -> "tabs" -> Tabs, Tabs.Trigger, …
+  // The trailing plural is dropped so "buttons" finds Button.
+  const leaf = storyId.split("--").pop() ?? "";
+  const pascal = leaf
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("");
+  const candidates = [pascal, pascal.replace(/s$/, "")].filter(Boolean);
+
+  const owned = componentDocs.filter(
+    (doc) =>
+      rendered.has(doc.name) &&
+      candidates.some((c) => doc.name === c || doc.name.startsWith(`${c}.`)),
+  );
+
+  // A story whose name matches nothing documents everything it renders — an
+  // empty table is worse than a broad one.
+  return owned.length
+    ? owned
+    : componentDocs.filter((doc) => rendered.has(doc.name));
 };
 
-const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
+/**
+ * Turns a heritage clause into something a reader can act on. The tables list
+ * only a component's own props, so without this a Button looks like it
+ * takes five props and no onClick — when in fact it forwards every standard
+ * button attribute.
+ */
+const describeHeritage = (clause: string): string | null => {
+  const dom = /(\w+)HTMLAttributes<(\w+)>/.exec(clause);
+  if (dom) {
+    const omitted = [...clause.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    const base = `every standard ${dom[1].toLowerCase()} attribute — onClick, id, aria-*, data-*`;
+    return omitted.length ? `${base} (except ${omitted.join(", ")})` : base;
+  }
+  if (clause === "SpacingProps") return "margin and padding steps — m, mt, mb, p, pb";
+  return null;
+};
+
+const PropRow = ({ prop: p, inherited }: { prop: PropDoc; inherited?: boolean }) => (
+  <div
+    className={`docs-api__row${inherited ? " docs-api__row--inherited" : ""}`}
+    role="row"
+  >
+    <span className="docs-api__prop" role="cell">
+      {p.name}
+      {p.required && (
+        <span className="docs-api__required" title="Required">
+          *
+        </span>
+      )}
+    </span>
+    <span className="docs-api__type" role="cell">
+      {p.type}
+    </span>
+    <span className="docs-api__default" role="cell">
+      {p.defaultValue ?? "—"}
+    </span>
+    <span className="docs-api__desc" role="cell">
+      {p.description || <em>—</em>}
+    </span>
+  </div>
+);
+
+const INHERITED_PREVIEW = 4;
+
+const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
+  const [showAllInherited, setShowAllInherited] = useState(false);
+  const shown = showAllInherited
+    ? doc.inherited
+    : doc.inherited.slice(0, INHERITED_PREVIEW);
+  const hidden = doc.inherited.length - shown.length;
+
+  return (
   <div className="docs-api">
     <div className="docs-api__head">
       <span className="docs-api__name">{`<${doc.name}>`}</span>
       <span className="docs-api__file">{doc.file}</span>
     </div>
+
+    {/* What the component IS. A prop table can only say what it takes. */}
+    {doc.description && (
+      <p className="docs-api__about">{doc.description}</p>
+    )}
 
     <div className="docs-api__table" role="table">
       <div className="docs-api__row docs-api__row--head" role="row">
@@ -118,38 +214,91 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
       </div>
 
       {doc.props.map((p) => (
-        <div className="docs-api__row" role="row" key={p.name}>
-          <span className="docs-api__prop" role="cell">
-            {p.name}
-            {p.required && (
-              <span className="docs-api__required" title="Required">
-                *
-              </span>
-            )}
-          </span>
-          <span className="docs-api__type" role="cell">
-            {p.type}
-          </span>
-          <span className="docs-api__default" role="cell">
-            {p.defaultValue ?? "—"}
-          </span>
-          <span className="docs-api__desc" role="cell">
-            {p.description || <em>—</em>}
-          </span>
-        </div>
+        <PropRow key={p.name} prop={p} />
       ))}
+
+      {doc.inherited.length > 0 && (
+        <>
+          <div className="docs-api__row docs-api__row--section" role="row">
+            <span>Inherited from {doc.file.replace(".tsx", "")}'s element</span>
+          </div>
+          {shown.map((p) => (
+            <PropRow key={p.name} prop={p} inherited />
+          ))}
+          <div className="docs-api__row docs-api__row--more" role="row">
+            <button
+              type="button"
+              className="docs-api__more"
+              aria-expanded={showAllInherited}
+              onClick={() => setShowAllInherited((v) => !v)}
+            >
+              {showAllInherited
+                ? "Show fewer"
+                : `Show all ${doc.inherited.length}`}
+            </button>
+            <span className="docs-api__morenote">
+              {showAllInherited
+                ? `${doc.inheritedCount - doc.inherited.length} more inherited props are not listed`
+                : `${hidden} more listed, ${doc.inheritedCount} inherited in total`}
+            </span>
+          </div>
+        </>
+      )}
     </div>
 
-    {doc.tokens.length > 0 && (
-      <div className="docs-api__tokens">
-        <span className="docs-api__tokenlabel">Tokens used</span>
-        {doc.tokens.map((t) => (
-          <code key={t}>{t}</code>
-        ))}
+    {doc.extendsFrom.length > 0 && (
+      <div className="docs-api__extends">
+        <span className="docs-api__tokenlabel">Also accepts</span>
+        <ul>
+          {doc.extendsFrom.map((clause) => {
+            const note = describeHeritage(clause);
+            return (
+              <li key={clause}>
+                <code>{clause}</code>
+                {note && <span> — {note}</span>}
+              </li>
+            );
+          })}
+        </ul>
       </div>
     )}
-  </div>
-);
+
+    {/* Only component-scoped properties. The global --sp-* palette is how
+        every component is built, not something you tune per component — it is
+        documented once under Foundations. */}
+    {doc.tokens.length > 0 && (
+      <div className="docs-api__customprops">
+        <div className="docs-api__head">
+          <span className="docs-api__name">Custom properties</span>
+          <span className="docs-api__file">
+            set on the component or any ancestor
+          </span>
+        </div>
+        <div className="docs-api__table" role="table">
+          <div className="docs-api__row docs-api__row--head docs-api__row--token" role="row">
+            <span role="columnheader">Property</span>
+            <span role="columnheader">Default</span>
+            <span role="columnheader">Effect when overridden</span>
+          </div>
+          {doc.tokens.map((t) => (
+            <div className="docs-api__row docs-api__row--token" role="row" key={t.name}>
+              <span className="docs-api__prop" role="cell">
+                {t.name}
+              </span>
+              <span className="docs-api__default" role="cell">
+                {t.defaults.length ? t.defaults.join(" / ") : "—"}
+              </span>
+              <span className="docs-api__desc" role="cell">
+                {t.description || <em>—</em>}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+    </div>
+  );
+};
 
 export const Provider: GlobalProvider = ({
   children,
@@ -161,7 +310,7 @@ export const Provider: GlobalProvider = ({
   const { name, levels } = parseStoryId(globalState.story);
 
   const meta = storyMeta as
-    | { description?: string; fullBleed?: boolean }
+    | { description?: string; fullBleed?: boolean; components?: string[] }
     | undefined;
 
   // Overview and Foundations render as full pages; component stories render
@@ -211,7 +360,9 @@ export const Provider: GlobalProvider = ({
     return whole.split("\n").slice(loc.locStart - 1, loc.locEnd).join("\n").trim();
   })();
 
-  const docs = source ? componentsInSource(source) : [];
+  const docs = source
+    ? componentsInSource(source, globalState.story, meta?.components)
+    : [];
 
   return (
     <>
@@ -247,12 +398,11 @@ export const Provider: GlobalProvider = ({
                 so it should not cost a click to find. */}
             {source && (
               <section className="docs-source">
-                <div className="docs-code">
-                  <div className="docs-code__bar">
-                    {stories[globalState.story]?.entry ?? "Source"}
-                  </div>
-                  <pre>{source}</pre>
-                </div>
+                <Code
+                  code={source}
+                  label={stories[globalState.story]?.entry ?? "Source"}
+                  maxHeight={460}
+                />
               </section>
             )}
 

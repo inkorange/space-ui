@@ -15,7 +15,7 @@ Tabs.Trigger now apply their skin internally. There is no plain mode.
 
 In its place, a real prop for the thing that genuinely is a choice: `animated`
 (default `true`) stills the ambient loops — the orbiting rim, the glint sweep,
-the twinkling stars — on SpaceButton, Select.Trigger, Select.Content,
+the twinkling stars — on Button, Select.Trigger, Select.Content,
 TextField.Root, TextArea and Tabs.Trigger. Gradients, rim shading and shadows
 are unaffected: the look is the component, only its motion is optional.
 `prefers-reduced-motion` continues to still the loops regardless of the prop.

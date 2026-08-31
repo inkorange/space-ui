@@ -47,8 +47,13 @@ export const useDialog = () => {
 };
 
 export interface RootProps {
+  /** Controls the dialog. Omit both this and onOpenChange to let the dialog
+   *  manage its own state. */
   open?: boolean;
+  /** Called whenever the dialog opens or closes, including via Escape or a
+   *  backdrop click. */
   onOpenChange?: (o: boolean) => void;
+  /** A Trigger and a Content. */
   children?: ReactNode;
 }
 
@@ -72,6 +77,13 @@ export function makeRoot(alert: boolean) {
     );
   };
 }
+/**
+ * Owns a dialog's open state. Works controlled via `open`/`onOpenChange`, or
+ * uncontrolled if you pass neither.
+ *
+ * Renders nothing itself — it only provides context, so Trigger and Content
+ * can sit anywhere beneath it in the tree.
+ */
 export const Root = makeRoot(false);
 
 type Clickable = React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>;
@@ -83,22 +95,53 @@ const chainOpen = (child: ReactNode, fn: () => void): ReactNode => {
   });
 };
 
-export function Trigger({ children }: { children?: ReactNode }) {
+/**
+ * Opens the dialog. Chains onto its child's existing click handler rather
+ * than replacing it, and renders no element of its own — so the child stays
+ * whatever it already was, button or otherwise.
+ */
+export function Trigger({
+  children,
+}: {
+  /** The control that opens the dialog. Its own onClick still fires. */
+  children?: ReactNode;
+}) {
   const d = useDialog();
   return <>{chainOpen(children, () => d.setOpen(true))}</>;
 }
 
-export function Close({ children }: { children?: ReactNode }) {
+/**
+ * Closes the dialog. Same shape as Trigger: wraps its child, adds a close on
+ * click, and adds no markup.
+ */
+export function Close({
+  children,
+}: {
+  /** The control that closes the dialog. Its own onClick still fires. */
+  children?: ReactNode;
+}) {
   const d = useDialog();
   return <>{chainOpen(children, () => d.setOpen(false))}</>;
 }
 
 export interface ContentProps extends React.HTMLAttributes<HTMLDialogElement> {
+  /** Padding and radius step. 4 is roomier, for dialogs carrying a form. */
   size?: "3" | "4";
+  /** Caps the dialog's width, e.g. "480px". Without it the dialog uses its
+   *  own default and grows with its content. */
   maxWidth?: string;
+  /** Dialog contents. Include a Title — it is the accessible name. */
   children?: ReactNode;
 }
 
+/**
+ * The dialog surface. Built on the native `<dialog>` element, so the browser
+ * supplies the top layer, focus trapping and Escape handling rather than the
+ * library reimplementing them.
+ *
+ * Dismissible by Escape or a click on the backdrop; AlertDialog's Content
+ * deliberately is not.
+ */
 export function Content({ size = "3", maxWidth, className, style, children, ...rest }: ContentProps) {
   const d = useDialog();
   const ref = useRef<HTMLDialogElement | null>(null);
@@ -199,11 +242,19 @@ export function Content({ size = "3", maxWidth, className, style, children, ...r
   );
 }
 
+/**
+ * The dialog's accessible name. Wire one up for every dialog — it is what a
+ * screen reader announces when the dialog opens.
+ */
 export function Title({ className, ...rest }: HeadingProps) {
   const d = useDialog();
   return <Heading as="h2" size="5" {...rest} id={d.titleId} className={cx(styles.title, className)} />;
 }
 
+/**
+ * Supporting copy beneath the title, registered as the dialog's accessible
+ * description. Optional, and only announced when present.
+ */
 export function Description(props: TextProps) {
   const d = useDialog();
   // aria-describedby on Content is conditional on a Description actually
