@@ -18,9 +18,18 @@ export interface HeadingProps
   /** Centres the text. There is no `left`/`right` — headings are
    *  start-aligned unless deliberately centred. */
   align?: "center";
+  /** The heading text. */
   children?: ReactNode;
 }
 
+/**
+ * A section heading. `as` sets the heading level and `size` sets the
+ * appearance, deliberately apart — so a visually small heading can still be
+ * an h2 where the document structure calls for one.
+ *
+ * Shares size steps 4-6 with Text, so a heading and body copy on the same
+ * line align.
+ */
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
   { as = "h2", size, color, align, className, style, m, mt, mb, p, pb, ...rest },
   ref,

@@ -6,16 +6,32 @@ import styles from "./Slider.module.scss";
 import ctl from "../styles/spaceControls.module.scss";
 
 export interface SliderProps {
+  /** Current value, as a single-element array. Fully controlled. */
   value: number[];
+  /** Called with the new value array as the thumb moves. */
   onValueChange: (v: number[]) => void;
+  /** Lower bound. */
   min: number;
+  /** Upper bound. */
   max: number;
+  /** Smallest increment the thumb can move by. */
   step: number;
+  /** Blocks interaction and removes it from the tab order. */
   disabled?: boolean;
+  /** Merged onto the wrapper. */
   className?: string;
+  /** Accessible name. Required unless a visible label references it,
+   *  since a slider has no text of its own.
+   */
   "aria-label"?: string;
 }
 
+/**
+ * A range control for a continuous value.
+ *
+ * Takes and returns an array so multiple thumbs can be added later without a
+ * breaking change, even though it renders one today.
+ */
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   { value, onValueChange, min, max, step, disabled, className, "aria-label": ariaLabel },
   ref,

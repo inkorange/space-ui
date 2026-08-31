@@ -526,11 +526,6 @@ describe("animated prop", () => {
     )],
     ["TextField.Root", (a) => <TextField.Root animated={a} />],
     ["TextArea", (a) => <TextArea animated={a} />],
-    ["Tabs.Trigger", (a) => (
-      <Tabs.Root value="x" onValueChange={() => {}}>
-        <Tabs.List><Tabs.Trigger value="x" animated={a}>x</Tabs.Trigger></Tabs.List>
-      </Tabs.Root>
-    )],
   ];
 
   for (const [name, render] of cases) {

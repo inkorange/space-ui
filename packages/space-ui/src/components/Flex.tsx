@@ -18,11 +18,19 @@ export interface FlexProps extends SpacingProps, React.HTMLAttributes<HTMLDivEle
   justify?: "start" | "center" | "end" | "between";
   /** Wrapping behaviour. Default is the browser's `nowrap`. */
   wrap?: "wrap" | "nowrap";
+  /** The items to lay out. */
   children?: ReactNode;
 }
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
+/**
+ * A flex row or column whose gap comes from the spacing scale, so layouts
+ * inherit the 8pt grid instead of restating it in pixels.
+ *
+ * `asChild` merges the layout onto its only child rather than adding a
+ * wrapper, for when an extra div would break a grid or a selector.
+ */
 export const Flex = forwardRef<HTMLDivElement, FlexProps>(function Flex(
   { asChild, gap, direction, align, justify, wrap, className, style, m, mt, mb, p, pb, children, ...rest },
   ref,

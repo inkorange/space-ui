@@ -8,6 +8,7 @@ export interface LoaderProps {
   size?: "sm" | "md" | "lg";
   /** Visible caption under the spinner; also doubles as the accessible name. */
   label?: string;
+  /** Merged onto the wrapper. */
   className?: string;
 }
 

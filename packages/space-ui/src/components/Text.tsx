@@ -24,9 +24,18 @@ export interface TextProps
   color?: "muted" | "danger" | "success" | "warning";
   /** Id of the control this labels. Only meaningful with `as="label"`. */
   htmlFor?: string;
+  /** The text. */
   children?: ReactNode;
 }
 
+/**
+ * Body copy. Size, weight and colour are presentational and independent of
+ * the element, so `as` stays free to be whatever the document actually needs
+ * — a `p` for prose, a `label` for a field, a `span` inline.
+ *
+ * Colour is a role, not a hue: use `muted` for secondary copy and reserve the
+ * status roles for text that genuinely carries that meaning.
+ */
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
   { as = "span", size, weight, color, className, style, m, mt, mb, p, pb, ...rest },
   ref,
