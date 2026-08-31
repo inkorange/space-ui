@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "description": "SpaceUI — a space-themed React component library and design system",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "repository": { "type": "git", "url": "https://github.com/inkorange/space-ui" },
   "type": "module",
   "sideEffects": ["**/*.css"],
