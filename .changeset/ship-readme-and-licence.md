@@ -24,3 +24,6 @@ the documentation site.
 Removes references to the internal application these components came from —
 from the readme, the gallery, and the source comments that reached the
 published type definitions and sourcemaps.
+
+Adds a component sampler image to the readme, drawn from the real token
+values so it cannot show colours the library does not ship.

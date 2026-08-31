@@ -5,7 +5,24 @@
 24 React components and 20 icons on a seven-role token system, with zero
 runtime dependencies.
 
-📖 **[Browse the gallery →](https://space-components.vercel.app)**
+<!-- Absolute URLs on purpose: npm renders this file too, and relative paths
+     resolve against the registry rather than the repository. -->
+<img alt="A lit-glass button, select, badges, slider, progress bar and folder tabs on a dark ground"
+     src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/components.svg"
+     width="100%">
+
+📖 **[Browse the gallery →](https://space-components.vercel.app)** — every
+component, its props, its tokens, and the source for each example.
+
+<!-- SCREENSHOT SLOT
+     Drop a capture of the gallery at .github/assets/gallery.png and swap the
+     comment below for the img tag. A real screenshot beats the illustration
+     above for showing what the docs actually look like.
+
+<img alt="The SpaceUI documentation gallery"
+     src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/gallery.png"
+     width="100%">
+-->
 
 ## Install
 
