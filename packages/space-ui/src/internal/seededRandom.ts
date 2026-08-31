@@ -1,4 +1,4 @@
-/** Deterministic RNG + string hash, vendored from planet-builder (the only
+/** Deterministic RNG + string hash, vendored from the source application (the only
  *  consumer inside the library is SpaceButton's star speckle). Pure,
  *  dependency-free, and part of no public API. */
 export function mulberry32(a: number): () => number {

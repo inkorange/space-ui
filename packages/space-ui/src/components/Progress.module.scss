@@ -1,5 +1,5 @@
 /* The extraction left this at `overflow: hidden` alone, because the visuals
-   lived in planet-builder's HabitabilityMeter.module.scss — so the component
+   lived in the source application's own stylesheet — so the component
    rendered an invisible zero-height div anywhere else.
 
    It now speaks the same language as Slider, which is the right reference: a

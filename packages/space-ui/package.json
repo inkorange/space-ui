@@ -7,6 +7,16 @@
     "access": "public",
     "provenance": true
   },
+  "homepage": "https://space-components.vercel.app",
+  "bugs": { "url": "https://github.com/inkorange/space-ui/issues" },
+  "keywords": [
+    "react",
+    "design-system",
+    "component-library",
+    "dark-theme",
+    "design-tokens",
+    "react-19"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/inkorange/space-ui"

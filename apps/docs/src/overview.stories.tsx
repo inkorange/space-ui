@@ -18,11 +18,10 @@ export default {
 };
 
 /**
- * The hero demo is a planet summary — the shape planet-builder actually
- * renders, not an invented device. Built from the components that appear in
- * most of the app's files (Text, Button, Heading, Badge, Card) plus a
- * Select, with nothing composed on top: the lit glass is what the package
- * gives you, so this is exactly what a consumer would ship.
+ * A real composition rather than an invented device, built from the
+ * components that carry most of the load in practice — Text, Button,
+ * Heading, Badge, Card — plus a Select, with nothing composed on top. The lit
+ * glass is what the package gives you, so this is what a consumer would ship.
  */
 const PlanetCard = () => {
   const [star, setStar] = useState("G");
@@ -246,9 +245,9 @@ export const Introduction = () => (
             className="docs-hero__lede docs-rise"
             style={{ animationDelay: "220ms" }}
           >
-            The design system behind planet-builder, extracted so other projects
-            can use it. {componentCount} React components and {iconCount} icons
-            on a seven-role token system, with zero runtime dependencies.
+            {componentCount} React components and {iconCount} icons on a
+            seven-role token system, with zero runtime dependencies — built for
+            dark, instrument-dense interfaces.
           </p>
 
           <div
@@ -435,12 +434,11 @@ export const Introduction = () => (
         <div className="docs-section__label">Provenance</div>
         <h2 className="docs-section__title">Extracted, not invented</h2>
         <p className="docs-section__intro">
-          These components ran in production in planet-builder before they
-          became a package. The extraction kept the rendered output identical —
-          a few deliberate exceptions to the spacing grid survive where parity
-          with the shipped app beat grid purity, and they are commented where
-          they occur. Two components stayed behind because they were coupled to
-          the app's framework: SceneLoadingOverlay and ImageWithFallback.
+          These components ran in production before they became a package, so
+          they arrived with their edge cases already found rather than imagined.
+          The extraction kept the rendered output identical — a few deliberate
+          exceptions to the spacing grid survive where parity with the shipped
+          app beat grid purity, and they are commented where they occur.
         </p>
         <p className="docs-section__intro" style={{ marginBottom: 0 }}>
           Source lives at{" "}

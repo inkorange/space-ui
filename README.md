@@ -2,9 +2,8 @@
 
 **Components for dark, instrument-dense interfaces.**
 
-The design system behind [planet-builder](https://github.com/inkorange/planet-builder),
-extracted so other projects can use it. 24 React components and 20 icons on a
-seven-role token system, with zero runtime dependencies.
+24 React components and 20 icons on a seven-role token system, with zero
+runtime dependencies.
 
 📖 **[Browse the gallery →](https://space-components.vercel.app)**
 
@@ -156,13 +155,12 @@ that does nothing is worse than no prop.
 
 ## Extracted, not invented
 
-These components ran in production in planet-builder before they became a
-package. The extraction kept the rendered output identical — a few deliberate
-exceptions to the spacing grid survive where parity with the shipped app beat
-grid purity, and they are commented where they occur.
+These components ran in production before they became a package, so they
+arrived with their edge cases already found rather than imagined. The
+extraction kept the rendered output identical — a few deliberate exceptions to
+the spacing grid survive where parity with the shipped app beat grid purity,
+and they are commented where they occur.
 
-Two components stayed behind because they were coupled to the app's framework:
-`SceneLoadingOverlay` and `ImageWithFallback`.
 
 ## Develop
 
