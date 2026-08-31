@@ -23,18 +23,18 @@ const spaceTheme: PrismTheme = {
     },
     {
       types: ["keyword", "operator", "boolean", "builtin"],
-      style: { color: "#baa7ff" }, // --sp-violet-11
+      style: { color: "var(--sp-accent-text)" },
     },
     {
       types: ["string", "char", "inserted", "attr-value"],
-      style: { color: "#3dd68c" }, // --sp-green-11
+      style: { color: "var(--sp-success-text)" },
     },
     {
       types: ["attr-name", "property", "constant", "symbol"],
-      style: { color: "#ffca16" }, // --sp-amber-11
+      style: { color: "var(--sp-warning-text)" },
     },
-    { types: ["number", "unit"], style: { color: "#f76b15" } }, // --sp-orange-9
-    { types: ["deleted"], style: { color: "#ff9592" } }, // --sp-red-11
+    { types: ["number", "unit"], style: { color: "var(--sp-category-orange-text)" } },
+    { types: ["deleted"], style: { color: "var(--sp-danger-text)" } },
     { types: ["selector", "atrule"], style: { color: "var(--docs-readout)" } },
   ],
 };
