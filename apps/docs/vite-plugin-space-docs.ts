@@ -40,6 +40,39 @@ export type ComponentDoc = {
    * smaller than the real one.
    */
   extendsFrom: string[];
+  /** Notable props inherited from a DOM attribute set, verified by the checker. */
+  inherited: PropDoc[];
+  /** How many props are inherited in total, most of which are not worth listing. */
+  inheritedCount: number;
+};
+
+/**
+ * Inherited DOM props worth showing as real rows. A component extending
+ * React.ButtonHTMLAttributes inherits 288 properties — 168 of them event
+ * handlers — so listing all of them buries the handful the component actually
+ * declares. These are the ones people reach for; each is only emitted if the
+ * type checker confirms it genuinely exists on that component.
+ */
+const NOTABLE_INHERITED: Record<string, string> = {
+  onClick: "Click handler. Forwarded straight to the underlying element.",
+  onChange: "Fires on every edit; pair with `value` for a controlled input.",
+  onFocus: "Fires when the element gains focus.",
+  onBlur: "Fires when the element loses focus.",
+  onKeyDown: "Key handler, for shortcuts beyond the built-in keyboard support.",
+  disabled: "Blocks interaction and removes the element from the tab order.",
+  readOnly: "Value is visible and selectable but cannot be edited.",
+  required: "Marks the field as required for form validation.",
+  type: "Native element type, e.g. `button` vs `submit`.",
+  name: "Field name used on form submission.",
+  value: "Controlled value.",
+  defaultValue: "Initial value for an uncontrolled element.",
+  placeholder: "Hint shown while the field is empty.",
+  maxLength: "Maximum accepted character count.",
+  autoFocus: "Focus on mount. Use sparingly — it moves focus without asking.",
+  tabIndex: "Tab order position.",
+  id: "Element id, e.g. to pair a control with a label's htmlFor.",
+  title: "Native tooltip text. Not a substitute for a visible label.",
+  "aria-label": "Accessible name where no visible label exists.",
 };
 
 const isSourceFile = (f: string) =>
@@ -109,14 +142,39 @@ const isExported = (node: ts.Node): boolean =>
   !!ts.getCombinedModifierFlags(node as ts.Declaration) &&
   (ts.getCombinedModifierFlags(node as ts.Declaration) & ts.ModifierFlags.Export) !== 0;
 
+/**
+ * A full Program (not a bare createSourceFile) so the checker can follow
+ * `extends` into React's type definitions. Syntax-only parsing cannot see
+ * inherited members at all, which is why onClick was missing from the tables.
+ */
+const createChecker = () => {
+  try {
+    const pkgRoot = resolve(__dirname, "../../packages/space-ui");
+    const cfgPath = resolve(pkgRoot, "tsconfig.json");
+    const cfg = ts.readConfigFile(cfgPath, ts.sys.readFile).config;
+    const parsed = ts.parseJsonConfigFileContent(cfg, ts.sys, pkgRoot);
+    const entries = readdirSync(COMPONENTS_DIR)
+      .filter(isSourceFile)
+      .map((f) => resolve(COMPONENTS_DIR, f));
+    const program = ts.createProgram(entries, parsed.options);
+    return { program, checker: program.getTypeChecker() };
+  } catch {
+    // Fall back to syntax-only extraction rather than failing the build.
+    return null;
+  }
+};
+
 const buildDocs = (): ComponentDoc[] => {
   const docs: ComponentDoc[] = [];
   const seen = new Set<string>();
+  const tc = createChecker();
 
   for (const file of readdirSync(COMPONENTS_DIR).filter(isSourceFile)) {
     const fileBase = basename(file, ".tsx");
     const code = readFileSync(resolve(COMPONENTS_DIR, file), "utf8");
-    const source = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const source =
+      tc?.program.getSourceFile(resolve(COMPONENTS_DIR, file)) ??
+      ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     const defaults = collectDefaults(source);
     const tokens = tokensIn(readStyles(fileBase));
 
@@ -151,13 +209,48 @@ const buildDocs = (): ComponentDoc[] => {
       const stem = declName.slice(0, -"Props".length);
       const name = stem === fileBase ? fileBase : `${fileBase}.${stem}`;
 
+      // Inherited props the checker confirms exist, so the table can never
+      // claim a prop the component does not actually accept.
+      let inherited: PropDoc[] = [];
+      let inheritedCount = 0;
+      if (tc && ts.isInterfaceDeclaration(node)) {
+        try {
+          const type = tc.checker.getTypeAtLocation(node.name);
+          const ownNames = new Set(props.map((pr) => pr.name));
+          const all = type.getProperties();
+          inheritedCount = all.filter((sym) => !ownNames.has(sym.getName())).length;
+          inherited = all
+            .filter(
+              (sym) =>
+                !ownNames.has(sym.getName()) &&
+                sym.getName() in NOTABLE_INHERITED,
+            )
+            .map((sym) => {
+              const t = tc.checker.getTypeOfSymbolAtLocation(sym, node.name);
+              let typeText = tc.checker.typeToString(t);
+              // React's handler types are unreadable when fully expanded.
+              if (typeText.length > 60) typeText = typeText.slice(0, 57) + "…";
+              return {
+                name: sym.getName(),
+                type: typeText,
+                required: false,
+                description: NOTABLE_INHERITED[sym.getName()],
+                defaultValue: null,
+              };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+        } catch {
+          inherited = [];
+        }
+      }
+
       const extendsFrom = ts.isInterfaceDeclaration(node)
         ? (node.heritageClauses ?? []).flatMap((h) =>
             h.types.map((t) => t.getText(source).replace(/\s+/g, " ")),
           )
         : [];
 
-      docs.push({ name, file, props, tokens, extendsFrom });
+      docs.push({ name, file, props, tokens, extendsFrom, inherited, inheritedCount });
       seen.add(name);
     });
 
@@ -204,7 +297,7 @@ const buildDocs = (): ComponentDoc[] => {
       }
       if (!props.length) return;
 
-      docs.push({ name, file, props, tokens, extendsFrom: [] });
+      docs.push({ name, file, props, tokens, extendsFrom: [], inherited: [], inheritedCount: 0 });
       seen.add(name);
     });
   }

@@ -1389,6 +1389,25 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   color: var(--docs-muted);
 }
 
+/* Inherited props are real API and belong in the table, but they are not
+   what the component adds — dimmed and grouped under a divider so the
+   component's own surface still reads first. */
+.docs-api__row--section {
+  grid-template-columns: 1fr;
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  padding: 8px 14px;
+}
+
+.docs-api__row--inherited .docs-api__prop,
+.docs-api__row--inherited .docs-api__type {
+  opacity: 0.72;
+}
+
 .docs-api__prop {
   font-family: var(--docs-font-mono);
   font-size: 12.5px;

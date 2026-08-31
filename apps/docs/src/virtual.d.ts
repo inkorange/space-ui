@@ -13,6 +13,8 @@ declare module "virtual:space-docs" {
     props: PropDoc[];
     tokens: string[];
     extendsFrom: string[];
+    inherited: PropDoc[];
+    inheritedCount: number;
   };
   export const components: ComponentDoc[];
   export const skinTokens: Record<string, string[]>;

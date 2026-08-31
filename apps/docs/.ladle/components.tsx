@@ -1,7 +1,11 @@
 import { ActionType, ModeState, type GlobalProvider } from "@ladle/react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { components as componentDocs, type ComponentDoc } from "virtual:space-docs";
+import {
+  components as componentDocs,
+  type ComponentDoc,
+  type PropDoc,
+} from "virtual:space-docs";
 import { storySource, stories } from "virtual:generated-list";
 import { Code } from "../src/docs-code";
 import "@inkorange/space-ui/tokens.css";
@@ -120,6 +124,31 @@ const describeHeritage = (clause: string): string | null => {
   return null;
 };
 
+const PropRow = ({ prop: p, inherited }: { prop: PropDoc; inherited?: boolean }) => (
+  <div
+    className={`docs-api__row${inherited ? " docs-api__row--inherited" : ""}`}
+    role="row"
+  >
+    <span className="docs-api__prop" role="cell">
+      {p.name}
+      {p.required && (
+        <span className="docs-api__required" title="Required">
+          *
+        </span>
+      )}
+    </span>
+    <span className="docs-api__type" role="cell">
+      {p.type}
+    </span>
+    <span className="docs-api__default" role="cell">
+      {p.defaultValue ?? "—"}
+    </span>
+    <span className="docs-api__desc" role="cell">
+      {p.description || <em>—</em>}
+    </span>
+  </div>
+);
+
 const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
   <div className="docs-api">
     <div className="docs-api__head">
@@ -136,26 +165,21 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
       </div>
 
       {doc.props.map((p) => (
-        <div className="docs-api__row" role="row" key={p.name}>
-          <span className="docs-api__prop" role="cell">
-            {p.name}
-            {p.required && (
-              <span className="docs-api__required" title="Required">
-                *
-              </span>
-            )}
-          </span>
-          <span className="docs-api__type" role="cell">
-            {p.type}
-          </span>
-          <span className="docs-api__default" role="cell">
-            {p.defaultValue ?? "—"}
-          </span>
-          <span className="docs-api__desc" role="cell">
-            {p.description || <em>—</em>}
-          </span>
-        </div>
+        <PropRow key={p.name} prop={p} />
       ))}
+
+      {doc.inherited.length > 0 && (
+        <>
+          <div className="docs-api__row docs-api__row--section" role="row">
+            <span>
+              Inherited — {doc.inherited.length} of {doc.inheritedCount} shown
+            </span>
+          </div>
+          {doc.inherited.map((p) => (
+            <PropRow key={p.name} prop={p} inherited />
+          ))}
+        </>
+      )}
     </div>
 
     {doc.extendsFrom.length > 0 && (
