@@ -50,7 +50,7 @@ light mode, a brand palette — is one `:root` block loaded *after* the library:
 :root {
   --sp-gray-panel: #ffffff;
   --sp-gray-text: #14161c;
-  --sp-primary-9: #7c5cff;
+  --sp-primary-solid: #7c5cff;
   --sp-font-family: "Inter", system-ui, sans-serif;
 }
 ```
@@ -110,7 +110,7 @@ overrides rather than a pass through the component tree:
 /* theme.css — loaded after tokens.css */
 :root {
   --sp-gray-panel: #14161c;
-  --sp-blue-9: #7c5cff;
+  --sp-primary-solid: #7c5cff;
   --sp-font-family: "Inter", system-ui, sans-serif;
 }
 ```

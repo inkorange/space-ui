@@ -19,7 +19,7 @@
 /* The fill is an unclassed child so a consumer can style `.progress > div`
    without needing a hashed class name — the shape planet-builder relies on. */
 .progress > div {
-  background: var(--sp-progress-fill-color, var(--sp-primary-9));
+  background: var(--sp-progress-fill-color, var(--sp-primary-solid));
   border-radius: inherit;
   transition: width 0.3s ease;
 }

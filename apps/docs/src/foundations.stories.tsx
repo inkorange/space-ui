@@ -38,38 +38,44 @@ const GRAY_ROLES = [
 
 const ACCENT_GROUPS = [
   {
-    name: "Primary — interactive, focus, selection",
+    name: "Emphasis — interactive, focus, selection",
     tokens: [
-      "--sp-primary-2",
-      "--sp-primary-8",
-      "--sp-primary-9",
-      "--sp-primary-11",
-      "--sp-primary-12",
-      "--sp-primary-a2",
-      "--sp-primary-a3",
-      "--sp-primary-a6",
+      "--sp-primary-solid",
+      "--sp-primary-text",
+      "--sp-primary-soft",
+      "--sp-primary-border",
+      "--sp-primary-glow",
+      "--sp-primary-deep",
     ],
   },
   {
     name: "Success — safe and completed states",
-    tokens: [
-      "--sp-success-9",
-      "--sp-success-11",
-      "--sp-success-a3",
-      "--sp-success-a6",
-    ],
+    tokens: ["--sp-success-solid", "--sp-success-text", "--sp-success-soft"],
   },
   {
     name: "Warning — pending and cautionary states",
-    tokens: ["--sp-warning-10", "--sp-warning-11"],
+    tokens: ["--sp-warning-text", "--sp-warning-soft"],
   },
   {
     name: "Danger — destructive and error states",
-    tokens: ["--sp-danger-9", "--sp-danger-11"],
+    tokens: ["--sp-danger-text", "--sp-danger-soft"],
   },
   {
-    name: "Accent — decorative, carries no status",
-    tokens: ["--sp-accent-11"],
+    name: "Accent and neutral — decorative, carries no status",
+    tokens: ["--sp-accent-text", "--sp-accent-soft", "--sp-muted-soft"],
+  },
+  {
+    name: "Categorical — telling data apart, where hue is the identity",
+    tokens: [
+      "--sp-category-cyan-text",
+      "--sp-category-cyan-soft",
+      "--sp-category-purple-text",
+      "--sp-category-purple-soft",
+      "--sp-category-orange-text",
+      "--sp-category-orange-soft",
+      "--sp-category-yellow-text",
+      "--sp-category-yellow-soft",
+    ],
   },
 ];
 

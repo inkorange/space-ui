@@ -23,23 +23,23 @@
   padding: 4px 8px; gap: 6px; border-radius: 4px;
 }
 
-.colorMuted   { background: var(--sp-muted-a3); color: var(--sp-gray-text-dim); }
-.colorPrimary   { background: var(--sp-primary-a3); color: var(--sp-primary-11); }
-.colorSuccess  { background: var(--sp-success-a3); color: var(--sp-success-11); }
-.colorDanger    { background: var(--sp-danger-a3); color: var(--sp-danger-11); }
-.colorWarning  { background: var(--sp-warning-a3); color: var(--sp-warning-11); }
-.colorCyan   { background: var(--sp-category-cyan-a3); color: var(--sp-category-cyan-11); }
-.colorPurple { background: var(--sp-category-purple-a3); color: var(--sp-category-purple-11); }
-.colorOrange { background: var(--sp-category-orange-a3); color: var(--sp-category-orange-11); }
-.colorAccent { background: var(--sp-accent-a3); color: var(--sp-accent-11); }
-.colorYellow { background: var(--sp-category-yellow-a3); color: var(--sp-category-yellow-11); }
+.colorMuted   { background: var(--sp-muted-soft); color: var(--sp-gray-text-dim); }
+.colorPrimary   { background: var(--sp-primary-soft); color: var(--sp-primary-text); }
+.colorSuccess  { background: var(--sp-success-soft); color: var(--sp-success-text); }
+.colorDanger    { background: var(--sp-danger-soft); color: var(--sp-danger-text); }
+.colorWarning  { background: var(--sp-warning-soft); color: var(--sp-warning-text); }
+.colorCyan   { background: var(--sp-category-cyan-soft); color: var(--sp-category-cyan-text); }
+.colorPurple { background: var(--sp-category-purple-soft); color: var(--sp-category-purple-text); }
+.colorOrange { background: var(--sp-category-orange-soft); color: var(--sp-category-orange-text); }
+.colorAccent { background: var(--sp-accent-soft); color: var(--sp-accent-text); }
+.colorYellow { background: var(--sp-category-yellow-soft); color: var(--sp-category-yellow-text); }
 
 /* Solid variant: only the color(s) actually used with variant="solid" get a
    rule (grep 'variant="solid"' — one site). Implement for that color:
    background = its -9 step solid, white text. Example for blue:
-   .solid.colorPrimary { background: var(--sp-primary-9); color: var(--sp-on-solid); }
+   .solid.colorPrimary { background: var(--sp-primary-solid); color: var(--sp-on-solid); }
    Replace/extend per what the grep finds and note it in the task report. */
-.solid.colorSuccess { background: var(--sp-success-9); color: var(--sp-on-solid); }
+.solid.colorSuccess { background: var(--sp-success-solid); color: var(--sp-on-solid); }
 
 /* Opt-in wrapping for long free-text badges (user-named systems). */
 .wrap { white-space: normal; min-width: 0; overflow-wrap: anywhere; }

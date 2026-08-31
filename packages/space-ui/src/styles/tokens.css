@@ -21,24 +21,35 @@
                                      split from border after visual review —
                                      tracks need the old solid, not 19% alpha */
 
-  /* Accents (Radix dark values, 1:1) */
-  --sp-primary-2: #111927;
-  --sp-primary-8: #2870bd;
-  --sp-primary-9: #0090ff;
-  --sp-primary-11: #70b8ff;
-  --sp-primary-12: #c2e6ff;
-  --sp-primary-a2: #1166fb18;
-  --sp-primary-a3: #0077ff3a;
-  --sp-primary-a6: #0f89fd7f;
-  --sp-warning-10: #ffd60a;
-  --sp-warning-11: #ffca16;
-  --sp-success-9: #30a46c;
-  --sp-success-11: #3dd68c;
-  --sp-success-a3: #22ff991e;
-  --sp-success-a6: #44ffaa4b;
-  --sp-danger-9: #e5484d;
-  --sp-danger-11: #ff9592;
-  --sp-accent-11: #baa7ff;
+  /* ---- Accents ------------------------------------------------------
+     Named for the job, never the hue or a step on a ramp — the treatment
+     the grays above already had. Two axes, because emphasis and status
+     answer different questions: calling "success" a secondary colour
+     would say less than "green" did.
+
+     Suffixes are roles, not tones: -solid fills a shape, -text sits on
+     the dark ground, -soft is a wash behind it, -border outlines, -glow
+     is a halo. Values are the measured Radix dark theme, so the swap was
+     visually silent. */
+
+  /* Emphasis */
+  --sp-primary-solid: #0090ff;   /* solid fill: badges, progress          */
+  --sp-primary-text: #70b8ff;    /* links and text on the dark ground     */
+  --sp-primary-soft: #0077ff3a;  /* wash behind soft badges               */
+  --sp-primary-border: #2870bd;  /* focus outlines                        */
+  --sp-primary-glow: #0f89fd7f;  /* halo on the loader                    */
+  --sp-primary-deep: #111927;    /* deepest tint, gradient ends           */
+
+  /* Status */
+  --sp-success-solid: #30a46c;
+  --sp-success-text: #3dd68c;
+  --sp-success-soft: #22ff991e;
+  --sp-warning-text: #ffca16;
+  --sp-warning-soft: #fa820022;
+  --sp-danger-text: #ff9592;
+  --sp-danger-soft: #ff173f2d;
+  --sp-accent-text: #baa7ff;
+  --sp-accent-soft: #8354fe36;
 
   /* ---- Component colours --------------------------------------------
      Values specific to one component's identity rather than a shared role.
@@ -68,11 +79,8 @@
   --sp-slider-range-from-color: rgba(70, 110, 210, 0.85);
   --sp-panel-item-highlight-color: rgba(220, 230, 255, 0.45);
 
-  /* Soft alpha fills, for badge-style backgrounds carrying a status. */
-  --sp-muted-a3: #ffffff12;
-  --sp-danger-a3: #ff173f2d;
-  --sp-warning-a3: #fa820022;
-  --sp-accent-a3: #8354fe36;
+  /* A faint neutral wash, for a badge carrying no status. */
+  --sp-muted-soft: #ffffff12;
   --sp-on-solid: #ffffff;          /* text on a solid accent fill */
 
   /* ---- Categorical --------------------------------------------------
@@ -80,14 +88,14 @@
      distinguishes rather than signals. These keep hue names on purpose:
      in a categorical scale the hue IS the identity, and a ranking word
      like "tertiary" would imply an order that does not exist. */
-  --sp-category-cyan-a3: #00befd28;
-  --sp-category-cyan-11: #4ccce6;
-  --sp-category-purple-a3: #c150ff2d;
-  --sp-category-purple-11: #d19dff;
-  --sp-category-orange-a3: #fb6a0025;
-  --sp-category-orange-11: #ffa057;
-  --sp-category-yellow-a3: #ffaa001e;
-  --sp-category-yellow-11: #f5e147;
+  --sp-category-cyan-soft: #00befd28;
+  --sp-category-cyan-text: #4ccce6;
+  --sp-category-purple-soft: #c150ff2d;
+  --sp-category-purple-text: #d19dff;
+  --sp-category-orange-soft: #fb6a0025;
+  --sp-category-orange-text: #ffa057;
+  --sp-category-yellow-soft: #ffaa001e;
+  --sp-category-yellow-text: #f5e147;
 
   /* ---- Lit-glass surfaces -------------------------------------------
      Stored as raw channels, not colours, so a component can vary alpha
