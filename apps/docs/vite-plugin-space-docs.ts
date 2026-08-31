@@ -209,6 +209,29 @@ const tokensIn = (css: string): TokenDoc[] => {
   }));
 };
 
+/**
+ * kebab-cases a component file name so it can be matched against a token's
+ * component segment: TextField → text-field, SpaceButton → space-button.
+ */
+const kebab = (name: string) =>
+  name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+/**
+ * Tokens declared in the shared skin, attributed to the component they name.
+ * `--sp-select-item-height` belongs to Select even though it lives in
+ * spaceControls.module.scss — which only works because the naming convention
+ * puts the component in the token. That is the convention earning its keep.
+ */
+const skinTokensFor = (fileBase: string): TokenDoc[] => {
+  try {
+    const css = readFileSync(resolve(STYLES_DIR, "spaceControls.module.scss"), "utf8");
+    const prefix = `--sp-${kebab(fileBase)}-`;
+    return tokensIn(css).filter((t) => t.name.startsWith(prefix));
+  } catch {
+    return [];
+  }
+};
+
 const readStyles = (fileBase: string): string => {
   try {
     return readFileSync(resolve(COMPONENTS_DIR, `${fileBase}.module.scss`), "utf8");
@@ -256,7 +279,9 @@ const buildDocs = (): ComponentDoc[] => {
       ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     const defaults = collectDefaults(source);
     const styleSource = readStyles(fileBase);
-    const tokens = tokensIn(styleSource);
+    const tokens = [...tokensIn(styleSource), ...skinTokensFor(fileBase)].sort(
+      (a, b) => a.name.localeCompare(b.name),
+    );
     const paletteTokens = paletteIn(styleSource);
 
     source.forEachChild((node) => {

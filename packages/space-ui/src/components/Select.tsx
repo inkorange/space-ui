@@ -191,7 +191,7 @@ export function Content({ className, position: _position, animated = true, child
   // Measures the trigger's rendered width (and available vertical space
   // below it) to size the listbox. useLayoutEffect so the measurement is
   // applied before the browser paints the first open frame — a plain
-  // useEffect flashes one frame with --select-trigger-width unset.
+  // useEffect flashes one frame with --_select-trigger-width unset.
   useLayoutEffect(() => {
     if (s.open && triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect();
@@ -234,7 +234,7 @@ export function Content({ className, position: _position, animated = true, child
       style={
         triggerWidth != null || maxHeight != null
           ? ({
-              ...(triggerWidth != null ? { "--select-trigger-width": `${triggerWidth}px` } : {}),
+              ...(triggerWidth != null ? { "--_select-trigger-width": `${triggerWidth}px` } : {}),
               ...(maxHeight != null ? { maxHeight: `${maxHeight}px` } : {}),
             } as React.CSSProperties)
           : undefined

@@ -6,7 +6,7 @@
 /* Registered as a real <angle> so the browser interpolates it smoothly —
    drives the `from` of every rim conic gradient so the sunlit arc can orbit
    the pill's edge instead of sitting fixed at the upper-left terminator. */
-@property --rim-angle {
+@property --_rim-angle {
   syntax: "<angle>";
   inherits: true;
   initial-value: 210deg;
@@ -21,7 +21,9 @@
   padding: 14px 32px;
   border: none;
   border-radius: 999px;
-  font: 600 15px/1 var(--font-roboto, ui-sans-serif, system-ui);
+  // Typeface comes from the system token, never a per-component hook:
+  // one place decides the font for every component.
+  font: 600 15px/1 var(--sp-font-family);
   letter-spacing: 0.02em;
   color: #eaf2ff;
   cursor: pointer;
@@ -46,7 +48,7 @@
     border-radius: inherit;
     padding: 1px;
     background: conic-gradient(
-      from var(--rim-angle),
+      from var(--_rim-angle),
       rgba(150, 190, 255, 0.95),
       rgba(150, 190, 255, 0.1) 35%,
       rgba(150, 190, 255, 0.03) 55%,
@@ -176,7 +178,7 @@
 
   &::before {
     background: conic-gradient(
-      from var(--rim-angle),
+      from var(--_rim-angle),
       rgba(255, 180, 130, 0.9),
       rgba(255, 180, 130, 0.1) 35%,
       rgba(255, 180, 130, 0.03) 55%,
@@ -226,8 +228,8 @@
 }
 
 @keyframes rimRotate {
-  from { --rim-angle: 210deg; }
-  to { --rim-angle: 570deg; }
+  from { --_rim-angle: 210deg; }
+  to { --_rim-angle: 570deg; }
 }
 
 @keyframes glintSweep {

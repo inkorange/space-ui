@@ -9,14 +9,14 @@
 /* Registered as a real <angle> so the browser interpolates it smoothly —
    drives the `from` of the rim conic gradient so the sunlit arc orbits the
    control's edge (matches SpaceButton). */
-@property --rim-angle {
+@property --_rim-angle {
   syntax: "<angle>";
   inherits: true;
   initial-value: 210deg;
 }
 
 $rim: conic-gradient(
-  from var(--rim-angle),
+  from var(--_rim-angle),
   rgba(150, 190, 255, 0.95),
   rgba(150, 190, 255, 0.1) 35%,
   rgba(150, 190, 255, 0.03) 55%,
@@ -32,13 +32,9 @@ $glass:
   linear-gradient(180deg, rgba(15, 20, 40, 0.9), rgba(5, 7, 15, 0.95));
 
 .spaceControl.spaceControl {
-  /* One shared control height across the app (size-variant-proof — overrides
-     Radix's per-size --select-trigger-height). Keep in sync with .spaceInput. */
-  --select-trigger-height: 40px;
-  /* Fixed 40px so the trigger matches the TextField exactly. The `ghost` variant
-     (used so the animated rim shows instead of Radix's surface border) ignores
-     --select-trigger-height and sizes to content (~50px), so pin it here and let
-     align-items center the label/chevron within it. */
+  /* One shared control height across the app. Fixed at 40px so a trigger
+     matches a sibling TextField exactly, with align-items centring the label
+     and chevron inside it. */
   height: 40px;
   box-sizing: border-box;
   display: inline-flex;
@@ -147,6 +143,11 @@ $glass:
   }
 }
 
+/**
+ * @token --sp-select-item-height Minimum height of each option row in a
+ *   Select's panel. Raise it for touch targets, lower it for dense lists.
+ */
+
 /* Dropdown/popover panel (e.g. Radix Select.Content): glass card with a
    quieter limb rim, squared enough to hold a list. */
 .spacePanel.spacePanel {
@@ -156,7 +157,7 @@ $glass:
   background:
     #{$glass} padding-box,
     conic-gradient(
-        from var(--rim-angle),
+        from var(--_rim-angle),
         rgba(150, 190, 255, 0.55),
         rgba(150, 190, 255, 0.08) 40%,
         rgba(150, 190, 255, 0.03) 60%,
@@ -168,7 +169,7 @@ $glass:
   color: #eaf2ff;
   /* Never exceed the trigger's width, so long items (e.g. preset
      "name - description") can't run off the screen edge on mobile. */
-  max-width: var(--select-trigger-width);
+  max-width: var(--_select-trigger-width);
 
   /* Let long item labels wrap to multiple lines instead of overflowing. Radix
      gives items a fixed single-line height, so also grow the height and add
@@ -177,7 +178,7 @@ $glass:
   :global(.spSelectItem) {
     white-space: normal;
     height: auto;
-    min-height: var(--select-item-height, 24px);
+    min-height: var(--sp-select-item-height, 24px);
     padding-top: 6px;
     padding-bottom: 6px;
     line-height: 1.3;
@@ -200,10 +201,8 @@ $glass:
    applied to a Radix TextField.Root. The inner <input> is made transparent so
    our glass shows through instead of Radix's default field surface/border. */
 .spaceInput.spaceInput {
-  /* Shared control height (size-variant-proof — overrides Radix's per-size
-     --text-field-height) so every input matches the selects. Keep in sync with
-     .spaceControl. 4px vertical inset replaces Radix's 1px root padding. */
-  --text-field-height: 40px;
+  /* Matches .spaceControl's 40px so inputs and selects line up; the 4px
+     vertical inset replaces Radix's 1px root padding. */
   border: 1px solid transparent;
   border-radius: 999px;
   animation: rimRotate 12s linear infinite;
@@ -258,8 +257,8 @@ $glass:
 }
 
 @keyframes rimRotate {
-  from { --rim-angle: 210deg; }
-  to { --rim-angle: 570deg; }
+  from { --_rim-angle: 210deg; }
+  to { --_rim-angle: 570deg; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -280,7 +279,6 @@ $glass:
    keeps it in the same family as the buttons and cards without pretending to
    be a pill. */
 .spaceTextArea.spaceTextArea {
-  --text-field-height: auto;
   height: auto;
   min-height: 92px;
   border-radius: 16px;

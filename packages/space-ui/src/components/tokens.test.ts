@@ -74,6 +74,18 @@ describe("design tokens", () => {
     }
   });
 
+  // No component may pin a typeface of its own: the font is a system decision
+  // made once in tokens.css. This caught SpaceButton reading --font-roboto.
+  it("no component introduces its own font hook", () => {
+    for (const file of walk(SCSS_ROOT)) {
+      const css = readFileSync(file, "utf8");
+      const hooks = [...css.matchAll(/var\(\s*(--[a-zA-Z0-9-]*font[a-zA-Z0-9-]*)/g)]
+        .map((m) => m[1])
+        .filter((t) => t !== "--sp-font-family" && !/^--sp-font-(xs|sm|md|xl)$/.test(t));
+      expect(hooks, `${file} defines its own font hook: ${hooks.join(", ")}`).toHaveLength(0);
+    }
+  });
+
   it("component tokens follow --sp-<component>-<modifier>-<type>", () => {
     const TYPES = ["size", "color", "timer", "angle", "width", "height"];
     for (const file of walk(SCSS_ROOT)) {

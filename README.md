@@ -104,12 +104,16 @@ components read which token.
 
 Almost nothing sets a `font-family` — the library inherits whatever your app
 already loaded, and nothing renders through a portal, so inheritance reaches
-every component. Two exceptions pin a stack, and both are overridable:
+every component. Two components pin a stack (`Badge` and `SpaceButton`), and
+both read the same token:
 
-- **`Badge`** reads `--sp-font-family`, defaulting to the system stack it
-  inherited from Radix, which deliberately kept badges off the app font.
-- **`SpaceButton`** reads `--font-roboto`, falling back to `ui-sans-serif,
-  system-ui`. Define that property in your app to bring buttons onto your font.
+```css
+:root { --sp-font-family: "Inter", system-ui, sans-serif; }
+```
+
+There is deliberately no per-component font hook. Typeface is a system-level
+decision made in one place, and a test fails the build if a component
+introduces its own.
 
 ## The look is not optional
 

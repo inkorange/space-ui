@@ -211,10 +211,10 @@ export const TypeScale = () => (
       <p className="docs-section__intro">
         Almost nothing declares a font-family, and nothing in the library
         renders through a portal, so your app's font reaches components by plain
-        inheritance. Two pin a stack instead, and both read a custom property so
-        you can move them: Badge uses <code>--sp-font-family</code>, and
-        SpaceButton uses <code>--font-roboto</code> — the latter is a hook for
-        the host app to fill, which is why it carries no component prefix.
+        inheritance. Two pin a stack instead — Badge and SpaceButton — and both
+        read <code>--sp-font-family</code>. There is deliberately no
+        per-component font hook: typeface is a system decision made in one
+        place, and a test fails the build if a component introduces its own.
       </p>
 
       <div className="docs-swatches">
