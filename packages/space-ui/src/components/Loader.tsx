@@ -1,9 +1,9 @@
 "use client";
 
 import { cx } from "./propShared";
-import styles from "./SpaceLoader.module.scss";
+import styles from "./Loader.module.scss";
 
-export interface SpaceLoaderProps {
+export interface LoaderProps {
   /** sm = inline/compact spots. md = default. lg = full-panel takeovers. */
   size?: "sm" | "md" | "lg";
   /** Visible caption under the spinner; also doubles as the accessible name. */
@@ -17,7 +17,7 @@ export interface SpaceLoaderProps {
  * so it composes cleanly wherever a lazy chunk or async panel needs a
  * space-themed loading state (see SurfaceView's dynamic-import loader).
  */
-export function SpaceLoader({ size = "md", label, className }: SpaceLoaderProps) {
+export function Loader({ size = "md", label, className }: LoaderProps) {
   return (
     <div
       className={cx(styles.wrap, styles[size], className)}

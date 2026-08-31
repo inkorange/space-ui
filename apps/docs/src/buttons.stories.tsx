@@ -1,4 +1,4 @@
-import { SpaceButton, SpaceLoader, IconToggle, Progress } from "@inkorange/space-ui";
+import { Button, Loader, IconToggle, Progress } from "@inkorange/space-ui";
 import { useState } from "react";
 
 export default {
@@ -8,20 +8,21 @@ export default {
 export const Buttons = () => (
   <div style={{ display: "grid", gap: 16 }}>
     <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-      <SpaceButton>Build Planet</SpaceButton>
-      <SpaceButton size="sm">Small</SpaceButton>
-      <SpaceButton size="lg">Large</SpaceButton>
-      <SpaceButton size="micro" aria-label="Micro">M</SpaceButton>
-      <SpaceButton ember>Ember</SpaceButton>
-      <SpaceButton iconOnly aria-label="Share">↗</SpaceButton>
-      <SpaceButton disabled>Disabled</SpaceButton>
+      <Button>Build Planet</Button>
+      <Button size="sm">Small</Button>
+      <Button size="lg">Large</Button>
+      <Button size="micro" aria-label="Micro">M</Button>
+      <Button ember>Ember</Button>
+      <Button iconOnly aria-label="Share">↗</Button>
+      <Button disabled>Disabled</Button>
     </div>
 
-    <SpaceButton fullWidth>Full width</SpaceButton>
+    <Button fullWidth>Full width</Button>
   </div>
 );
 
-export const Loader = () => <SpaceLoader label="Terraforming…" />;
+export const LoaderStory = () => <Loader label="Terraforming…" />;
+LoaderStory.storyName = "Loader";
 
 export const ProgressStory = () => (
   <div style={{ display: "grid", gap: 12, width: 320 }}>
@@ -60,7 +61,7 @@ Buttons.meta = {
     "The primary action control. Four sizes, the ember variant for destructive-ish actions, icon-only, disabled and full-width. Sizing is driven by the spacing scale, so buttons stay on the grid wherever they land.",
 };
 
-Loader.meta = {
+LoaderStory.meta = {
   description:
     "An indeterminate progress indicator for work with no measurable end. Pair it with a label that names the work, not the state.",
 };

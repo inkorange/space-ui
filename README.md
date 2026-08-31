@@ -23,13 +23,13 @@ pnpm add @inkorange/space-ui
 // once, at your app entry — one import, defaults included
 import "@inkorange/space-ui/styles.css";
 
-import { SpaceButton, Card, Heading } from "@inkorange/space-ui";
+import { Button, Card, Heading } from "@inkorange/space-ui";
 
 export function Planet() {
   return (
     <Card>
       <Heading size="4">Kepler-442b</Heading>
-      <SpaceButton>Build planet</SpaceButton>
+      <Button>Build planet</Button>
     </Card>
   );
 }
@@ -123,7 +123,7 @@ components read which token.
 
 Almost nothing sets a `font-family` — the library inherits whatever your app
 already loaded, and nothing renders through a portal, so inheritance reaches
-every component. Two components pin a stack (`Badge` and `SpaceButton`), and
+every component. Two components pin a stack (`Badge` and `Button`), and
 both read the same token:
 
 ```css
@@ -144,8 +144,8 @@ What you can turn off is the **motion**, because ambient loops that suit a hero
 button distract in a dense form or a long list. One prop, one meaning:
 
 ```tsx
-<SpaceButton>Build planet</SpaceButton>                  {/* ambient motion, the default */}
-<SpaceButton animated={false}>Build planet</SpaceButton> {/* same look, no loops */}
+<Button>Build planet</Button>                  {/* ambient motion, the default */}
+<Button animated={false}>Build planet</Button> {/* same look, no loops */}
 
 <TextField.Root animated={false} />
 <Select.Trigger animated={false} />

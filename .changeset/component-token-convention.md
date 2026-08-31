@@ -2,10 +2,10 @@
 "@inkorange/space-ui": major
 ---
 
-Establish the component-token convention and apply it to SpaceLoader.
+Establish the component-token convention and apply it to Loader.
 
 Component tokens now follow `--sp-<component>-<modifier>-<type>`, where type
-is one of size, color, timer, angle, width, height. SpaceLoader's three
+is one of size, color, timer, angle, width, height. Loader's three
 become `--sp-loader-orbit-size`, `--sp-loader-planet-size` and
 `--sp-loader-moon-size`.
 

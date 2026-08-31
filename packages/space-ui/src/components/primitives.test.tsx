@@ -28,7 +28,7 @@ import * as Dialog from "./Dialog";
 import * as AlertDialog from "./AlertDialog";
 import * as DropdownMenu from "./DropdownMenu";
 import * as Tabs from "./Tabs";
-import { SpaceButton } from "./SpaceButton";
+import { Button } from "./Button";
 import * as Icons from "./icons";
 
 const html = (el: ReactElement) => renderToStaticMarkup(el);
@@ -509,7 +509,7 @@ describe("icons", () => {
  */
 describe("animated prop", () => {
   const cases: Array<[string, (animated?: boolean) => ReactElement]> = [
-    ["SpaceButton", (a) => <SpaceButton animated={a}>go</SpaceButton>],
+    ["Button", (a) => <Button animated={a}>go</Button>],
     ["Select.Trigger", (a) => (
       <Select.Root value="x" onValueChange={() => {}}>
         <Select.Trigger animated={a} />

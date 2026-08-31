@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, AlertDialog, DropdownMenu, Tabs, Tooltip, SpaceButton, Text } from "@inkorange/space-ui";
+import { Dialog, AlertDialog, DropdownMenu, Tabs, Tooltip, Button, Text } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Overlays",
@@ -7,12 +7,12 @@ export default {
 
 export const DialogStory = () => (
   <Dialog.Root>
-    <Dialog.Trigger><SpaceButton>Open dialog</SpaceButton></Dialog.Trigger>
+    <Dialog.Trigger><Button>Open dialog</Button></Dialog.Trigger>
     <Dialog.Content size="4" maxWidth="480px">
       <Dialog.Title>Add to a star system</Dialog.Title>
       <Dialog.Description>Pick a system for this planet to call home.</Dialog.Description>
       <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "flex-end" }}>
-        <Dialog.Close><SpaceButton size="sm">Done</SpaceButton></Dialog.Close>
+        <Dialog.Close><Button size="sm">Done</Button></Dialog.Close>
       </div>
     </Dialog.Content>
   </Dialog.Root>
@@ -25,13 +25,13 @@ DialogStory.meta = {
 
 export const AlertDialogStory = () => (
   <AlertDialog.Root>
-    <AlertDialog.Trigger><SpaceButton>Delete planet</SpaceButton></AlertDialog.Trigger>
+    <AlertDialog.Trigger><Button>Delete planet</Button></AlertDialog.Trigger>
     <AlertDialog.Content>
       <AlertDialog.Title>Delete this planet?</AlertDialog.Title>
       <AlertDialog.Description>This cannot be undone.</AlertDialog.Description>
       <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "flex-end" }}>
-        <AlertDialog.Cancel><SpaceButton size="sm">Cancel</SpaceButton></AlertDialog.Cancel>
-        <AlertDialog.Action><SpaceButton size="sm">Delete</SpaceButton></AlertDialog.Action>
+        <AlertDialog.Cancel><Button size="sm">Cancel</Button></AlertDialog.Cancel>
+        <AlertDialog.Action><Button size="sm">Delete</Button></AlertDialog.Action>
       </div>
     </AlertDialog.Content>
   </AlertDialog.Root>
@@ -44,7 +44,7 @@ AlertDialogStory.meta = {
 
 export const DropdownStory = () => (
   <DropdownMenu.Root>
-    <DropdownMenu.Trigger><SpaceButton>Menu</SpaceButton></DropdownMenu.Trigger>
+    <DropdownMenu.Trigger><Button>Menu</Button></DropdownMenu.Trigger>
     <DropdownMenu.Content>
       <DropdownMenu.Item onSelect={() => {}}>Rename</DropdownMenu.Item>
       <DropdownMenu.Item onSelect={() => {}}>Share</DropdownMenu.Item>
@@ -97,7 +97,7 @@ TabsStory.meta = {
 
 export const TooltipStory = () => (
   <Tooltip label="Full screen" side="top">
-    <SpaceButton size="sm">Hover me</SpaceButton>
+    <Button size="sm">Hover me</Button>
   </Tooltip>
 );
 TooltipStory.storyName = "Tooltip";

@@ -5,7 +5,7 @@ import {
   Heading,
   Select,
   Separator,
-  SpaceButton,
+  Button,
   Text,
 } from "@inkorange/space-ui";
 import { Code } from "./docs-code";
@@ -20,7 +20,7 @@ export default {
 /**
  * The hero demo is a planet summary — the shape planet-builder actually
  * renders, not an invented device. Built from the components that appear in
- * most of the app's files (Text, SpaceButton, Heading, Badge, Card) plus a
+ * most of the app's files (Text, Button, Heading, Badge, Card) plus a
  * Select, with nothing composed on top: the lit glass is what the package
  * gives you, so this is exactly what a consumer would ship.
  */
@@ -72,8 +72,8 @@ const PlanetCard = () => {
       </div>
 
       <div className="docs-demo__actions">
-        <SpaceButton>Build planet</SpaceButton>
-        <SpaceButton size="sm">View system</SpaceButton>
+        <Button>Build planet</Button>
+        <Button size="sm">View system</Button>
       </div>
     </Card>
   );
@@ -155,7 +155,7 @@ const MotionDemo = () => {
           <span className="docs-skindemo__note">default</span>
         </header>
         <div className="docs-skindemo__stack">
-          <SpaceButton>Build planet</SpaceButton>
+          <Button>Build planet</Button>
           <Select.Root value={liveStar} onValueChange={setLiveStar}>
             <Select.Trigger style={{ minWidth: 160 }} />
             <Select.Content>
@@ -167,7 +167,7 @@ const MotionDemo = () => {
             </Select.Content>
           </Select.Root>
         </div>
-        <pre className="docs-skindemo__code">&lt;SpaceButton /&gt;</pre>
+        <pre className="docs-skindemo__code">&lt;Button /&gt;</pre>
       </section>
 
       <section className="docs-skindemo__pane">
@@ -176,7 +176,7 @@ const MotionDemo = () => {
           <span className="docs-skindemo__note">animated={"{false}"}</span>
         </header>
         <div className="docs-skindemo__stack">
-          <SpaceButton animated={false}>Build planet</SpaceButton>
+          <Button animated={false}>Build planet</Button>
           <Select.Root value={stillStar} onValueChange={setStillStar}>
             <Select.Trigger animated={false} style={{ minWidth: 160 }} />
             <Select.Content animated={false}>
@@ -189,7 +189,7 @@ const MotionDemo = () => {
           </Select.Root>
         </div>
         <pre className="docs-skindemo__code">
-          &lt;SpaceButton animated={"{false}"} /&gt;
+          &lt;Button animated={"{false}"} /&gt;
         </pre>
       </section>
     </div>
@@ -276,7 +276,7 @@ export const Introduction = () => (
               guess whether it is a screenshot, a mock, or the real thing. */}
           <p className="docs-hero__caption">
             Live components — Card, Heading, Text, Badge, Separator, Select
-            and SpaceButton. Nothing composed on: this is what you get from the
+            and Button. Nothing composed on: this is what you get from the
             package.
           </p>
         </div>
@@ -410,10 +410,10 @@ export const Introduction = () => (
         <Code
           label="Stilling the motion"
           code={`/* ambient motion, the default */
-<SpaceButton>Build planet</SpaceButton>
+<Button>Build planet</Button>
 
 /* same look, no loops */
-<SpaceButton animated={false}>Build planet</SpaceButton>
+<Button animated={false}>Build planet</Button>
 <TextField.Root animated={false} />
 <Select.Trigger animated={false} />`}
         />
@@ -520,13 +520,13 @@ import "${packageName}/styles.css";`}
         <h2 className="docs-section__title">Use a component</h2>
         <Code
           label="Planet.tsx"
-          code={`import { SpaceButton, Card, Heading } from "${packageName}";
+          code={`import { Button, Card, Heading } from "${packageName}";
 
 export function Planet() {
   return (
     <Card>
       <Heading size="4">Kepler-442b</Heading>
-      <SpaceButton>Build planet</SpaceButton>
+      <Button>Build planet</Button>
     </Card>
   );
 }`}

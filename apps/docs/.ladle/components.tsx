@@ -109,7 +109,7 @@ const componentsInSource = (src: string): ComponentDoc[] => {
 
 /**
  * Turns a heritage clause into something a reader can act on. The tables list
- * only a component's own props, so without this a SpaceButton looks like it
+ * only a component's own props, so without this a Button looks like it
  * takes five props and no onClick — when in fact it forwards every standard
  * button attribute.
  */
