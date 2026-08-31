@@ -14,6 +14,7 @@ declare module "virtual:space-docs" {
   };
   export type ComponentDoc = {
     name: string;
+    description: string;
     file: string;
     props: PropDoc[];
     tokens: TokenDoc[];

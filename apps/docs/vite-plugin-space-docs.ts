@@ -27,8 +27,10 @@ export type PropDoc = {
 };
 
 export type ComponentDoc = {
-  /** "SpaceButton", or "Select.Trigger" for a namespaced part. */
+  /** "Button", or "Select.Trigger" for a namespaced part. */
   name: string;
+  /** JSDoc written above the component itself — what it is, not what it takes. */
+  description: string;
   file: string;
   props: PropDoc[];
   /** Component-scoped custom properties a consumer can override. */
@@ -221,19 +223,38 @@ const kebab = (name: string) =>
   name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 /**
- * Tokens declared in the shared skin, attributed to the component they name.
- * `--sp-select-item-height` belongs to Select even though it lives in
- * spaceControls.module.scss — which only works because the naming convention
- * puts the component in the token. That is the convention earning its keep.
+ * A component's tokens, wherever they are declared.
+ *
+ * Component colours live in tokens.css so a single file holds the whole
+ * palette — which means "not in tokens.css" cannot be the test for what
+ * belongs to a component, or every relocated token vanishes from its own
+ * table. The naming convention is the test instead: `--sp-tabs-*` belongs to
+ * Tabs no matter which file declares it. That is the convention paying for
+ * itself.
  */
-const skinTokensFor = (fileBase: string): TokenDoc[] => {
-  try {
-    const css = readFileSync(resolve(STYLES_DIR, "spaceControls.module.scss"), "utf8");
-    const prefix = `--sp-${kebab(fileBase)}-`;
-    return tokensIn(css).filter((t) => t.name.startsWith(prefix));
-  } catch {
-    return [];
+const declaredTokensFor = (fileBase: string): TokenDoc[] => {
+  const prefix = `--sp-${kebab(fileBase)}-`;
+  const out = new Map<string, TokenDoc>();
+
+  for (const file of ["tokens.css", "spaceControls.module.scss"]) {
+    try {
+      const css = readFileSync(resolve(STYLES_DIR, file), "utf8");
+      const described = tokenDescriptions(css);
+      for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:\s*([^;]+);/gm)) {
+        const [, name, value] = m;
+        if (!name.startsWith(prefix)) continue;
+        const flat = value.replace(/\s+/g, " ").trim();
+        out.set(name, {
+          name,
+          description: described.get(name) ?? "",
+          defaults: [flat.length > 48 ? `${flat.slice(0, 45)}…` : flat],
+        });
+      }
+    } catch {
+      /* ignore a missing file */
+    }
   }
+  return [...out.values()];
 };
 
 const readStyles = (fileBase: string): string => {
@@ -242,6 +263,47 @@ const readStyles = (fileBase: string): string => {
   } catch {
     return "";
   }
+};
+
+/** `TriggerProps` in Select.tsx documents the `Trigger` export. */
+const stemName = (declName: string, fileBase: string) => {
+  const stem = declName.slice(0, -"Props".length);
+  return stem === fileBase ? fileBase : stem;
+};
+
+/**
+ * JSDoc written above the component itself. Prop docs answer "what does this
+ * take"; this answers "what is it and when do I reach for it", which a table
+ * of props cannot say.
+ */
+const findDeclaration = (source: ts.SourceFile, exportName: string): ts.Node | null => {
+  let found: ts.Node | null = null;
+  source.forEachChild((node) => {
+    if (found) return;
+    if (ts.isFunctionDeclaration(node) && node.name?.text === exportName) found = node;
+    else if (ts.isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && ts.isIdentifier(decl.name) && decl.name.text === exportName) found = node;
+    }
+  });
+  return found;
+};
+
+const componentDoc = (source: ts.SourceFile, exportName: string): string => {
+  let found = "";
+  source.forEachChild((node) => {
+    if (found) return;
+    if (ts.isFunctionDeclaration(node) && node.name?.text === exportName) {
+      found = docOf(node);
+    } else if (ts.isVariableStatement(node)) {
+      const decl = node.declarationList.declarations[0];
+      if (decl && ts.isIdentifier(decl.name) && decl.name.text === exportName) {
+        // forwardRef(...) keeps its doc on the statement, not the declarator.
+        found = docOf(node) || docOf(decl);
+      }
+    }
+  });
+  return found;
 };
 
 const isExported = (node: ts.Node): boolean =>
@@ -283,9 +345,12 @@ const buildDocs = (): ComponentDoc[] => {
       ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     const defaults = collectDefaults(source);
     const styleSource = readStyles(fileBase);
-    const tokens = [...tokensIn(styleSource), ...skinTokensFor(fileBase)].sort(
-      (a, b) => a.name.localeCompare(b.name),
-    );
+    const described = tokenDescriptions(styleSource);
+    const tokens = [...tokensIn(styleSource), ...declaredTokensFor(fileBase)]
+      // A description written beside the component wins over none elsewhere.
+      .map((t) => ({ ...t, description: t.description || described.get(t.name) || "" }))
+      .filter((t, i, all) => all.findIndex((o) => o.name === t.name) === i)
+      .sort((a, b) => a.name.localeCompare(b.name));
     const paletteTokens = paletteIn(styleSource);
 
     source.forEachChild((node) => {
@@ -357,6 +422,15 @@ const buildDocs = (): ComponentDoc[] => {
         }
       }
 
+      // A `*Props` interface is not proof of a public component: Tooltip has
+      // an internal TriggerProps for a helper it never exports, which was
+      // being published in the reference as though it were API.
+      const exportName = stemName(declName, fileBase);
+      const decl = findDeclaration(source, exportName);
+      if (!decl || !isExported(decl)) return;
+
+      const description = componentDoc(source, exportName);
+
       const extendsFrom = ts.isInterfaceDeclaration(node)
         ? (node.heritageClauses ?? []).flatMap((h) =>
             h.types.map((t) => t.getText(source).replace(/\s+/g, " ")),
@@ -364,7 +438,7 @@ const buildDocs = (): ComponentDoc[] => {
         : [];
 
       docs.push({
-        name, file, props, tokens, paletteTokens,
+        name, description, file, props, tokens, paletteTokens,
         extendsFrom, inherited, inheritedCount,
       });
       seen.add(name);
@@ -393,14 +467,30 @@ const buildDocs = (): ComponentDoc[] => {
         }
       }
 
+      // Several components declare props as an INTERSECTION — an inline
+      // literal plus a DOM attribute set, e.g. `{ value: string } &
+      // ButtonHTMLAttributes<HTMLButtonElement>`. Handling only the plain
+      // literal dropped those components from the reference entirely.
       const typeNode = params?.[0]?.type;
-      if (!fnName || !typeNode || !ts.isTypeLiteralNode(typeNode)) return;
+      if (!fnName || !typeNode) return;
+
+      const literals: ts.TypeLiteralNode[] = [];
+      const intersected: string[] = [];
+      if (ts.isTypeLiteralNode(typeNode)) {
+        literals.push(typeNode);
+      } else if (ts.isIntersectionTypeNode(typeNode)) {
+        for (const part of typeNode.types) {
+          if (ts.isTypeLiteralNode(part)) literals.push(part);
+          else intersected.push(part.getText(source).replace(/\s+/g, " "));
+        }
+      }
+      if (!literals.length) return;
 
       const name = fnName === fileBase ? fileBase : `${fileBase}.${fnName}`;
       if (seen.has(name)) return;
 
       const props: PropDoc[] = [];
-      for (const member of typeNode.members) {
+      for (const member of literals.flatMap((l) => [...l.members])) {
         if (!ts.isPropertySignature(member) || !member.name) continue;
         const propName = member.name.getText(source).replace(/^["']|["']$/g, "");
         props.push({
@@ -414,8 +504,8 @@ const buildDocs = (): ComponentDoc[] => {
       if (!props.length) return;
 
       docs.push({
-        name, file, props, tokens, paletteTokens,
-        extendsFrom: [], inherited: [], inheritedCount: 0,
+        name, description: docOf(node), file, props, tokens, paletteTokens,
+        extendsFrom: intersected, inherited: [], inheritedCount: 0,
       });
       seen.add(name);
     });

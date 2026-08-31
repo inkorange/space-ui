@@ -1379,6 +1379,16 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   color: var(--docs-muted);
 }
 
+.docs-api__about {
+  margin: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--docs-hairline);
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+}
+
 .docs-api__table {
   display: grid;
   background: var(--docs-hairline);
@@ -1759,6 +1769,25 @@ html[data-docs-page="marketing"] .ladle-addons {
    a consumer would do it: a class on an ancestor, not an inline style. */
 .story-wide-select {
   --sp-select-trigger-max-width: 34rem;
+}
+
+/* A hard width rather than a cap, to show the label ellipsizing. */
+.story-narrow-select .spSelectTrigger {
+  width: 220px;
+}
+
+/* The Tabs story's content region. Its background matches
+   --sp-tabs-surface-color, which is exactly what the active tab recreates to
+   break through this border — set them together or the seam shows. */
+.docs-tabs-demo {
+  max-width: 520px;
+}
+
+.docs-tabs-demo__panel {
+  background: var(--sp-tabs-surface-color);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 0 0 12px 12px;
+  padding: 20px;
 }
 
 /* ============================================================

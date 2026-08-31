@@ -94,17 +94,52 @@ const parseStoryId = (id: string) => {
 };
 
 /**
- * Which documented components a story actually renders, read from the story's
- * own source. Deriving it beats a hand-maintained list on every story: a new
- * story gets its API table for free, and one can never fall out of date with
- * what the story renders.
+ * Which components a story is ABOUT — not merely which ones it renders.
+ *
+ * A story reaches for other components as scaffolding: the Tabs story puts
+ * Text inside a panel because a tab needs contents. Documenting those would
+ * turn every page into a partial copy of its neighbours, so the set is
+ * narrowed to components the story is named for.
+ *
+ * A story can state it outright with `meta.components` where the name does
+ * not carry it — "Text sizes" is about Text, and nothing in the name says so.
  */
-const componentsInSource = (src: string): ComponentDoc[] => {
-  const tags = new Set<string>();
+const componentsInSource = (
+  src: string,
+  storyId: string,
+  declared?: string[],
+): ComponentDoc[] => {
+  const rendered = new Set<string>();
   for (const m of src.matchAll(/<([A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)?)/g)) {
-    tags.add(m[1]);
+    rendered.add(m[1]);
   }
-  return componentDocs.filter((doc) => tags.has(doc.name));
+
+  if (declared) {
+    return componentDocs.filter((doc) =>
+      declared.some((d) => doc.name === d || doc.name.startsWith(`${d}.`)),
+    );
+  }
+
+  // "components--overlays--tabs" -> "tabs" -> Tabs, Tabs.Trigger, …
+  // The trailing plural is dropped so "buttons" finds Button.
+  const leaf = storyId.split("--").pop() ?? "";
+  const pascal = leaf
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("");
+  const candidates = [pascal, pascal.replace(/s$/, "")].filter(Boolean);
+
+  const owned = componentDocs.filter(
+    (doc) =>
+      rendered.has(doc.name) &&
+      candidates.some((c) => doc.name === c || doc.name.startsWith(`${c}.`)),
+  );
+
+  // A story whose name matches nothing documents everything it renders — an
+  // empty table is worse than a broad one.
+  return owned.length
+    ? owned
+    : componentDocs.filter((doc) => rendered.has(doc.name));
 };
 
 /**
@@ -164,6 +199,11 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
       <span className="docs-api__name">{`<${doc.name}>`}</span>
       <span className="docs-api__file">{doc.file}</span>
     </div>
+
+    {/* What the component IS. A prop table can only say what it takes. */}
+    {doc.description && (
+      <p className="docs-api__about">{doc.description}</p>
+    )}
 
     <div className="docs-api__table" role="table">
       <div className="docs-api__row docs-api__row--head" role="row">
@@ -270,7 +310,7 @@ export const Provider: GlobalProvider = ({
   const { name, levels } = parseStoryId(globalState.story);
 
   const meta = storyMeta as
-    | { description?: string; fullBleed?: boolean }
+    | { description?: string; fullBleed?: boolean; components?: string[] }
     | undefined;
 
   // Overview and Foundations render as full pages; component stories render
@@ -320,7 +360,9 @@ export const Provider: GlobalProvider = ({
     return whole.split("\n").slice(loc.locStart - 1, loc.locEnd).join("\n").trim();
   })();
 
-  const docs = source ? componentsInSource(source) : [];
+  const docs = source
+    ? componentsInSource(source, globalState.story, meta?.components)
+    : [];
 
   return (
     <>
