@@ -103,6 +103,23 @@ const componentsInSource = (src: string): ComponentDoc[] => {
   return componentDocs.filter((doc) => tags.has(doc.name));
 };
 
+/**
+ * Turns a heritage clause into something a reader can act on. The tables list
+ * only a component's own props, so without this a SpaceButton looks like it
+ * takes five props and no onClick — when in fact it forwards every standard
+ * button attribute.
+ */
+const describeHeritage = (clause: string): string | null => {
+  const dom = /(\w+)HTMLAttributes<(\w+)>/.exec(clause);
+  if (dom) {
+    const omitted = [...clause.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    const base = `every standard ${dom[1].toLowerCase()} attribute — onClick, id, aria-*, data-*`;
+    return omitted.length ? `${base} (except ${omitted.join(", ")})` : base;
+  }
+  if (clause === "SpacingProps") return "margin and padding steps — m, mt, mb, p, pb";
+  return null;
+};
+
 const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
   <div className="docs-api">
     <div className="docs-api__head">
@@ -140,6 +157,23 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => (
         </div>
       ))}
     </div>
+
+    {doc.extendsFrom.length > 0 && (
+      <div className="docs-api__extends">
+        <span className="docs-api__tokenlabel">Also accepts</span>
+        <ul>
+          {doc.extendsFrom.map((clause) => {
+            const note = describeHeritage(clause);
+            return (
+              <li key={clause}>
+                <code>{clause}</code>
+                {note && <span> — {note}</span>}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
 
     {doc.tokens.length > 0 && (
       <div className="docs-api__tokens">

@@ -33,6 +33,13 @@ export type ComponentDoc = {
   props: PropDoc[];
   /** Tokens the component's own stylesheet references. */
   tokens: string[];
+  /**
+   * What the props interface extends. Most components pass through a DOM
+   * attribute set, so onClick/disabled/type/aria-* are all accepted but
+   * appear nowhere in `props` — without this the tables imply an API far
+   * smaller than the real one.
+   */
+  extendsFrom: string[];
 };
 
 const isSourceFile = (f: string) =>
@@ -144,7 +151,13 @@ const buildDocs = (): ComponentDoc[] => {
       const stem = declName.slice(0, -"Props".length);
       const name = stem === fileBase ? fileBase : `${fileBase}.${stem}`;
 
-      docs.push({ name, file, props, tokens });
+      const extendsFrom = ts.isInterfaceDeclaration(node)
+        ? (node.heritageClauses ?? []).flatMap((h) =>
+            h.types.map((t) => t.getText(source).replace(/\s+/g, " ")),
+          )
+        : [];
+
+      docs.push({ name, file, props, tokens, extendsFrom });
       seen.add(name);
     });
 
@@ -191,7 +204,7 @@ const buildDocs = (): ComponentDoc[] => {
       }
       if (!props.length) return;
 
-      docs.push({ name, file, props, tokens });
+      docs.push({ name, file, props, tokens, extendsFrom: [] });
       seen.add(name);
     });
   }

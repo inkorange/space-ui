@@ -12,6 +12,7 @@ declare module "virtual:space-docs" {
     file: string;
     props: PropDoc[];
     tokens: string[];
+    extendsFrom: string[];
   };
   export const components: ComponentDoc[];
   export const skinTokens: Record<string, string[]>;

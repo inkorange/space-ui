@@ -1429,6 +1429,39 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   font-style: normal;
 }
 
+/* Inherited props matter as much as declared ones — a reader who cannot see
+   that onClick is accepted will assume it is not. */
+.docs-api__extends {
+  padding: 10px 14px;
+  background: var(--docs-raised);
+  border-top: 1px solid var(--docs-hairline);
+}
+
+.docs-api__extends ul {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.docs-api__extends li {
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--docs-text-dim);
+}
+
+.docs-api__extends code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
 .docs-api__tokens {
   display: flex;
   flex-wrap: wrap;
