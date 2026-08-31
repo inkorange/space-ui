@@ -1,6 +1,6 @@
 {
   "name": "@inkorange/space-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SpaceUI — a space-themed React component library and design system",
   "license": "MIT",
   "publishConfig": {
@@ -8,7 +8,9 @@
     "provenance": true
   },
   "homepage": "https://space-components.vercel.app",
-  "bugs": { "url": "https://github.com/inkorange/space-ui/issues" },
+  "bugs": {
+    "url": "https://github.com/inkorange/space-ui/issues"
+  },
   "keywords": [
     "react",
     "design-system",
