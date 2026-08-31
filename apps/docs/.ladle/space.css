@@ -1,3 +1,1721 @@
-html, body, .ladle-main { background: #111113 !important; color: #e7ecf5; }
-.space-stage { min-height: 100%; padding: 24px; font-family: system-ui, sans-serif; }
-.ladle-aside { background: #17171a; }
+/* ============================================================
+   SpaceUI gallery chrome.
+
+   Design note — the one rule everything else follows:
+
+   The STAGE never lies. Components were designed against the
+   space-dark ground (#111113), so the surface they render on
+   here is exactly that value and carries no gradient, texture,
+   or tint. Every ounce of visual interest lives in the CHROME —
+   the sidebar, the seam, the story frame — which is deliberately
+   a shade deeper than the stage so specimens sit *in* light
+   rather than on decoration.
+
+   The signature is the terminator: the sidebar/stage seam is lit
+   like a planet's day–night line, a single 1px blue core with a
+   soft bloom. It is the only light source in the chrome, and the
+   active nav rail is the same light breaking through. One light,
+   one source, because the subject is a planet builder.
+
+   Chrome type (Space Grotesk / JetBrains Mono) is deliberately
+   NOT the library's type (system-ui). The split is functional:
+   you can always tell gallery furniture from the system itself.
+   ============================================================ */
+
+/* ---------- Palette ----------------------------------------
+   `html:root` (0,1,1) outranks both ladle.css's `:root` and its
+   `[data-theme="dark"]` block (both 0,1,0), so these hold no
+   matter which theme state the app is in. That matters: the
+   library is dark-only, so a light mode would misrepresent every
+   glass surface in it. The theme toggle is switched off in
+   config.mjs rather than left as a control that lies.
+   ----------------------------------------------------------- */
+html:root {
+  /* Ladle's own six chrome variables, re-pointed at space tokens. */
+  --ladle-bg-color-primary: #111113;
+  --ladle-bg-color-secondary: #0e0f11;
+  --ladle-color-primary: #edeef0;
+  --ladle-color-secondary: #696e77;
+  --ladle-color-hover: #ffffff;
+  --ladle-color-accent: #0090ff;
+  --ladle-main-padding: 0;
+  --ladle-main-padding-mobile: 0;
+
+  /* Chrome-only values. Named for the thing they are, not the
+     token they came from, because the chrome is not the system. */
+  --docs-stage: #111113;      /* the truthful ground — never restyle */
+  --docs-hull: #0e0f11;       /* sidebar body                        */
+  --docs-void: #0a0b0d;       /* sidebar far edge, deepest point     */
+  --docs-raised: #16171a;     /* brand block, search, frame headers  */
+  --docs-terminator: #0090ff; /* the light                           */
+  --docs-readout: #70b8ff;    /* data values, hex codes              */
+
+  --docs-text: #edeef0;
+  --docs-text-dim: #b0b4ba;
+  --docs-muted: #696e77;
+  --docs-hairline: #d6ebfd30;
+  --docs-wash: #d8f4f609;
+
+  --docs-font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --docs-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--docs-stage);
+  color: var(--docs-text);
+}
+
+/* Ladle paints this behind everything; left at its default it
+   flashes the old ground during story transitions. */
+.ladle-background {
+  background-color: var(--docs-stage);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+nav.ladle-aside {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  background: linear-gradient(90deg, var(--docs-void) 0%, var(--docs-hull) 100%);
+  border: 0;
+}
+
+/* ---------- Sidebar on the left ----------
+   Ladle renders <main> before <nav>, so its default `row` lands the
+   sidebar on the RIGHT. `row-reverse` moves it left, and Ladle reads
+   the computed direction on mount to set [data-reversed] itself,
+   which flips its resize-handle drag math to match — this is a
+   supported layout, not a hack.
+
+   The chrome was authored for this side: the sidebar gradient runs
+   deepest at the far edge and lifts toward the seam, and the stage's
+   limb light sits at its inline-start. Both only read correctly with
+   the light source between them. */
+@media (min-width: 768px) {
+  .ladle-wrapper {
+    flex-direction: row-reverse;
+  }
+
+  /* Ladle re-pads the aside for the reversed layout with a (0,2,0)
+     selector, which outranks `nav.ladle-aside`. Restore the zero
+     padding that the brand block's full-bleed border depends on. */
+  html[data-reversed] nav.ladle-aside {
+    padding: 0;
+  }
+
+  /* Only the tree scrolls. Ladle puts overflow:auto on the aside in
+     full mode, which would stack a second scrollbar outside it. */
+  html[data-mode="full"] nav.ladle-aside {
+    overflow: hidden;
+  }
+}
+
+/* The brand block is appended to the end of the nav by
+   components.tsx (appending keeps it clear of React's own
+   children) and pulled to the top here. */
+.docs-brand {
+  order: -1;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--docs-hairline);
+}
+
+.docs-brand__mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* The lit crescent: a disc with an inset shadow eating one edge,
+   so the logo is itself a terminator. */
+.docs-brand__disc {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  background: var(--docs-terminator);
+  box-shadow:
+    inset -7px 0 0 0 var(--docs-void),
+    0 0 12px -2px var(--docs-terminator);
+}
+
+.docs-brand__name {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.docs-brand__sub {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Telemetry: real, counted-at-runtime facts about the library.
+   Structural, not decorative — the release status in particular
+   is the single most important thing a visitor needs to know. */
+.docs-telemetry {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--docs-hairline);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.docs-telemetry__cell {
+  background: var(--docs-raised);
+  padding: 8px 10px;
+}
+
+.docs-telemetry__value {
+  font-family: var(--docs-font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--docs-readout);
+  line-height: 1.2;
+}
+
+.docs-telemetry__label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-top: 2px;
+}
+
+.docs-status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--docs-raised);
+  padding: 8px 10px;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-text-dim);
+}
+
+.docs-status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 6px;
+  background: #ffca16;
+  box-shadow: 0 0 8px -1px #ffca16;
+}
+
+.docs-status--live .docs-status__dot {
+  background: #3dd68c;
+  box-shadow: 0 0 8px -1px #3dd68c;
+}
+
+/* ---------- Search ---------- */
+
+nav.ladle-aside input {
+  margin: 16px 24px 8px;
+  width: auto;
+  padding: 8px 10px;
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  color: var(--docs-text);
+  background: var(--docs-raised);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 6px;
+}
+
+nav.ladle-aside input::placeholder {
+  color: var(--docs-muted);
+}
+
+nav.ladle-aside input:focus {
+  outline: none;
+  color: var(--docs-text);
+  border-color: var(--docs-terminator);
+  box-shadow: 0 0 0 3px #0090ff26;
+}
+
+/* ---------- Tree ---------- */
+
+nav.ladle-aside > ul[role="tree"] {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 8px 0 0;
+  padding: 0 16px 24px;
+}
+
+nav.ladle-aside ul {
+  margin: 0;
+  padding: 0;
+}
+
+nav.ladle-aside ul ul {
+  /* Children indent to sit under the parent's label, not its icon. */
+  margin-inline-start: 10px;
+  border-inline-start: 1px solid var(--docs-hairline);
+  padding-inline-start: 6px;
+}
+
+nav.ladle-aside li {
+  margin: 1px 0;
+  border-radius: 6px;
+}
+
+/* Group rows (Overview, Foundations, Components …) read as
+   section headers rather than as clickable items.
+   Selected by :not(.ladle-linkable), NOT by [aria-expanded]:
+   Ladle sets aria-expanded on every tree item including leaves,
+   so an attribute selector here would style story links too. */
+nav.ladle-aside li:not(.ladle-linkable) > div {
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  border-radius: 6px;
+}
+
+nav.ladle-aside li:not(.ladle-linkable) > div:hover {
+  color: var(--docs-text-dim);
+  background: var(--docs-wash);
+}
+
+/* Second-level groups are component names — title case, not the
+   uppercase treatment of a top-level section. */
+nav.ladle-aside ul ul li:not(.ladle-linkable) > div {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--docs-text-dim);
+}
+
+/* Leaf rows. */
+nav.ladle-aside li.ladle-linkable > div {
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  position: relative;
+}
+
+nav.ladle-aside li.ladle-linkable > div:hover {
+  background: var(--docs-wash);
+}
+
+/* Ladle's <a> wraps only the label text, so the icon and the row's padding
+   were dead zones — the row highlighted on hover but most of it wasn't
+   clickable. Stretch the anchor's hit area over the whole row. The active
+   row's gradient overlay is pointer-events:none, so it can't intercept. */
+nav.ladle-aside li.ladle-linkable a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+
+nav.ladle-aside a {
+  font-size: 13px;
+  color: var(--docs-text-dim);
+  line-height: 1.4;
+}
+
+nav.ladle-aside li.ladle-linkable > div:hover a {
+  color: var(--docs-text);
+}
+
+nav.ladle-aside svg {
+  flex: 0 0 auto;
+  opacity: 0.45;
+}
+
+/* Active story: the terminator light breaking through. */
+nav.ladle-aside li.ladle-active > div {
+  background: #0090ff1f;
+  box-shadow: inset 2px 0 0 0 var(--docs-terminator);
+}
+
+nav.ladle-aside li.ladle-active > div::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #0090ff2e, transparent);
+}
+
+nav.ladle-aside .ladle-active a {
+  color: var(--docs-text);
+  font-weight: 500;
+}
+
+nav.ladle-aside li.ladle-active svg {
+  opacity: 1;
+  color: var(--docs-terminator);
+}
+
+/* ---------- Sidebar scrollbar ---------- */
+
+nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar {
+  width: 8px;
+}
+
+nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb {
+  background: #ffffff14;
+  border-radius: 4px;
+}
+
+nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
+  background: #ffffff26;
+}
+
+/* ============================================================
+   THE TERMINATOR — the sidebar/stage seam.
+
+   Styled symmetrically (core line centred, bloom to both sides)
+   so it reads correctly whether the sidebar is on the left or,
+   in Ladle's reversed layout, on the right.
+   ============================================================ */
+
+.ladle-resize-handle {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #0090ff00 40%,
+    #0090ff59 50%,
+    #0090ff00 60%,
+    transparent 100%
+  );
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.ladle-resize-handle::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    #0090ff8c 18%,
+    #0090ff8c 82%,
+    transparent
+  );
+}
+
+.ladle-resize-handle:hover,
+.ladle-resize-active {
+  box-shadow: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #0090ff00 35%,
+    #0090ff87 50%,
+    #0090ff00 65%,
+    transparent 100%
+  );
+}
+
+/* ============================================================
+   STAGE + STORY FRAME
+   ============================================================ */
+
+.ladle-main {
+  position: relative;
+  background: var(--docs-stage);
+}
+
+.docs-shell {
+  min-height: 100%;
+  padding: 40px 48px 64px;
+  box-sizing: border-box;
+  position: relative;
+
+  /* The library sets no font-family on any component except Badge — it
+     inherits whatever the host app declares. So the gallery has to declare
+     one, exactly as a consuming app would, or components fall back to the
+     browser's serif default. The chrome classes below all pin their own
+     face, so this only reaches library-rendered text. */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Limb light: the terminator's glow spilling a little way onto
+   the stage. The only non-flat thing on this surface, kept far
+   from where specimens render. */
+.docs-shell::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  width: 380px;
+  height: 320px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at top left,
+    #0090ff12,
+    transparent 70%
+  );
+}
+
+.docs-shell > * {
+  position: relative;
+}
+
+/* ---------- Story header ---------- */
+
+.docs-storyhead {
+  max-width: 760px;
+  margin-bottom: 24px;
+}
+
+.docs-storyhead__eyebrow {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-bottom: 8px;
+}
+
+.docs-storyhead__eyebrow span {
+  color: var(--docs-terminator);
+}
+
+.docs-storyhead__title {
+  font-family: var(--docs-font-display);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--docs-text);
+}
+
+.docs-storyhead__desc {
+  margin: 8px 0 0;
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+}
+
+/* ---------- Specimen frame ---------- */
+
+.docs-specimen {
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-stage);
+  /* Corner tick marks, drawn with the border-image-free trick of
+     two layered gradients — reads as a calibration frame. */
+  box-shadow: 0 1px 0 0 #ffffff08 inset;
+  overflow: visible;
+}
+
+.docs-specimen__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+  border-radius: 10px 10px 0 0;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+  letter-spacing: 0.04em;
+}
+
+.docs-specimen__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--docs-terminator);
+  opacity: 0.65;
+}
+
+.docs-specimen__body {
+  padding: 32px;
+}
+
+/* ============================================================
+   OVERVIEW / FOUNDATIONS PAGE FURNITURE
+   ============================================================ */
+
+.docs-page {
+  max-width: 880px;
+}
+
+.docs-hero__title {
+  font-family: var(--docs-font-display);
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 16px;
+  color: var(--docs-text);
+}
+
+.docs-hero__title em {
+  font-style: normal;
+  color: var(--docs-terminator);
+}
+
+.docs-hero__lede {
+  font-family: var(--docs-font-display);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--docs-text-dim);
+  margin: 0 0 28px;
+  max-width: 620px;
+}
+
+/* ---------- Hero ----------
+   The landing page is the one surface that gets atmosphere. Component
+   stories never do: a specimen must sit still on flat ground so you can
+   judge it. That line is deliberate, not an oversight. */
+.docs-hero {
+  position: relative;
+  margin-bottom: 8px;
+  padding-bottom: 40px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--docs-hairline);
+}
+
+.docs-starfield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Fade the field out before it reaches the copy, so specks never
+     compete with type for attention. */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 96%);
+}
+
+.docs-hero__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.9fr);
+  gap: 48px;
+  align-items: center;
+  min-height: 400px;
+  padding-top: 24px;
+}
+
+.docs-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-bottom: 18px;
+}
+
+.docs-hero__eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--docs-terminator);
+  box-shadow: 0 0 10px -1px var(--docs-terminator);
+}
+
+.docs-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.docs-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #04121f;
+  background: linear-gradient(180deg, #48adff, var(--docs-terminator));
+  border: 1px solid #64bcff;
+  box-shadow: 0 6px 20px -6px #0090ff8c;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.docs-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -6px #0090ffb3;
+}
+
+.docs-cta--quiet {
+  color: var(--docs-text);
+  background: transparent;
+  border-color: var(--docs-hairline);
+  box-shadow: none;
+}
+
+.docs-cta--quiet:hover {
+  border-color: var(--docs-terminator);
+  background: #0090ff14;
+}
+
+.docs-hero__demo {
+  width: 100%;
+  max-width: 420px;
+  justify-self: end;
+}
+
+.docs-hero__caption {
+  margin: 12px 2px 0;
+  font-family: var(--docs-font-display);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--docs-muted);
+}
+
+.docs-hero__caption code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+/* ---------- Hero demo internals ---------- */
+
+.docs-demo__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.docs-demo__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.docs-demo__stats dt {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+}
+
+.docs-demo__stats dd {
+  margin: 3px 0 0;
+  font-family: var(--docs-font-mono);
+  font-size: 13px;
+  color: var(--docs-readout);
+}
+
+.docs-demo__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.docs-demo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Motion ----------
+   Both primitives are neutralised by the reduced-motion block at the end
+   of this file: `both` fill leaves .docs-rise on its final frame, and
+   Reveal sets its shown state synchronously when reduced motion is on. */
+
+.docs-rise {
+  animation: docs-rise 620ms cubic-bezier(0.16, 0.84, 0.44, 1) both;
+}
+
+@keyframes docs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.docs-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.docs-reveal.is-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Skin on / off ----------
+   Both panes sit on the same ground with identical padding: the comparison
+   is only honest if the two states are given exactly the same room and the
+   same backdrop. The lit pane gets a faint blue wash to mark it as the
+   opt-in state, never to flatter it. */
+
+.docs-skindemo {
+  display: grid;
+  gap: 1px;
+  background: var(--docs-hairline);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 720px) {
+  .docs-skindemo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.docs-skindemo__pane {
+  background: var(--docs-stage);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.docs-skindemo__pane--lit {
+  background:
+    radial-gradient(ellipse at 50% 0%, #0090ff10, transparent 70%),
+    var(--docs-stage);
+}
+
+.docs-skindemo__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--docs-hairline);
+}
+
+.docs-skindemo__badge {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  background: var(--docs-wash);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.docs-skindemo__badge--lit {
+  color: var(--docs-terminator);
+  background: #0090ff1f;
+  border-color: #0090ff40;
+}
+
+.docs-skindemo__note {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+}
+
+/* Equal, generous room so neither state is cramped relative to the other. */
+.docs-skindemo__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 28px 20px;
+  flex: 1 1 auto;
+  align-items: flex-start;
+}
+
+.docs-skindemo__code {
+  margin: 0;
+  padding: 10px 16px;
+  border-top: 1px solid var(--docs-hairline);
+  background: var(--docs-void);
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ---------- Section headings ---------- */
+
+.docs-section {
+  margin-top: 56px;
+}
+
+.docs-section__label {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--docs-terminator);
+  margin-bottom: 10px;
+}
+
+.docs-section__title {
+  font-family: var(--docs-font-display);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  color: var(--docs-text);
+}
+
+.docs-section__intro {
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--docs-text-dim);
+  margin: 0 0 20px;
+  max-width: 620px;
+}
+
+/* ---------- Principles ---------- */
+
+.docs-principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.docs-principle {
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-wash);
+  padding: 18px;
+}
+
+.docs-principle__name {
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--docs-text);
+  margin-bottom: 6px;
+}
+
+.docs-principle__body {
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+  margin: 0;
+}
+
+/* The rule each principle enforces, quoted in the system's own
+   notation — the reason the card is credible. */
+.docs-principle__rule {
+  margin-top: 10px;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 5px;
+  padding: 5px 8px;
+  display: inline-block;
+}
+
+/* ---------- Code ---------- */
+
+.docs-code {
+  position: relative;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-void);
+  overflow: hidden;
+}
+
+.docs-code__bar {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+  letter-spacing: 0.04em;
+}
+
+.docs-code pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--docs-font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--docs-text);
+}
+
+.docs-code .c {
+  color: var(--docs-muted);
+}
+
+.docs-code .k {
+  color: var(--docs-readout);
+}
+
+.docs-code .s {
+  color: #3dd68c;
+}
+
+/* ---------- Token example ----------
+   Result and source, side by side. The demo pane deliberately sits on the
+   plain stage with no chrome decoration: the point is that everything you
+   see is produced by the six declarations listed beside it. */
+
+.docs-tokendemo {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 860px) {
+  .docs-tokendemo {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: start;
+  }
+}
+
+.docs-tokendemo__pane {
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-stage);
+  padding: 20px;
+}
+
+.docs-tokendemo__label {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-bottom: 12px;
+}
+
+/* Sub-heading inside a section, for the "here is how you do it" steps. */
+.docs-subhead {
+  font-family: var(--docs-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--docs-text);
+  margin: 28px 0 8px;
+}
+
+/* Inline code in body copy — token names appear constantly in this prose. */
+.docs-section__intro code,
+.docs-principle__body code {
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+  color: var(--docs-readout);
+  background: #0090ff12;
+  border: 1px solid #0090ff26;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* ---------- Callout ---------- */
+
+.docs-callout {
+  display: flex;
+  gap: 12px;
+  border: 1px solid #ffca1640;
+  background: #ffca160f;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.docs-callout__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffca16;
+  box-shadow: 0 0 8px -1px #ffca16;
+  margin-top: 6px;
+  flex: 0 0 7px;
+}
+
+.docs-callout__title {
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffca16;
+  margin-bottom: 3px;
+}
+
+.docs-callout__body {
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+  margin: 0;
+}
+
+/* ============================================================
+   TOKEN SURVEY
+   ============================================================ */
+
+.docs-swatches {
+  display: grid;
+  gap: 1px;
+  background: var(--docs-hairline);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.docs-swatch {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1.1fr) 96px minmax(0, 1.4fr);
+  align-items: center;
+  gap: 16px;
+  background: var(--docs-stage);
+  padding: 12px 16px;
+}
+
+/* The chip sits on a checkerboard so alpha tokens read as alpha —
+   several of these grays are translucent, and that is the whole
+   point of them. */
+.docs-swatch__chip {
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--docs-hairline);
+  background-color: #202226;
+  background-image:
+    linear-gradient(45deg, #2a2d32 25%, transparent 25%),
+    linear-gradient(-45deg, #2a2d32 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2a2d32 75%),
+    linear-gradient(-45deg, transparent 75%, #2a2d32 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.docs-swatch__chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--chip);
+}
+
+.docs-swatch__name {
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+  color: var(--docs-text);
+  overflow-wrap: anywhere;
+}
+
+.docs-swatch__value {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+.docs-swatch__role {
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--docs-text-dim);
+}
+
+/* The Radix variant each role replaced. The consolidation from
+   fifteen grays to seven roles is the system's origin story, so
+   the survey shows the trade rather than hiding it. */
+.docs-swatch__was {
+  display: block;
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  color: var(--docs-muted);
+  margin-top: 2px;
+}
+
+.docs-swatch--usage {
+  grid-template-columns: minmax(160px, 1fr) 120px minmax(0, 1.6fr);
+}
+
+/* Loose list of token names — used where the value matters less than the
+   set, e.g. "these are defined but unreferenced". */
+.docs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.docs-chips code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+
+.docs-accents {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.docs-accent {
+  border: 1px solid var(--docs-hairline);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--docs-raised);
+}
+
+.docs-accent__chip {
+  height: 46px;
+  background-color: #202226;
+  background-image:
+    linear-gradient(45deg, #2a2d32 25%, transparent 25%),
+    linear-gradient(-45deg, #2a2d32 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #2a2d32 75%),
+    linear-gradient(-45deg, transparent 75%, #2a2d32 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  position: relative;
+}
+
+.docs-accent__chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--chip);
+}
+
+.docs-accent__meta {
+  padding: 8px 10px;
+  border-top: 1px solid var(--docs-hairline);
+}
+
+.docs-accent__name {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-text);
+}
+
+.docs-accent__value {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  color: var(--docs-muted);
+  margin-top: 2px;
+}
+
+/* ---------- Spacing ---------- */
+
+.docs-scale {
+  display: grid;
+  gap: 1px;
+  background: var(--docs-hairline);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.docs-scale__row {
+  display: grid;
+  grid-template-columns: 120px 72px 1fr;
+  align-items: center;
+  gap: 16px;
+  background: var(--docs-stage);
+  padding: 12px 16px;
+}
+
+.docs-scale__name {
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+  color: var(--docs-text);
+}
+
+.docs-scale__value {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+/* Bars are sized from the token itself, so the picture cannot
+   drift from the value beside it. */
+.docs-scale__bar {
+  height: 14px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--docs-terminator), #2870bd);
+}
+
+.docs-typerow {
+  display: grid;
+  grid-template-columns: 120px 72px 1fr;
+  align-items: baseline;
+  gap: 16px;
+  background: var(--docs-stage);
+  padding: 14px 16px;
+}
+
+.docs-typerow__sample {
+  color: var(--docs-text);
+  font-family: system-ui, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   SOURCE + API REFERENCE
+
+   Both sit below the specimen, always visible. A component library
+   that hides its source and its prop table behind a toggle is asking
+   the reader to work for the two things they came for.
+   ============================================================ */
+
+.docs-source {
+  margin-top: 20px;
+}
+
+.docs-source .docs-code pre {
+  max-height: 460px;
+  overflow: auto;
+  tab-size: 2;
+}
+
+.docs-apis {
+  margin-top: 40px;
+}
+
+.docs-apis__title {
+  font-family: var(--docs-font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--docs-text);
+  margin: 0 0 6px;
+}
+
+.docs-apis__note {
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--docs-muted);
+  margin: 0 0 16px;
+  max-width: 620px;
+}
+
+.docs-api {
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.docs-api__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--docs-raised);
+  border-bottom: 1px solid var(--docs-hairline);
+}
+
+.docs-api__name {
+  font-family: var(--docs-font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--docs-readout);
+}
+
+.docs-api__file {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+}
+
+.docs-api__table {
+  display: grid;
+  background: var(--docs-hairline);
+  gap: 1px;
+}
+
+.docs-api__row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.9fr) minmax(0, 1.5fr) minmax(80px, 0.6fr) minmax(0, 2fr);
+  gap: 16px;
+  padding: 10px 14px;
+  background: var(--docs-stage);
+  align-items: baseline;
+}
+
+.docs-api__row--head span {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+}
+
+.docs-api__prop {
+  font-family: var(--docs-font-mono);
+  font-size: 12.5px;
+  color: var(--docs-text);
+  overflow-wrap: anywhere;
+}
+
+/* Required props are rare here — almost everything is optional — so the
+   marker flags the exception rather than decorating the rule. */
+.docs-api__required {
+  color: var(--docs-terminator);
+  margin-left: 3px;
+}
+
+.docs-api__type {
+  font-family: var(--docs-font-mono);
+  font-size: 11.5px;
+  color: var(--docs-readout);
+  overflow-wrap: anywhere;
+}
+
+.docs-api__default {
+  font-family: var(--docs-font-mono);
+  font-size: 11.5px;
+  color: var(--docs-text-dim);
+  overflow-wrap: anywhere;
+}
+
+.docs-api__desc {
+  font-family: var(--docs-font-display);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--docs-text-dim);
+}
+
+.docs-api__desc em {
+  color: var(--docs-muted);
+  font-style: normal;
+}
+
+.docs-api__tokens {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--docs-raised);
+  border-top: 1px solid var(--docs-hairline);
+}
+
+.docs-api__tokenlabel {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-right: 2px;
+}
+
+.docs-api__tokens code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+  background: #0090ff14;
+  border: 1px solid #0090ff2b;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+@media (max-width: 860px) {
+  .docs-api__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .docs-api__row--head {
+    display: none;
+  }
+
+  .docs-api__type::before {
+    content: "type: ";
+    color: var(--docs-muted);
+  }
+
+  .docs-api__default::before {
+    content: "default: ";
+    color: var(--docs-muted);
+  }
+}
+
+/* ============================================================
+   SKINNED / BARE COMPARISON
+
+   Five components ship structure plus hook classes, with the glass
+   treatment composed on by the consumer via spaceControls. Both
+   states are shown, skinned first — the skinned form is what a
+   visitor should judge the library by.
+   ============================================================ */
+
+.docs-variants {
+  display: grid;
+  gap: 1px;
+  background: var(--docs-hairline);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .docs-variants {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.docs-variant {
+  background: var(--docs-stage);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.docs-variant__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+}
+
+.docs-variant__badge {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-terminator);
+  background: #0090ff1f;
+  border: 1px solid #0090ff40;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.docs-variant__badge--bare {
+  color: var(--docs-muted);
+  background: var(--docs-wash);
+  border-color: var(--docs-hairline);
+}
+
+.docs-variant__note {
+  font-family: var(--docs-font-display);
+  font-size: 11.5px;
+  color: var(--docs-muted);
+  min-width: 0;
+}
+
+.docs-variant__note code {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+/* Generous, equal padding: the two states must be compared on their
+   own merits, not on how much room each was given. */
+.docs-variant__body {
+  padding: 24px;
+  flex: 1 1 auto;
+}
+
+/* ============================================================
+   ADDON BAR
+   ============================================================ */
+
+/* No component to inspect on Overview/Foundations, so the addon bar has
+   nothing to act on there — it reads as an unexplained toolbar. Component
+   stories keep it. */
+html[data-docs-page="marketing"] .ladle-addons {
+  display: none;
+}
+
+/* The source addon stays ENABLED because Ladle only generates the
+   storySource map when it is — components.tsx reads that map to print the
+   code under each specimen. Only its button is hidden: the source is
+   already on the page, so a toggle to reveal it is a control with nothing
+   to do. */
+.ladle-addons li:has(button[data-testid="addon-source"]) {
+  display: none;
+}
+
+/* A single full-width row, for tokens whose value is prose-length rather
+   than a hex code. */
+.docs-swatch--wide {
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+
+.ladle-addons {
+  background: var(--docs-raised);
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px -8px #000000a6;
+}
+
+.ladle-addons button {
+  color: var(--docs-text-dim);
+}
+
+.ladle-addons button:hover {
+  color: var(--docs-text);
+}
+
+/* Ladle's preview mode renders the story alone — no sidebar, no addon
+   bar, and so no visible way back. The `f` hotkey works but is only
+   documented on the button that just vanished, which strands anyone who
+   clicks it. This is that way back. */
+.docs-exit-fullscreen {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--docs-font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--docs-text);
+  background: var(--docs-raised);
+  border: 1px solid var(--docs-hairline);
+  box-shadow: 0 8px 24px -8px #000000a6;
+  opacity: 0.55;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.docs-exit-fullscreen:hover,
+.docs-exit-fullscreen:focus-visible {
+  opacity: 1;
+  border-color: var(--docs-terminator);
+}
+
+.docs-exit-fullscreen kbd {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  color: var(--docs-readout);
+  background: #0090ff1f;
+  border: 1px solid #0090ff40;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* ============================================================
+   QUALITY FLOOR
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Outline the row, matching the enlarged hit area rather than the text. */
+nav.ladle-aside li.ladle-linkable > div:has(a:focus-visible),
+nav.ladle-aside li:focus-visible > div {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+}
+
+nav.ladle-aside a:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 767px) {
+  nav.ladle-aside {
+    background: var(--docs-hull);
+    border-bottom: 1px solid var(--docs-hairline);
+  }
+
+  .docs-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    min-height: 0;
+  }
+
+  .docs-hero__demo {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .docs-shell {
+    padding: 24px 16px 48px;
+  }
+
+  .docs-specimen__body {
+    padding: 20px;
+  }
+
+  .docs-swatch {
+    grid-template-columns: 44px minmax(0, 1fr);
+    row-gap: 6px;
+  }
+
+  .docs-swatch__value,
+  .docs-swatch__role {
+    grid-column: 2;
+  }
+
+  .docs-scale__row,
+  .docs-typerow {
+    grid-template-columns: 88px 60px 1fr;
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

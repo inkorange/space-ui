@@ -3,6 +3,7 @@ import type * as React from "react";
 import { forwardRef } from "react";
 import { cx } from "./propShared";
 import styles from "./Slider.module.scss";
+import ctl from "../styles/spaceControls.module.scss";
 
 export interface SliderProps {
   value: number[];
@@ -22,7 +23,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   const v = value[0] ?? min;
   const pct = max === min ? 0 : ((v - min) / (max - min)) * 100;
   return (
-    <span className={cx(styles.root, className)} data-disabled={disabled || undefined}>
+    <span className={cx(styles.root, ctl.spaceSlider, className)} data-disabled={disabled || undefined}>
       <span className={cx(styles.track, "spSliderTrack")}>
         <span className={cx(styles.range, "spSliderRange")} style={{ width: `${pct}%` }} />
       </span>

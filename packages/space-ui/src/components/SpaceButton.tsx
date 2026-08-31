@@ -13,6 +13,10 @@ interface SpaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
   size?: "sm" | "md" | "lg" | "micro";
   /** Stretch to the container width (sticky footers). */
   fullWidth?: boolean;
+  /** Ambient motion: the orbiting rim, the glint sweep, and the twinkling
+   *  stars. Set false for dense UI or long lists where the movement
+   *  distracts. The glass look itself is not optional. Default true. */
+  animated?: boolean;
 }
 
 
@@ -22,7 +26,7 @@ interface SpaceButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
  * sweep. Plain <button>, so it composes with Radix Dialog.Trigger (Slot).
  */
 export const SpaceButton = forwardRef<HTMLButtonElement, SpaceButtonProps>(
-  function SpaceButton({ iconOnly, ember, size = "md", fullWidth, className, children, ...rest }, ref) {
+  function SpaceButton({ iconOnly, ember, size = "md", fullWidth, animated = true, className, children, ...rest }, ref) {
     const id = useId();
 
     // Unique-per-instance star field: positions and timing vary button to
@@ -52,7 +56,12 @@ export const SpaceButton = forwardRef<HTMLButtonElement, SpaceButtonProps>(
       .join(" ");
 
     return (
-      <button ref={ref} className={classes} {...rest}>
+      <button
+        ref={ref}
+        className={classes}
+        data-animated={animated ? undefined : "false"}
+        {...rest}
+      >
         {size !== "micro" && (
           <span className={styles.stars} aria-hidden>
             {starStyles.map((style, i) => (

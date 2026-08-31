@@ -13,6 +13,7 @@ import {
 } from "react";
 import { cx } from "./propShared";
 import styles from "./Select.module.scss";
+import ctl from "../styles/spaceControls.module.scss";
 
 interface RootCtx {
   value: string;
@@ -129,12 +130,14 @@ export function Root({ value, onValueChange, disabled, children }: RootProps) {
 export interface TriggerProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
   placeholder?: string;
-  /** Accepted for Radix call-site compatibility; styling comes from the
-   *  space theme classes, so variants are a no-op. */
+  /** Accepted for Radix call-site compatibility; a no-op. */
   variant?: string;
+  /** Ambient motion: the lit arc orbiting the rim. The glass skin itself
+   *  is always applied. Default true. */
+  animated?: boolean;
 }
 
-export function Trigger({ placeholder, variant: _variant, className, ...rest }: TriggerProps) {
+export function Trigger({ placeholder, variant: _variant, animated = true, className, ...rest }: TriggerProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();
   const label = s.value ? s.labelFor(s.value) : null;
@@ -148,7 +151,8 @@ export function Trigger({ placeholder, variant: _variant, className, ...rest }: 
       {...rest}
       ref={triggerRef}
       disabled={s.disabled}
-      className={cx(styles.trigger, "spSelectTrigger", className)}
+      className={cx(styles.trigger, ctl.spaceControl, "spSelectTrigger", className)}
+      data-animated={animated ? undefined : "false"}
       data-state={s.open ? "open" : "closed"}
       aria-haspopup="listbox"
       aria-expanded={s.open}
@@ -174,10 +178,12 @@ export interface ContentProps {
   /** Accepted for Radix call-site compatibility ("popper" everywhere);
    *  our listbox is always trigger-anchored. */
   position?: string;
+  /** Ambient motion on the panel rim. Default true. */
+  animated?: boolean;
   children?: ReactNode;
 }
 
-export function Content({ className, position: _position, children }: ContentProps) {
+export function Content({ className, position: _position, animated = true, children }: ContentProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -225,7 +231,8 @@ export function Content({ className, position: _position, children }: ContentPro
       tabIndex={-1}
       hidden={!s.open}
       aria-activedescendant={s.highlighted ? optionId(s.listboxId, s.highlighted) : undefined}
-      className={cx(styles.listbox, className)}
+      className={cx(styles.listbox, ctl.spacePanel, className)}
+      data-animated={animated ? undefined : "false"}
       style={
         triggerWidth != null || maxHeight != null
           ? ({

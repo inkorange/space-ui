@@ -1,7 +1,7 @@
 {
   "name": "@inkorange/space-ui",
   "version": "0.0.0",
-  "description": "Space UI — a space-themed React component library (TerraForge design system)",
+  "description": "SpaceUI — a space-themed React component library and design system",
   "license": "MIT",
   "repository": { "type": "git", "url": "https://github.com/inkorange/space-ui" },
   "type": "module",

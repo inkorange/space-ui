@@ -15,7 +15,11 @@ jobs:
       pull-requests: write
       id-token: write # npm provenance
     steps:
+      # Same reason as ci.yml: changesets reads git history to work out what
+      # to version and publish. A shallow clone would bite here on the first
+      # real publish rather than on a PR.
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }

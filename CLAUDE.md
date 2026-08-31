@@ -1,12 +1,12 @@
 # Space UI — project context
 
-The TerraForge design system, extracted from planet-builder's
+The SpaceUI design system, extracted from planet-builder's
 `src/components/ui/` (2026-08-30; pre-extraction history lives there).
 Owner: Chris West. Commits are authored solely by Chris — never add
 Co-Authored-By or AI-attribution trailers.
 
 ## State (2026-08-31)
-- 25 components + icons + tokens.css + spaceControls class map in
+- 24 components + 20 icons + tokens.css + spaceControls class map in
   `packages/space-ui`; 49 tests (vitest, includes the Radix-ban and
   token-grid guard suites — permanent invariants).
 - Ladle gallery in `apps/docs`, deployed: https://space-components.vercel.app

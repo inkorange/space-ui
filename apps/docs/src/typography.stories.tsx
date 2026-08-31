@@ -1,5 +1,9 @@
 import { Text, Heading, Link, Separator, Badge } from "@inkorange/space-ui";
 
+export default {
+  title: "Components/Typography",
+};
+
 export const Headings = () => (
   <div style={{ display: "grid", gap: 12 }}>
     {(["9", "8", "7", "6", "5", "4", "3", "2", "1"] as const).map((s) => (
@@ -35,3 +39,22 @@ export const SeparatorStory = () => (
   </div>
 );
 SeparatorStory.storyName = "Separator";
+SeparatorStory.meta = {
+  description:
+    "A hairline rule using the border token, for dividing content without introducing a panel.",
+};
+
+Headings.meta = {
+  description:
+    "Nine heading sizes. Size is presentational and independent of heading level, so document structure stays correct.",
+};
+
+TextSizes.meta = {
+  description:
+    "Five body sizes plus the gray color role for secondary copy.",
+};
+
+Badges.meta = {
+  description:
+    "Compact status labels in five colors, solid and soft. Color carries meaning: green for safe, red for destructive, amber for pending.",
+};

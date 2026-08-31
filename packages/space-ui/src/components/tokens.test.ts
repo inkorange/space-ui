@@ -21,6 +21,7 @@ export const EXPECTED_TOKENS = [
   "--sp-orange-9",
   "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl",
   "--sp-font-xs", "--sp-font-sm", "--sp-font-md", "--sp-font-xl",
+  "--sp-font-family",
 ];
 
 describe("design tokens", () => {
