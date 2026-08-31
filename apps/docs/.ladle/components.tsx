@@ -223,9 +223,12 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
       </div>
     )}
 
+    {/* Only component-scoped properties. The global --sp-* palette is how
+        every component is built, not something you tune per component — it is
+        documented once under Foundations. */}
     {doc.tokens.length > 0 && (
       <div className="docs-api__tokens">
-        <span className="docs-api__tokenlabel">Tokens used</span>
+        <span className="docs-api__tokenlabel">Custom properties</span>
         {doc.tokens.map((t) => (
           <code key={t}>{t}</code>
         ))}

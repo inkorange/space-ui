@@ -102,11 +102,14 @@ components read which token.
 
 ### Fonts
 
-No component sets a `font-family` — the library inherits whatever your app
+Almost nothing sets a `font-family` — the library inherits whatever your app
 already loaded, and nothing renders through a portal, so inheritance reaches
-every component. `Badge` is the sole exception: it pins a stack (inherited from
-Radix, which deliberately kept badges off the app font). That pin reads from
-`--sp-font-family`, so overriding it brings badges onto your font too.
+every component. Two exceptions pin a stack, and both are overridable:
+
+- **`Badge`** reads `--sp-font-family`, defaulting to the system stack it
+  inherited from Radix, which deliberately kept badges off the app font.
+- **`SpaceButton`** reads `--font-roboto`, falling back to `ui-sans-serif,
+  system-ui`. Define that property in your app to bring buttons onto your font.
 
 ## The look is not optional
 

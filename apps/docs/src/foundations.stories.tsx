@@ -209,12 +209,12 @@ export const TypeScale = () => (
       <div className="docs-section__label">Family</div>
       <h2 className="docs-section__title">Inherited, with one pin</h2>
       <p className="docs-section__intro">
-        No component declares a font-family, and nothing in the library renders
-        through a portal, so your app's font reaches every component by plain
-        inheritance. Badge is the one exception: it pins a stack, inherited from
-        Radix, which otherwise leaves badges on the system font while the rest of
-        your UI follows your brand. That pin reads from a token, so you can move
-        it.
+        Almost nothing declares a font-family, and nothing in the library
+        renders through a portal, so your app's font reaches components by plain
+        inheritance. Two pin a stack instead, and both read a custom property so
+        you can move them: Badge uses <code>--sp-font-family</code>, and
+        SpaceButton uses <code>--font-roboto</code> — the latter is a hook for
+        the host app to fill, which is why it carries no component prefix.
       </p>
 
       <div className="docs-swatches">

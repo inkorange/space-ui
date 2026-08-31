@@ -31,7 +31,7 @@ export type ComponentDoc = {
   name: string;
   file: string;
   props: PropDoc[];
-  /** Tokens the component's own stylesheet references. */
+  /** Component-scoped custom properties a consumer can override. */
   tokens: string[];
   /**
    * What the props interface extends. Most components pass through a DOM
@@ -124,13 +124,25 @@ const collectDefaults = (source: ts.SourceFile): Map<string, string> => {
   return defaults;
 };
 
-/** Every `var(--sp-*)` / `var(--spacing-*)` a stylesheet references. */
+/**
+ * Component-scoped custom properties — the knobs a consumer can actually turn
+ * on THIS component, e.g. `--loader-planet`.
+ *
+ * Deliberately excludes the global `--sp-*` / `--spacing-*` palette. Those are
+ * how a colour or a gap is written in this system, consumed internally by
+ * every component; listing them per component implies a local knob that does
+ * not exist, and overriding one is a system-wide decision documented once
+ * under Foundations. Only properties namespaced to the component are API.
+ */
 const tokensIn = (css: string): string[] => {
   const found = new Set<string>();
-  for (const m of css.matchAll(/var\(\s*(--(?:sp|spacing)-[a-zA-Z0-9-]+)/g)) {
-    found.add(m[1]);
-  }
-  return [...found].sort();
+  // Read with var(), and defined as a declaration — a component both
+  // consuming and defaulting its own property is the normal shape.
+  for (const m of css.matchAll(/var\(\s*(--[a-zA-Z0-9-]+)/g)) found.add(m[1]);
+  for (const m of css.matchAll(/^\s*(--[a-zA-Z0-9-]+)\s*:/gm)) found.add(m[1]);
+  return [...found]
+    .filter((t) => !/^--(sp|spacing)-/.test(t))
+    .sort();
 };
 
 const readStyles = (fileBase: string): string => {
