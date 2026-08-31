@@ -130,14 +130,12 @@ export function Root({ value, onValueChange, disabled, children }: RootProps) {
 export interface TriggerProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
   placeholder?: string;
-  /** Accepted for Radix call-site compatibility; a no-op. */
-  variant?: string;
   /** Ambient motion: the lit arc orbiting the rim. The glass skin itself
    *  is always applied. Default true. */
   animated?: boolean;
 }
 
-export function Trigger({ placeholder, variant: _variant, animated = true, className, ...rest }: TriggerProps) {
+export function Trigger({ placeholder, animated = true, className, ...rest }: TriggerProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();
   const label = s.value ? s.labelFor(s.value) : null;
