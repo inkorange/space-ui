@@ -986,17 +986,12 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   color: var(--docs-text);
 }
 
-.docs-code .c {
-  color: var(--docs-muted);
+/* prism-react-renderer renders each line as its own div. */
+.docs-code pre > div {
+  white-space: pre;
+  min-height: 1.7em;
 }
 
-.docs-code .k {
-  color: var(--docs-readout);
-}
-
-.docs-code .s {
-  color: #3dd68c;
-}
 
 /* ---------- Token example ----------
    Result and source, side by side. The demo pane deliberately sits on the

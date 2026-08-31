@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { components as componentDocs, type ComponentDoc } from "virtual:space-docs";
 import { storySource, stories } from "virtual:generated-list";
+import { Code } from "../src/docs-code";
 import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
@@ -247,12 +248,11 @@ export const Provider: GlobalProvider = ({
                 so it should not cost a click to find. */}
             {source && (
               <section className="docs-source">
-                <div className="docs-code">
-                  <div className="docs-code__bar">
-                    {stories[globalState.story]?.entry ?? "Source"}
-                  </div>
-                  <pre>{source}</pre>
-                </div>
+                <Code
+                  code={source}
+                  label={stories[globalState.story]?.entry ?? "Source"}
+                  maxHeight={460}
+                />
               </section>
             )}
 

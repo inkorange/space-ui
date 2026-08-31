@@ -8,6 +8,7 @@ import {
   SpaceButton,
   Text,
 } from "@inkorange/space-ui";
+import { Code } from "./docs-code";
 import { Reveal, Starfield } from "./docs-motion";
 import { componentCount, iconCount, packageName, repoUrl } from "./system-facts";
 
@@ -125,20 +126,11 @@ const TokenExample = () => (
       </div>
     </div>
 
-    <div className="docs-code">
-      <div className="docs-code__bar">readout.css</div>
-      <pre>
-        .readout {"{"}
-        {DEMO_RULES.map(([prop, value]) => (
-          <span key={prop}>
-            {"\n  "}
-            {prop}: <span className="k">{value}</span>;
-          </span>
-        ))}
-        {"\n"}
-        {"}"}
-      </pre>
-    </div>
+    <Code
+      label="readout.css"
+      language="css"
+      code={`.readout {\n${DEMO_RULES.map(([prop, value]) => `  ${prop}: ${value};`).join("\n")}\n}`}
+    />
   </div>
 );
 
@@ -335,29 +327,24 @@ export const Introduction = () => (
           eight-point grid with one 4px half-step; when a measurement falls
           between steps, round up.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">PlanetPanel.css</div>
-          <pre>
-            <span className="c">/* once, at your app entry */</span>
-            {"\n"}
-            <span className="k">@import</span>{" "}
-            <span className="s">"{packageName}/tokens.css"</span>;
-            {"\n\n"}.planet-panel {"{"}
-            {"\n  "}background: <span className="k">var(--sp-gray-panel)</span>;
-            {"\n  "}border: 1px solid <span className="k">var(--sp-gray-border)</span>;
-            {"\n  "}padding: <span className="k">var(--spacing-md)</span>;{"  "}
-            <span className="c">/* 16px — on the grid */</span>
-            {"\n  "}gap: <span className="k">var(--spacing-sm)</span>;
-            {"\n"}
-            {"}"}
-            {"\n\n"}.planet-panel__label {"{"}
-            {"\n  "}color: <span className="k">var(--sp-gray-text-dim)</span>;{"  "}
-            <span className="c">/* secondary text */</span>
-            {"\n  "}font-size: <span className="k">var(--sp-font-sm)</span>;
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="PlanetPanel.css"
+          language="css"
+          code={`/* once, at your app entry */
+@import "${packageName}/tokens.css";
+
+.planet-panel {
+  background: var(--sp-gray-panel);
+  border: 1px solid var(--sp-gray-border);
+  padding: var(--spacing-md);  /* 16px \u2014 on the grid */
+  gap: var(--spacing-sm);
+}
+
+.planet-panel__label {
+  color: var(--sp-gray-text-dim);  /* secondary text */
+  font-size: var(--sp-font-sm);
+}`}
+        />
 
         <h3 className="docs-subhead">Retheme by redefining</h3>
         <p className="docs-section__intro">
@@ -366,24 +353,21 @@ export const Introduction = () => (
           the payoff for consolidating fifteen grays into seven: a theme change
           is a short diff.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">theme.css — loaded after tokens.css</div>
-          <pre>
-            :root {"{"}
-            {"\n  "}
-            <span className="c">/* surfaces */</span>
-            {"\n  "}--sp-gray-panel: <span className="s">#14161c</span>;
-            {"\n  "}--sp-gray-border: <span className="s">#8ab4ff2e</span>;
-            {"\n\n  "}
-            <span className="c">/* primary action, focus, selection */</span>
-            {"\n  "}--sp-blue-9: <span className="s">#7c5cff</span>;
-            {"\n\n  "}
-            <span className="c">/* the one family pin — see Foundations */</span>
-            {"\n  "}--sp-font-family: <span className="s">"Inter"</span>, system-ui, sans-serif;
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="theme.css \u2014 loaded after tokens.css"
+          language="css"
+          code={`:root {
+  /* surfaces */
+  --sp-gray-panel: #14161c;
+  --sp-gray-border: #8ab4ff2e;
+
+  /* primary action, focus, selection */
+  --sp-blue-9: #7c5cff;
+
+  /* the one family pin \u2014 see Foundations */
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}`}
+        />
 
         <p className="docs-section__intro" style={{ marginTop: 20, marginBottom: 0 }}>
           Every token, its resolved value, and the Radix variant it replaced is
@@ -422,18 +406,16 @@ export const Introduction = () => (
           exactly where they were.
         </p>
 
-        <div className="docs-code">
-          <div className="docs-code__bar">Stilling the motion</div>
-          <pre>
-            <span className="c">{"/* ambient motion, the default */"}</span>
-            {"\n"}&lt;SpaceButton&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n\n"}
-            <span className="c">{"/* same look, no loops */"}</span>
-            {"\n"}&lt;SpaceButton animated={"{false}"}&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n"}&lt;TextField.Root animated={"{false}"} /&gt;
-            {"\n"}&lt;Select.Trigger animated={"{false}"} /&gt;
-          </pre>
-        </div>
+        <Code
+          label="Stilling the motion"
+          code={`/* ambient motion, the default */
+<SpaceButton>Build planet</SpaceButton>
+
+/* same look, no loops */
+<SpaceButton animated={false}>Build planet</SpaceButton>
+<TextField.Root animated={false} />
+<Select.Trigger animated={false} />`}
+        />
 
         <p className="docs-section__intro" style={{ marginTop: 16, marginBottom: 0 }}>
           Readers who set <code>prefers-reduced-motion</code> get this without
@@ -502,16 +484,15 @@ export const Installation = () => (
       <section className="docs-section" style={{ marginTop: 32 }}>
         <div className="docs-section__label">Step one</div>
         <h2 className="docs-section__title">Install the package</h2>
-        <div className="docs-code">
-          <div className="docs-code__bar">Terminal</div>
-          <pre>
-            <span className="c"># pnpm</span>
-            {"\n"}pnpm add {packageName}
-            {"\n\n"}
-            <span className="c"># npm</span>
-            {"\n"}npm install {packageName}
-          </pre>
-        </div>
+        <Code
+          label="Terminal"
+          language="bash"
+          code={`# pnpm
+pnpm add ${packageName}
+
+# npm
+npm install ${packageName}`}
+        />
       </section>
     </Reveal>
 
@@ -524,16 +505,11 @@ export const Installation = () => (
           The CSS ships precompiled, so no Sass toolchain is required
           downstream.
         </p>
-        <div className="docs-code">
-          <div className="docs-code__bar">app entry</div>
-          <pre>
-            <span className="k">import</span>{" "}
-            <span className="s">"{packageName}/tokens.css"</span>;
-            {"\n"}
-            <span className="k">import</span>{" "}
-            <span className="s">"{packageName}/styles.css"</span>;
-          </pre>
-        </div>
+        <Code
+          label="app entry"
+          code={`import "${packageName}/tokens.css";
+import "${packageName}/styles.css";`}
+        />
       </section>
     </Reveal>
 
@@ -541,26 +517,19 @@ export const Installation = () => (
       <section className="docs-section">
         <div className="docs-section__label">Step three</div>
         <h2 className="docs-section__title">Use a component</h2>
-        <div className="docs-code">
-          <div className="docs-code__bar">Planet.tsx</div>
-          <pre>
-            <span className="k">import</span> {"{ SpaceButton, Card, Heading }"}{" "}
-            <span className="k">from</span>{" "}
-            <span className="s">"{packageName}"</span>;
-            {"\n\n"}
-            <span className="k">export function</span> Planet() {"{"}
-            {"\n  "}
-            <span className="k">return</span> (
-            {"\n    "}&lt;Card&gt;
-            {"\n      "}&lt;Heading size=<span className="s">"4"</span>
-            &gt;Kepler-442b&lt;/Heading&gt;
-            {"\n      "}&lt;SpaceButton&gt;Build planet&lt;/SpaceButton&gt;
-            {"\n    "}&lt;/Card&gt;
-            {"\n  "});
-            {"\n"}
-            {"}"}
-          </pre>
-        </div>
+        <Code
+          label="Planet.tsx"
+          code={`import { SpaceButton, Card, Heading } from "${packageName}";
+
+export function Planet() {
+  return (
+    <Card>
+      <Heading size="4">Kepler-442b</Heading>
+      <SpaceButton>Build planet</SpaceButton>
+    </Card>
+  );
+}`}
+        />
       </section>
     </Reveal>
 

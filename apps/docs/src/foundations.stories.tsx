@@ -1,3 +1,4 @@
+import { Code } from "./docs-code";
 import { components as componentDocs, skinTokens } from "virtual:space-docs";
 
 export default {
@@ -227,15 +228,15 @@ export const TypeScale = () => (
         </div>
       </div>
 
-      <div className="docs-code" style={{ marginTop: 12 }}>
-        <div className="docs-code__bar">Overriding it</div>
-        <pre>
-          <span className="c">/* your app */</span>
-          {"\n"}:root {"{"}
-          {"\n  "}--sp-font-family: <span className="s">"Inter"</span>, system-ui, sans-serif;
-          {"\n"}
-          {"}"}
-        </pre>
+      <div style={{ marginTop: 12 }}>
+        <Code
+          label="Overriding it"
+          language="css"
+          code={`/* your app */
+:root {
+  --sp-font-family: "Inter", system-ui, sans-serif;
+}`}
+        />
       </div>
     </section>
 
