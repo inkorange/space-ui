@@ -8,11 +8,6 @@ seven-role token system, with zero runtime dependencies.
 
 📖 **[Browse the gallery →](https://space-components.vercel.app)**
 
-> **Not published yet.** `@inkorange/space-ui` is not on npm, so the install
-> command below will not resolve today. The package is complete and the
-> release is gated on a final review of the gallery. Until then, browse the
-> components or build from source.
-
 ## Install
 
 ```bash

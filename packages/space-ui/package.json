@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css",
+    "prepack": "cp ../../README.md ../../LICENSE .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

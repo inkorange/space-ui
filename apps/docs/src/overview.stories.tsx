@@ -473,19 +473,6 @@ export const Installation = () => (
       One package, one stylesheet, React 19 as a peer dependency.
     </p>
 
-    <div className="docs-callout">
-      <span className="docs-callout__dot" aria-hidden="true" />
-      <div>
-        <div className="docs-callout__title">Not published yet</div>
-        <p className="docs-callout__body">
-          {packageName} is not on npm — the install command below will not
-          resolve today. The package is complete and the release is gated on a
-          final review of this gallery. Until then, browse the components here
-          or build from source.
-        </p>
-      </div>
-    </div>
-
     <Reveal>
       <section className="docs-section" style={{ marginTop: 32 }}>
         <div className="docs-section__label">Step one</div>
