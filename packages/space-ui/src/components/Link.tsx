@@ -6,7 +6,12 @@ import styles from "./Link.module.scss";
 export interface LinkProps
   extends SpacingProps,
     Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "color"> {
+  /** Render the single child element instead of an `<a>`, merging link
+   *  styling onto it. For wrapping a router's own Link component without
+   *  nesting two anchors. */
   asChild?: boolean;
+  /** Font size step: 1=12px, 2=14px, 3=16px. Matches Text's first three
+   *  steps so inline links sit flush with surrounding copy. */
   size?: "1" | "2" | "3";
   children?: ReactNode;
 }

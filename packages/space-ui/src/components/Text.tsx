@@ -6,11 +6,21 @@ import styles from "./Text.module.scss";
 export interface TextProps
   extends SpacingProps,
     Omit<React.HTMLAttributes<HTMLElement>, "color"> {
+  /** Element to render. Default `span`. Use `p` for prose and `label`
+   *  (with `htmlFor`) for form labels — size is presentational, so the
+   *  element stays free to be the semantically correct one. */
   as?: "span" | "div" | "p" | "label";
+  /** Font size step: 1=12px, 2=14px, 3=16px, 4=18px, 5=20px, 6=24px.
+   *  Line height and letter spacing move with it. Omit to inherit. */
   size?: "1" | "2" | "3" | "4" | "5" | "6";
+  /** 500 or 700. Omit for the inherited weight. */
   weight?: "medium" | "bold";
+  /** Semantic colour role. `gray` is the standard secondary-text token;
+   *  the rest carry meaning, so avoid them for emphasis alone. Omit for
+   *  primary text. */
   color?: "gray" | "red" | "green" | "amber";
-  htmlFor?: string; // when as="label"
+  /** Id of the control this labels. Only meaningful with `as="label"`. */
+  htmlFor?: string;
   children?: ReactNode;
 }
 
