@@ -76,12 +76,22 @@ function collectItems(children: ReactNode): Array<{ value: string; label: ReactN
 }
 
 export interface RootProps {
+  /** The selected item's value. Fully controlled. */
   value: string;
+  /** Called with the newly selected value. */
   onValueChange: (v: string) => void;
+  /** Blocks the trigger and removes it from the tab order. */
   disabled?: boolean;
+  /** A Trigger and a Content. */
   children?: ReactNode;
 }
 
+/**
+ * A single-choice menu for lists too long to show inline. Fully controlled.
+ *
+ * Reads its options at render time rather than through effects, so the
+ * trigger shows the right label on first paint and under SSR.
+ */
 export function Root({ value, onValueChange, disabled, children }: RootProps) {
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState<string | null>(null);
@@ -132,12 +142,22 @@ export function Root({ value, onValueChange, disabled, children }: RootProps) {
 
 export interface TriggerProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
+  /** Shown when nothing is selected. Counts toward the trigger's width,
+   *  so selecting an option never resizes it.
+   */
   placeholder?: string;
   /** Ambient motion: the lit arc orbiting the rim. The glass skin itself
    *  is always applied. Default true. */
   animated?: boolean;
 }
 
+/**
+ * The closed state of the Select, showing the selected item's own content.
+ *
+ * Sizes itself to its widest option, so it never changes width as you select
+ * — capped by `--sp-select-trigger-max-width`, past which the label
+ * ellipsizes.
+ */
 export function Trigger({ placeholder, animated = true, className, ...rest }: TriggerProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();
@@ -188,15 +208,24 @@ export function Trigger({ placeholder, animated = true, className, ...rest }: Tr
 }
 
 export interface ContentProps {
+  /** Merged with the panel's own classes. */
   className?: string;
   /** Accepted for Radix call-site compatibility ("popper" everywhere);
    *  our listbox is always trigger-anchored. */
   position?: string;
   /** Ambient motion on the panel rim. Default true. */
   animated?: boolean;
+  /** The Items. */
   children?: ReactNode;
 }
 
+/**
+ * The option panel. Always mounted but hidden while closed, so the trigger
+ * can read its labels for sizing.
+ *
+ * Never narrower than the trigger, and grows to fit the longest option so
+ * labels only wrap when they truly must.
+ */
 export function Content({ className, position: _position, animated = true, children }: ContentProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();
@@ -282,11 +311,20 @@ export function Content({ className, position: _position, animated = true, child
 }
 
 export interface ItemProps {
+  /** Reported to onValueChange when chosen. */
   value: string;
+  /** Skipped by keyboard navigation and not selectable. Still contributes
+   *  its width to the trigger's sizing. */
   disabled?: boolean;
+  /** Shown in the panel and, once selected, in the trigger — so it has to
+   *  read correctly in both places. */
   children?: ReactNode;
 }
 
+/**
+ * One option. Its children are what the trigger displays once selected, so
+ * anything rendered here has to read correctly in both places.
+ */
 export function Item({ value, disabled, children }: ItemProps) {
   const s = useSelect();
   const triggerRef = useTriggerRef();

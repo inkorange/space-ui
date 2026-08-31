@@ -28,11 +28,21 @@
    of the widest, which is what makes the trigger stop resizing on select. */
 .labelWrap {
   display: grid;
+  /* minmax(0, auto), not plain auto: the sizer sets white-space: nowrap, so
+     its min-content width is the whole string, and an auto track would take
+     that as an unshrinkable floor — forcing the button past its own max-width
+     and pushing the chevron out. A 0 min track lets the column shrink, while
+     the auto max still grows it to the widest option when there is room. */
+  grid-template-columns: minmax(0, auto);
   min-width: 0;
 }
 
+/* Both children share one cell. min-width: 0 because a grid item defaults to
+   min-width: auto, which would stop the label shrinking — and a label that
+   cannot shrink can never ellipsize, however narrow the control gets. */
 .labelWrap > * {
   grid-area: 1 / 1;
+  min-width: 0;
 }
 
 .sizer {
@@ -40,6 +50,8 @@
   visibility: hidden;
   pointer-events: none;
   white-space: nowrap;
+  /* Clip rather than spill once the cap bites. */
+  overflow: hidden;
 }
 
 /* Every label occupies the SAME cell, so the sizer is as wide as the widest
@@ -50,7 +62,16 @@
   grid-area: 1 / 1;
 }
 
-.triggerLabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* text-align: start because a <button> centres its text by UA default, and
+   this span stretches to the sizer's width — so a label shorter than the
+   widest option would float in the middle of the control instead of sitting
+   against its leading edge. */
+.triggerLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+}
 .chevron { flex-shrink: 0; opacity: 0.7; }
 
 .listbox {
@@ -60,7 +81,21 @@
   // Above the builder's absolute overlays (max z-index 12 per inventory)
   // and safe inside dialog stacking contexts.
   z-index: 50;
-  min-width: 100%;
+  /* Width policy, in one place:
+       min  — never narrower than the trigger, so the panel always covers the
+              control that opened it. Measured from the trigger rather than
+              100%, because the root stretches when it is a grid or flex item
+              and min-width would then beat the max below.
+       width— grow to the longest option, so a label only wraps when it truly
+              has to.
+       max  — stay on screen; past this, items wrap instead of overflowing. */
+  min-width: var(--_select-trigger-width, 100%);
+  width: max-content;
+  max-width: var(--sp-select-panel-max-width);
+
+  /* The panel opens away from the control, so it cannot inherit the trigger's
+     type the way a child would. */
+  font-size: 14px;
   max-height: min(60vh, 380px);
   overflow-y: auto;
   background: var(--sp-select-panel-color);
