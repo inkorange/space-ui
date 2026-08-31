@@ -19,7 +19,8 @@ export const Buttons = () => {
         <SpaceButton onClick={count}>Build Planet</SpaceButton>
         <SpaceButton size="sm" onClick={count}>Small</SpaceButton>
         <SpaceButton size="lg" onClick={count}>Large</SpaceButton>
-        <SpaceButton size="micro" onClick={count}>Micro</SpaceButton>
+        {/* micro is sized for tiny steppers, so it only fits a glyph or two. */}
+        <SpaceButton size="micro" onClick={count} aria-label="Micro">M</SpaceButton>
         <SpaceButton ember onClick={count}>Ember</SpaceButton>
         <SpaceButton iconOnly aria-label="Share" onClick={count}>↗</SpaceButton>
         <SpaceButton disabled onClick={count}>Disabled</SpaceButton>
