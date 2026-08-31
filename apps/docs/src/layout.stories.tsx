@@ -1,5 +1,9 @@
 import { Box, Flex, Grid, Card, ScrollArea, Text, Heading } from "@inkorange/space-ui";
 
+export default {
+  title: "Components/Layout",
+};
+
 export const CardStory = () => (
   <Card style={{ maxWidth: 360 }}>
     <Heading size="4">Kepler-442b</Heading>
@@ -7,6 +11,10 @@ export const CardStory = () => (
   </Card>
 );
 CardStory.storyName = "Card";
+CardStory.meta = {
+  description:
+    "A translucent panel for grouping related content. The 12px inset is a deliberate exception to the spacing grid, kept for parity with the shipped app.",
+};
 
 export const FlexAndGrid = () => (
   <Flex direction="column" gap="4">
@@ -37,3 +45,12 @@ export const ScrollAreaStory = () => (
   </ScrollArea>
 );
 ScrollAreaStory.storyName = "ScrollArea";
+ScrollAreaStory.meta = {
+  description:
+    "A scroll container with styled overflow, for regions that scroll independently of the page.",
+};
+
+FlexAndGrid.meta = {
+  description:
+    "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it.",
+};
