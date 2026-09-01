@@ -24,6 +24,11 @@ jobs:
       - run: pnpm --filter docs typecheck
       - run: pnpm --filter @inkorange/space-ui test
       - run: pnpm --filter @inkorange/space-ui build
+      # Every path the exports map promises must exist after the build, and no
+      # published .d.ts may import something the tarball does not carry. 1.0.1
+      # shipped a subpath whose types pointed at a file that never existed, and
+      # nothing here noticed.
+      - run: pnpm --filter @inkorange/space-ui check:exports
       - run: pnpm --filter docs build
       # Library-source PRs must carry a changeset (docs-only changes pass).
       # Skipped on the release branch: a "Version Packages" PR bumps

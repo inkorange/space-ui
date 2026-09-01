@@ -157,6 +157,41 @@ describe("design tokens", () => {
     }
   });
 
+  // SpaceControlClasses is asserted onto the SCSS module through `unknown`,
+  // so TypeScript cannot check the names for us. Without this, renaming a
+  // class in the SCSS would leave the published interface quietly lying and
+  // every consumer's ctl.spaceInput resolving to undefined at runtime.
+  it("SpaceControlClasses matches the classes the SCSS defines", () => {
+    const scss = readFileSync(
+      path.join(__dirname, "..", "styles", "spaceControls.module.scss"),
+      "utf8",
+    );
+    const ts = readFileSync(
+      path.join(__dirname, "..", "styles", "spaceControls.ts"),
+      "utf8",
+    );
+
+    const declared = [
+      ...(/export interface SpaceControlClasses \{([\s\S]*?)\}/.exec(ts)?.[1] ?? "")
+        .matchAll(/^\s*(\w+):/gm),
+    ].map((m) => m[1]);
+    expect(declared.length, "interface should not be empty").toBeGreaterThan(0);
+
+    const defined = new Set([
+      ...[...scss.matchAll(/^\.(\w+)\.\1\s*\{/gm)].map((m) => m[1]),
+      ...[...scss.matchAll(/^@keyframes\s+(\w+)/gm)].map((m) => m[1]),
+    ]);
+
+    for (const name of declared) {
+      expect(defined, `SpaceControlClasses declares ${name}, absent from the SCSS`)
+        .toContain(name);
+    }
+    for (const name of defined) {
+      expect(declared, `SCSS defines .${name}, missing from SpaceControlClasses`)
+        .toContain(name);
+    }
+  });
+
   it("no Radix design variables remain in our styles", () => {
     // --radix-select-trigger-width is a Radix Select internal, allowed until Phase 3.
     const banned = /var\(--(gray|slate|blue|amber|green|yellow|orange|violet|cyan|red|accent|space|font-size|color-panel|default-font-family)[a-zA-Z0-9-]*\s*[,)]/;
