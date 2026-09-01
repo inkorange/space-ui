@@ -67,8 +67,8 @@
         "Components",
         "Forms"
       ],
-      "locStart": 139,
-      "locEnd": 148,
+      "locStart": 127,
+      "locEnd": 136,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "RadioGroupStory",
       "meta": {
@@ -82,7 +82,7 @@
         "Forms"
       ],
       "locStart": 62,
-      "locEnd": 132,
+      "locEnd": 120,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "SelectStory",
       "meta": {
@@ -150,7 +150,7 @@
         "Foundations"
       ],
       "locStart": 398,
-      "locEnd": 494,
+      "locEnd": 486,
       "filePath": "src/foundations.stories.tsx",
       "namedExport": "Motion",
       "meta": {
@@ -295,7 +295,7 @@
         "Overlays"
       ],
       "locStart": 48,
-      "locEnd": 58,
+      "locEnd": 55,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "DropdownStory",
       "meta": {
@@ -308,8 +308,8 @@
         "Components",
         "Overlays"
       ],
-      "locStart": 68,
-      "locEnd": 96,
+      "locStart": 65,
+      "locEnd": 93,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "TabsStory",
       "meta": {
@@ -322,8 +322,8 @@
         "Components",
         "Overlays"
       ],
-      "locStart": 103,
-      "locEnd": 107,
+      "locStart": 100,
+      "locEnd": 104,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "TooltipStory",
       "meta": {
@@ -335,8 +335,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 675,
-      "locEnd": 765,
+      "locStart": 666,
+      "locEnd": 756,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Installation",
       "meta": {
@@ -348,8 +348,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 291,
-      "locEnd": 671,
+      "locStart": 282,
+      "locEnd": 662,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Introduction",
       "meta": {
@@ -362,7 +362,7 @@
         "Overview"
       ],
       "locStart": 45,
-      "locEnd": 181,
+      "locEnd": 178,
       "filePath": "src/stickersheet.stories.tsx",
       "namedExport": "Stickersheet",
       "meta": {}
