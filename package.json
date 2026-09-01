@@ -7,7 +7,9 @@
     "docs": "pnpm --filter docs dev",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && changeset publish",
+    "assets": "pnpm --filter docs assets",
+    "icons": "pnpm --filter docs icons"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.0"

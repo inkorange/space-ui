@@ -12,7 +12,9 @@ import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
   componentCount,
+  coveragePct,
   iconCount,
+  minzipKb,
   isPublished,
   version,
 } from "../src/system-facts";
@@ -48,7 +50,16 @@ const useSidebarSlot = () => {
 const Brand = () => (
   <>
     <a className="docs-brand__mark" href="?story=overview--introduction">
-      <span className="docs-brand__disc" aria-hidden="true" />
+      {/* aria-hidden: the link's own text already says SpaceUI, so an alt
+          here would just make a screen reader say the name twice. */}
+      <img
+        className="docs-brand__logo"
+        src="/logo-64.png"
+        width={32}
+        height={32}
+        alt=""
+        aria-hidden="true"
+      />
       <span>
         <span className="docs-brand__name">SpaceUI</span>
         <span className="docs-brand__sub">@inkorange/space-ui</span>
@@ -71,6 +82,16 @@ const Brand = () => (
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">19</div>
         <div className="docs-telemetry__label">React</div>
+      </div>
+      <div className="docs-telemetry__cell">
+        <div className="docs-telemetry__value">{minzipKb}<span className="docs-telemetry__unit">kB</span></div>
+        <div className="docs-telemetry__label">Minzip</div>
+      </div>
+      <div className="docs-telemetry__cell">
+        {/* Rounded for display; measured.json keeps the precise value, and
+            the README badge rounds the same way. */}
+        <div className="docs-telemetry__value">{Math.round(coveragePct)}<span className="docs-telemetry__unit">%</span></div>
+        <div className="docs-telemetry__label">Coverage</div>
       </div>
       <div className={`docs-status${isPublished ? " docs-status--live" : ""}`}>
         <span className="docs-status__dot" aria-hidden="true" />

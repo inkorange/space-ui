@@ -137,15 +137,16 @@ nav.ladle-aside {
 
 /* The lit crescent: a disc with an inset shadow eating one edge,
    so the logo is itself a terminator. */
-.docs-brand__disc {
-  width: 22px;
-  height: 22px;
-  flex: 0 0 22px;
-  border-radius: 50%;
-  background: var(--docs-terminator);
-  box-shadow:
-    inset -7px 0 0 0 var(--docs-void),
-    0 0 12px -2px var(--docs-terminator);
+/* Replaces the drawn crescent that stood in before there was a real mark.
+   The source is a square app icon, so it gets the same rounding an OS would
+   give it rather than being forced into a circle, which would crop the ring
+   and the two moons off the corners. */
+.docs-brand__logo {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 8px;
+  box-shadow: 0 0 12px -3px var(--docs-terminator);
 }
 
 .docs-brand__name {
@@ -191,6 +192,12 @@ nav.ladle-aside {
   font-weight: 500;
   color: var(--docs-readout);
   line-height: 1.2;
+}
+
+.docs-telemetry__unit {
+  margin-left: 2px;
+  font-size: 0.62em;
+  opacity: 0.75;
 }
 
 .docs-telemetry__label {
@@ -577,6 +584,10 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   line-height: 1.05;
   margin: 0 0 16px;
   color: var(--docs-text);
+  /* No hard <br> in the markup: at narrow widths a forced break stranded a
+     single word on its own line. balance evens out whatever wrap the width
+     actually calls for. */
+  text-wrap: balance;
 }
 
 .docs-hero__title em {
@@ -617,14 +628,26 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 96%);
 }
 
+/* Single column is the default. The demo column has a 300px floor and the
+   sidebar takes ~240px of the viewport, so below roughly 1080px the two-column
+   form starved the copy — at a 900px viewport the headline column measured
+   205px and broke the title across five lines. Two columns only once there is
+   actually room for them. */
 .docs-hero__grid {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.9fr);
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
   align-items: center;
-  min-height: 400px;
   padding-top: 24px;
+}
+
+@media (min-width: 1080px) {
+  .docs-hero__grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.9fr);
+    gap: 48px;
+    min-height: 400px;
+  }
 }
 
 .docs-hero__eyebrow {
@@ -687,10 +710,18 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   background: #0090ff14;
 }
 
+/* Stacked, the demo is just the next block down, so it fills the measure.
+   The 420px cap and end-alignment belong to the two-column form only —
+   applied there, not undone here. */
 .docs-hero__demo {
   width: 100%;
-  max-width: 420px;
-  justify-self: end;
+}
+
+@media (min-width: 1080px) {
+  .docs-hero__demo {
+    max-width: 420px;
+    justify-self: end;
+  }
 }
 
 .docs-hero__caption {
@@ -1823,11 +1854,6 @@ nav.ladle-aside a:focus-visible {
     min-height: 0;
   }
 
-  .docs-hero__demo {
-    justify-self: stretch;
-    max-width: none;
-  }
-
   .docs-shell {
     padding: 24px 16px 48px;
   }
@@ -1862,4 +1888,212 @@ nav.ladle-aside a:focus-visible {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------- Stickersheet ----------
+   The source of .github/assets/components.png. Laid out for a 16:10-ish
+   capture: a fixed measure so the shot is reproducible rather than dependent
+   on whatever width the browser happened to have. */
+.docs-sheet {
+  width: 1200px;
+  padding: 40px;
+  /* The library sets no font-family — every component inherits the host's.
+     The capture runs in preview mode, outside the docs shell, so without this
+     the whole sheet fell back to the browser's default serif and misrepresented
+     what the components look like in a real app. */
+  font-family: var(--docs-font-display);
+  color: var(--docs-text);
+  background:
+    radial-gradient(120% 90% at 15% -10%, rgba(20, 40, 90, 0.55), transparent 60%),
+    var(--docs-void);
+}
+
+.docs-sheet__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.docs-sheet__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 14px;
+  background: var(--docs-raised);
+}
+
+.docs-sheet__cell[data-wide] { grid-column: span 2; }
+.docs-sheet__cell[data-tall] { grid-row: span 2; }
+
+.docs-sheet__label {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+}
+
+/* Wrap rather than clip: a row of badges is the point of the Badge cell. */
+.docs-sheet__stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.docs-sheet__cell[data-tall] .docs-sheet__stage { align-items: stretch; }
+
+/* A block stage, for children that are full-measure blocks with no width of
+   their own — Progress collapsed to nothing as a flex item. */
+.docs-sheet__cell[data-fill] .docs-sheet__stage {
+  display: block;
+  width: 100%;
+}
+
+.docs-sheet__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px 8px 2px;
+  border-bottom: 1px solid var(--docs-hairline);
+}
+.docs-sheet__row:last-child { border-bottom: 0; }
+
+/* ---------- Installation, on the landing page ----------
+   Numbered because the steps genuinely are a sequence: you cannot import the
+   stylesheet before the package is installed. */
+.docs-install {
+  display: grid;
+  gap: 28px;
+  margin: 28px 0 24px;
+}
+
+.docs-install__step {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.docs-install__num {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 13px;
+  color: var(--docs-readout);
+}
+
+.docs-install__body { min-width: 0; }
+
+.docs-install__head {
+  margin: 6px 0 10px;
+  font-family: var(--docs-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--docs-text);
+}
+
+/* ---------- Token tiers ---------- */
+.docs-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 24px 0 28px;
+}
+
+.docs-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 12px;
+  background: var(--docs-raised);
+}
+
+/* The reach, not a number: these are tiers of scope, and saying how far each
+   one travels is the whole point of separating them. */
+.docs-tier__index {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--docs-readout);
+}
+
+.docs-tier__name {
+  font-family: var(--docs-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--docs-text);
+}
+
+.docs-tier__body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--docs-text-dim);
+}
+
+.docs-tier__sample {
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+  color: var(--docs-terminator);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Component catalogue ---------- */
+.docs-catalogue {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.docs-catalogue__group {
+  padding: 20px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 12px;
+  background: var(--docs-raised);
+}
+
+.docs-catalogue__name {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+  margin-bottom: 12px;
+}
+
+.docs-catalogue__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.docs-catalogue__list a {
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  color: var(--docs-text);
+  text-decoration: none;
+}
+
+.docs-catalogue__list a:hover {
+  color: var(--docs-terminator);
+  text-decoration: underline;
 }

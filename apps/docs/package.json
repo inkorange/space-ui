@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "ladle serve",
     "build": "ladle build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "assets": "node scripts/shoot-readme-assets.mjs",
+    "icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "@inkorange/space-ui": "workspace:*",

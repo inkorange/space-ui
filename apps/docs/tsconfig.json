@@ -8,6 +8,7 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "resolveJsonModule": true,
     "baseUrl": ".",
     // Mirrors the aliases in vite.config.ts. Without these, tsc resolves the
     // library to its built dist while the gallery renders from source — the
