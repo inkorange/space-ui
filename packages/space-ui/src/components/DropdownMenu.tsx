@@ -5,11 +5,12 @@
 "use client";
 import type * as React from "react";
 import {
-  cloneElement, createContext, createElement, isValidElement, useContext,
+  createContext, createElement, isValidElement, useContext,
   useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode,
 } from "react";
 import { cx } from "./propShared";
 import styles from "./DropdownMenu.module.scss";
+import { Button, type ButtonProps } from "./Button";
 
 interface MenuCtx {
   open: boolean;
@@ -19,166 +20,80 @@ interface MenuCtx {
 const Ctx = createContext<MenuCtx | null>(null);
 const useMenu = () => {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("DropdownMenu parts must be inside DropdownMenu.Root");
+  if (!ctx) throw new Error("DropdownMenu parts must be inside a DropdownMenu");
   return ctx;
 };
 
-// Refs live in their own contexts (not bundled into MenuCtx) so `ref={...}`
-// attachment in JSX reads a plain RefObject, matching the pattern Select.tsx
-// uses for its trigger ref.
-const TriggerRefCtx = createContext<React.RefObject<HTMLElement | null> | null>(null);
-const useTriggerRef = () => {
-  const ref = useContext(TriggerRefCtx);
-  if (!ref) throw new Error("DropdownMenu parts must be inside DropdownMenu.Root");
-  return ref;
-};
-const MenuRefCtx = createContext<React.RefObject<HTMLDivElement | null> | null>(null);
-const useMenuRef = () => {
-  const ref = useContext(MenuRefCtx);
-  if (!ref) throw new Error("DropdownMenu parts must be inside DropdownMenu.Root");
-  return ref;
-};
 
-// Whether a platform light-dismiss just closed the popover (cleared after a
-// short window by a timeout — see Content's onToggle). Own context per the
-// ref-context pattern above (refs never live on Ctx itself — react-hooks/
-// refs forbids mutable refs on a value object that's also read for render,
-// since a ref write wouldn't trigger the re-render consumers of Ctx expect).
-const LightDismissRefCtx = createContext<React.RefObject<boolean> | null>(null);
-const useLightDismissRef = () => {
-  const ref = useContext(LightDismissRefCtx);
-  if (!ref) throw new Error("DropdownMenu parts must be inside DropdownMenu.Root");
-  return ref;
-};
 
 // Whether the popover's current "closed" toggle was initiated by an Item
-// activating (click/asChild-navigate) rather than a platform light-dismiss
-// (click outside / Esc). Item arms this just before it calls setOpen(false);
-// Content's onToggle reads-and-clears it to decide whether to arm the
-// light-dismiss race guard above — an item-initiated close shouldn't be
-// mistaken for an outside click. Own ref-context, same reasoning as
-// LightDismissRefCtx.
+// activating rather than a platform light-dismiss (click outside / Esc).
+// Item arms this just before it calls setOpen(false); the root's onToggle
+// reads-and-clears it to decide whether to arm the light-dismiss race guard.
+// It stays in its own context because a mutable ref must not sit on a value
+// object that is also read during render — a ref write would not trigger the
+// re-render that consumers of Ctx expect.
 const ItemClosedRefCtx = createContext<React.RefObject<boolean> | null>(null);
 const useItemClosedRef = () => {
   const ref = useContext(ItemClosedRefCtx);
-  if (!ref) throw new Error("DropdownMenu parts must be inside DropdownMenu.Root");
+  if (!ref) throw new Error("DropdownMenu parts must be inside a DropdownMenu");
   return ref;
 };
 
-// Plain (non-component, non-hook) helper: reads-and-clears the flag. Kept
-// outside Trigger's body because closures passed through cloneElement's
-// props object aren't recognized as deferred event handlers by the React
-// Compiler's ref-during-render check the way a literal JSX attribute value
-// is — pulling the `.current` access out into an ordinary function sidesteps
-// that false positive (the closure in Trigger only ever calls this helper,
-// it never touches `.current` itself).
+// Plain helper that reads-and-clears the flag, kept out of the click handler
+// so the `.current` access is not mistaken for a ref read during render.
 function consumeLightDismissFlag(ref: React.RefObject<boolean>): boolean {
   if (!ref.current) return false;
   ref.current = false;
   return true;
 }
 
-// Same false-positive, same fix: Item's asChild onClick is built inside the
-// props object passed to createElement (not a literal JSX attribute), so a
-// direct `.current` write there trips the same ref-during-render check.
+// Same reasoning: Item's asChild onClick is built inside the props object
+// passed to createElement rather than as a literal JSX attribute, so a direct
+// `.current` write there trips the same ref-during-render check.
 function markItemInitiatedClose(ref: React.RefObject<boolean>): void {
   ref.current = true;
 }
 
-/**
- * Owns a menu's open state and closes it on an outside click or Escape.
- * Renders nothing of its own.
- */
-export function Root({
-  children,
-}: {
-  /** A Trigger and a Content. */
-  children?: ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const menuId = useId();
-  const triggerRef = useRef<HTMLElement | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const lightDismissedRef = useRef(false);
-  const itemClosedRef = useRef(false);
-  return (
-    <Ctx.Provider value={{ open, setOpen, menuId }}>
-      <TriggerRefCtx.Provider value={triggerRef}>
-        <MenuRefCtx.Provider value={menuRef}>
-          <LightDismissRefCtx.Provider value={lightDismissedRef}>
-            <ItemClosedRefCtx.Provider value={itemClosedRef}>{children}</ItemClosedRefCtx.Provider>
-          </LightDismissRefCtx.Provider>
-        </MenuRefCtx.Provider>
-      </TriggerRefCtx.Provider>
-    </Ctx.Provider>
-  );
-}
-
-/**
- * The control that opens the menu, and the element the menu is positioned
- * against. Wraps its child rather than rendering a button of its own.
- */
-export function Trigger({
-  children,
-}: {
-  /** The control that opens the menu, and what the menu anchors to. */
-  children?: ReactNode;
-}) {
-  const m = useMenu();
-  const triggerRef = useTriggerRef();
-  const lightDismissedRef = useLightDismissRef();
-  if (!isValidElement(children)) return null;
-  const child = children as React.ReactElement<Record<string, unknown>>;
-  return cloneElement(child, {
-    ref: triggerRef,
-    "aria-haspopup": "menu",
-    "aria-expanded": m.open,
-    "aria-controls": m.menuId,
-    onClick: (e: React.MouseEvent) => {
-      (child.props.onClick as ((e: React.MouseEvent) => void) | undefined)?.(e);
-      // Race: clicking the trigger while the menu is open first fires a
-      // pointerdown, which the popover API treats as an outside interaction
-      // and light-dismisses the popover (Content's onToggle flags this ref
-      // and clears it again after a short window — see there). The click
-      // event that completes right after would then read the now-stale
-      // open===false and immediately reopen the menu it was meant to close.
-      // Skip this click's toggle if a light-dismiss just landed within the
-      // same gesture.
-      if (consumeLightDismissFlag(lightDismissedRef)) return;
-      m.setOpen(!m.open);
-    },
-  });
-}
-
-/**
- * The menu surface, anchored to the trigger and aligned to its start or end
- * edge. Owns the keyboard model: arrows move between items, Escape closes and
- * returns focus to the trigger.
- */
-export function Content({
-  align = "start",
-  children,
-}: {
+export interface DropdownMenuProps extends Omit<ButtonProps, "children"> {
+  /** The trigger's content. The trigger is always a Button, so this is what
+   *  goes inside it — text, or an icon with `iconOnly`. */
+  label: ReactNode;
   /** Which edge of the trigger the menu lines up with. Use `end` when the
    *  trigger sits near the right edge and the menu would overflow. */
   align?: "start" | "end";
-  /** Items, Labels and Separators. */
+  /** `DropdownMenu.Item`, `.Separator` and `.Label`, in any order. */
   children?: ReactNode;
-}) {
-  const m = useMenu();
-  const triggerRef = useTriggerRef();
-  const menuRef = useMenuRef();
-  const lightDismissedRef = useLightDismissRef();
-  const itemClosedRef = useItemClosedRef();
+}
+
+/**
+ * A menu of actions hung off a button.
+ *
+ * The trigger is built in and is always a Button — a dropdown whose trigger
+ * looked like anything else was never a shape worth supporting, and making it
+ * arbitrary cost a `cloneElement` that had to graft aria wiring and a click
+ * handler onto someone else's element.
+ *
+ * The menu rides the platform's top layer via `popover`, so click-outside
+ * dismissal and stacking come from the browser rather than an approximation.
+ * Arrows move between items, Escape closes and returns focus to the trigger.
+ */
+function DropdownMenuRoot({ label, align = "start", children, ...buttonProps }: DropdownMenuProps) {
+  const [open, setOpen] = useState(false);
+  const menuId = useId();
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const lightDismissedRef = useRef(false);
+  const itemClosedRef = useRef(false);
   const [pos, setPos] = useState<{ top: number; left: number | "auto"; right: number | "auto" } | null>(null);
 
   // useLayoutEffect (not useEffect) so the position is measured and applied
-  // synchronously before paint — matches Select.tsx's trigger-measurement
-  // pattern and avoids a one-frame flash at the wrong coordinates.
+  // synchronously before paint — matches Select's trigger measurement and
+  // avoids a one-frame flash at the wrong coordinates.
   useLayoutEffect(() => {
     const el = menuRef.current;
     if (!el) return;
-    if (m.open) {
+    if (open) {
       // Position under the trigger before entering the top layer.
       const trigger = triggerRef.current;
       if (trigger) {
@@ -193,68 +108,93 @@ export function Content({
     } else if (el.matches(":popover-open")) {
       el.hidePopover();
     }
-  }, [m.open, align, menuRef, triggerRef]);
+  }, [open, align]);
 
   // A resize invalidates the anchored position (measured once, at open) —
-  // rather than re-measuring on every resize tick, just close the menu, same
-  // as a light dismiss.
+  // rather than re-measuring on every tick, close the menu, as a light
+  // dismiss would.
   useEffect(() => {
-    if (!m.open) return;
-    const setOpen = m.setOpen;
+    if (!open) return;
     const onResize = () => setOpen(false);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [m.open, m.setOpen]);
+  }, [open]);
 
   return (
-    <div
-      ref={menuRef}
-      id={m.menuId}
-      role="menu"
-      popover="auto"
-      className={styles.menu}
-      style={
-        pos
-          ? {
-              top: pos.top,
-              left: pos.left === "auto" ? "auto" : pos.left,
-              right: pos.right === "auto" ? "auto" : pos.right,
-            }
-          : undefined
-      }
-      onToggle={(e: React.SyntheticEvent<HTMLDivElement>) => {
-        // Platform light-dismiss (click outside / Esc) → sync React state.
-        if ((e.nativeEvent as ToggleEvent).newState === "closed") {
-          // An Item activating also drives this closed (setOpen(false) →
-          // hidePopover() → this same toggle event) — that's not a light
-          // dismiss and shouldn't arm the race guard below. Read-and-clear
-          // the item's flag to tell the two apart.
-          const itemInitiated = itemClosedRef.current;
-          itemClosedRef.current = false;
-          if (!itemInitiated) {
-            // Flag the race window for Trigger's onClick (see the comment
-            // there) and auto-clear it shortly after — it only needs to
-            // survive the current click gesture, not linger indefinitely.
-            lightDismissedRef.current = true;
-            setTimeout(() => { lightDismissedRef.current = false; }, 300);
+    <Ctx.Provider value={{ open, setOpen, menuId }}>
+      <ItemClosedRefCtx.Provider value={itemClosedRef}>
+        <Button
+          {...buttonProps}
+          ref={triggerRef}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-controls={menuId}
+          onClick={(e) => {
+            buttonProps.onClick?.(e);
+            // Race: clicking the trigger while the menu is open first fires a
+            // pointerdown, which the popover API treats as an outside
+            // interaction and light-dismisses the popover. The click that
+            // completes right after would read the now-stale open===false and
+            // immediately reopen the menu it was meant to close. Skip this
+            // click's toggle if a light-dismiss just landed in the same
+            // gesture.
+            if (consumeLightDismissFlag(lightDismissedRef)) return;
+            setOpen(!open);
+          }}
+        >
+          {label}
+        </Button>
+
+        <div
+          ref={menuRef}
+          id={menuId}
+          role="menu"
+          popover="auto"
+          className={styles.menu}
+          style={
+            pos
+              ? {
+                  top: pos.top,
+                  left: pos.left === "auto" ? "auto" : pos.left,
+                  right: pos.right === "auto" ? "auto" : pos.right,
+                }
+              : undefined
           }
-          if (m.open) m.setOpen(false);
-        }
-      }}
-      onKeyDown={(e) => {
-        const items = Array.from(
-          menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []
-        );
-        const idx = items.indexOf(document.activeElement as HTMLElement);
-        if (e.key === "ArrowDown") { e.preventDefault(); items[Math.min(idx + 1, items.length - 1)]?.focus(); }
-        else if (e.key === "ArrowUp") { e.preventDefault(); items[Math.max(idx - 1, 0)]?.focus(); }
-        else if (e.key === "Home") { e.preventDefault(); items[0]?.focus(); }
-        else if (e.key === "End") { e.preventDefault(); items[items.length - 1]?.focus(); }
-        else if (e.key === "Escape") { m.setOpen(false); triggerRef.current?.focus(); }
-      }}
-    >
-      {children}
-    </div>
+          onToggle={(e: React.SyntheticEvent<HTMLDivElement>) => {
+            // Platform light-dismiss (click outside / Esc) → sync React state.
+            if ((e.nativeEvent as ToggleEvent).newState === "closed") {
+              // An Item activating also drives this closed (setOpen(false) →
+              // hidePopover() → this same toggle event) — that is not a light
+              // dismiss and must not arm the race guard below. Read-and-clear
+              // the item's flag to tell the two apart.
+              const itemInitiated = itemClosedRef.current;
+              itemClosedRef.current = false;
+              if (!itemInitiated) {
+                // Flag the race window for the trigger's onClick and clear it
+                // shortly after — it only needs to survive the current click
+                // gesture, not linger.
+                lightDismissedRef.current = true;
+                setTimeout(() => { lightDismissedRef.current = false; }, 300);
+              }
+              if (open) setOpen(false);
+            }
+          }}
+          onKeyDown={(e) => {
+            const items = Array.from(
+              menuRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []
+            );
+            const idx = items.indexOf(document.activeElement as HTMLElement);
+            if (e.key === "ArrowDown") { e.preventDefault(); items[Math.min(idx + 1, items.length - 1)]?.focus(); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); items[Math.max(idx - 1, 0)]?.focus(); }
+            else if (e.key === "Home") { e.preventDefault(); items[0]?.focus(); }
+            else if (e.key === "End") { e.preventDefault(); items[items.length - 1]?.focus(); }
+            else if (e.key === "Escape") { setOpen(false); triggerRef.current?.focus(); }
+          }}
+        >
+          {children}
+        </div>
+      </ItemClosedRefCtx.Provider>
+    </Ctx.Provider>
   );
 }
 
@@ -262,7 +202,7 @@ export function Content({
  * A non-interactive heading for a group of items. Skipped by arrow-key
  * navigation, since there is nothing to activate.
  */
-export function Label({
+function Label({
   children,
 }: {
   /** Heading text for the group beneath it. Not focusable. */
@@ -271,7 +211,7 @@ export function Label({
   return <div className={styles.label}>{children}</div>;
 }
 
-export interface ItemProps {
+export interface DropdownMenuItemProps {
   /** Render the child element instead of the default item — for a link that
    *  should stay an anchor rather than becoming a button. */
   asChild?: boolean;
@@ -290,7 +230,7 @@ export interface ItemProps {
  * Pass `color="danger"` for a destructive action so it reads differently from
  * its neighbours before it is chosen, not after.
  */
-export function Item({ asChild, color, onSelect, children }: ItemProps) {
+function Item({ asChild, color, onSelect, children }: DropdownMenuItemProps) {
   const m = useMenu();
   const itemClosedRef = useItemClosedRef();
   const cls = cx(styles.item, color === "danger" && styles.danger);
@@ -345,6 +285,10 @@ export function Item({ asChild, color, onSelect, children }: ItemProps) {
  * A rule between groups of items — for separating a destructive action from
  * routine ones, so the two are not adjacent to a moving cursor.
  */
-export function Separator() {
+function Separator() {
   return <div role="separator" className={styles.separator} />;
 }
+
+// The parts hang off the component rather than being separate exports, so the
+// whole API is reachable from the one name a consumer already imported.
+export const DropdownMenu = Object.assign(DropdownMenuRoot, { Item, Separator, Label });

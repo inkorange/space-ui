@@ -42,24 +42,25 @@ export interface DialogCtx {
 const Ctx = createContext<DialogCtx | null>(null);
 export const useDialog = () => {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("Dialog parts must be inside Dialog.Root");
+  if (!ctx) throw new Error("Dialog parts must be inside a Dialog");
   return ctx;
 };
 
-export interface RootProps {
+export interface DialogProps {
   /** Controls the dialog. Omit both this and onOpenChange to let the dialog
    *  manage its own state. */
   open?: boolean;
   /** Called whenever the dialog opens or closes, including via Escape or a
    *  backdrop click. */
   onOpenChange?: (o: boolean) => void;
-  /** A Trigger and a Content. */
+  /** A `Trigger` and a `Content`, in any arrangement — this renders
+   *  nothing itself, so they can sit anywhere beneath it. */
   children?: ReactNode;
 }
 
-/** Shared by Dialog.Root and AlertDialog.Root (alert flag differs). */
+/** Shared by Dialog and AlertDialog; only the alert flag differs. */
 export function makeRoot(alert: boolean) {
-  return function Root({ open, onOpenChange, children }: RootProps) {
+  return function DialogRoot({ open, onOpenChange, children }: DialogProps) {
     const [internal, setInternal] = useState(false);
     const isControlled = open !== undefined;
     const actual = isControlled ? open : internal;
@@ -84,7 +85,7 @@ export function makeRoot(alert: boolean) {
  * Renders nothing itself — it only provides context, so Trigger and Content
  * can sit anywhere beneath it in the tree.
  */
-export const Root = makeRoot(false);
+const Root = makeRoot(false);
 
 type Clickable = React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>;
 const chainOpen = (child: ReactNode, fn: () => void): ReactNode => {
@@ -273,3 +274,14 @@ export function Description(props: TextProps) {
   }, [setHasDesc]);
   return <Text as="p" {...props} id={d.descId} />;
 }
+
+// The parts hang off the component rather than being separate exports, so the
+// whole API is reachable from the one name a consumer already imported. They
+// stay exported above too, because AlertDialog is assembled from them.
+export const Dialog = Object.assign(Root, {
+  Trigger,
+  Close,
+  Content,
+  Title,
+  Description,
+});

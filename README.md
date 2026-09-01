@@ -3,8 +3,8 @@
 <!-- badges:start -->
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
-![coverage](https://img.shields.io/badge/coverage-83%25-green)
-![minzip](https://img.shields.io/badge/minzip-22.1%20kB-blue)
+![coverage](https://img.shields.io/badge/coverage-82%25-green)
+![minzip](https://img.shields.io/badge/minzip-21.7%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
@@ -75,14 +75,11 @@ screen at once — the kind of interface where someone is adjusting values and
 watching something respond.
 
 ```tsx
-<Select.Root value={star} onValueChange={setStar}>
-  <Select.Trigger />
-  <Select.Content>
-    {types.map((t) => (
-      <Select.Item key={t} value={t}>{t}-type star</Select.Item>
-    ))}
-  </Select.Content>
-</Select.Root>
+<Select value={star} onValueChange={setStar}>
+  {types.map((t) => (
+    <Select.Item key={t} value={t}>{t}-type star</Select.Item>
+  ))}
+</Select>
 ```
 
 The small things are handled so you never have to notice them. That Select

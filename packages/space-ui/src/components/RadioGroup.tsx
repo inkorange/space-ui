@@ -12,7 +12,7 @@ interface GroupCtx {
 }
 const Ctx = createContext<GroupCtx | null>(null);
 
-export interface RootProps {
+export interface RadioGroupProps {
   /** The selected item's value. Fully controlled. */
   value: string;
   /** Called with the newly selected value. */
@@ -21,7 +21,7 @@ export interface RootProps {
   disabled?: boolean;
   /** Merged onto the group wrapper. */
   className?: string;
-  /** The Items. */
+  /** One or more `RadioGroup.Item`. */
   children?: ReactNode;
 }
 
@@ -29,7 +29,7 @@ export interface RootProps {
  * A single-choice control for short lists, where seeing every option at once
  * matters more than saving space. Reach for Select when it does not.
  */
-export function Root({ value, onValueChange, disabled, className, children }: RootProps) {
+function RadioGroupRoot({ value, onValueChange, disabled, className, children }: RadioGroupProps) {
   const name = useId();
   return (
     <Ctx.Provider value={{ value, onValueChange, disabled, name }}>
@@ -40,7 +40,7 @@ export function Root({ value, onValueChange, disabled, className, children }: Ro
   );
 }
 
-export interface ItemProps {
+export interface RadioGroupItemProps {
   /** Reported to the group's onValueChange when chosen. */
   value: string;
   /** Disables this option only. */
@@ -49,13 +49,17 @@ export interface ItemProps {
   children?: ReactNode;
 }
 
-/** With children: self-labeling (<label> wraps input+orb+children) — the
- *  SaveShareDialog pattern. Without children: emits a bare span so an
- *  OUTER label (ConfigurationPanel's <Text as="label">) owns association —
- *  nesting labels would be invalid HTML. */
-export function Item({ value, disabled, children }: ItemProps) {
+/**
+ * One option.
+ *
+ * With children it labels itself: a <label> wraps the input, the orb and the
+ * children, so the text is part of the click target. Without children it
+ * emits a bare span instead, so an OUTER label can own the association —
+ * nesting one label inside another is invalid HTML.
+ */
+function Item({ value, disabled, children }: RadioGroupItemProps) {
   const g = useContext(Ctx);
-  if (!g) throw new Error("RadioGroup.Item must be inside RadioGroup.Root");
+  if (!g) throw new Error("RadioGroup.Item must be inside a RadioGroup");
   const isDisabled = disabled || g.disabled;
   const control = (
     <>
@@ -81,3 +85,7 @@ export function Item({ value, disabled, children }: ItemProps) {
     </label>
   );
 }
+
+// Item hangs off the component rather than being a separate export, so the
+// whole API is reachable from the one name a consumer already imported.
+export const RadioGroup = Object.assign(RadioGroupRoot, { Item });

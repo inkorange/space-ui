@@ -289,7 +289,7 @@ const usageByToken = () => {
     for (const token of doc.paletteTokens) {
       const list = map.get(token) ?? [];
       // Namespaced parts share one stylesheet, so collapse to the file's
-      // component: Select.Trigger and Select.Content are one entry.
+      // component: Dialog.Trigger and Dialog.Content are one entry.
       const owner = doc.name.split(".")[0];
       if (!list.includes(owner)) list.push(owner);
       map.set(token, list);
@@ -330,8 +330,8 @@ export const TokenUsage = () => {
         <div className="docs-section__label">Reverse index</div>
         <h2 className="docs-section__title">Token → components</h2>
         <p className="docs-section__intro">
-          Namespaced parts share one stylesheet, so <code>Select.Trigger</code>{" "}
-          and <code>Select.Content</code> appear once as <code>Select</code>.
+          Namespaced parts share one stylesheet, so <code>Dialog.Trigger</code>{" "}
+          and <code>Dialog.Content</code> appear once as <code>Dialog</code>.
         </p>
 
         <div className="docs-swatches">
@@ -432,17 +432,14 @@ export const Motion = () => {
             </header>
             <div className="docs-skindemo__stack">
               <Button>Build planet</Button>
-              <TextField.Root placeholder="Planet name…" />
-              <Select.Root value={live} onValueChange={setLive}>
-                <Select.Trigger />
-                <Select.Content>
-                  {STAR_TYPES.map((t) => (
-                    <Select.Item key={t} value={t}>
-                      {t}-type star
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
+              <TextField placeholder="Planet name…" />
+              <Select value={live} onValueChange={setLive}>
+                {STAR_TYPES.map((t) => (
+                  <Select.Item key={t} value={t}>
+                    {t}-type star
+                  </Select.Item>
+                ))}
+              </Select>
             </div>
           </section>
 
@@ -453,17 +450,14 @@ export const Motion = () => {
             </header>
             <div className="docs-skindemo__stack">
               <Button animated={false}>Build planet</Button>
-              <TextField.Root animated={false} placeholder="Planet name…" />
-              <Select.Root value={still} onValueChange={setStill}>
-                <Select.Trigger animated={false} />
-                <Select.Content animated={false}>
-                  {STAR_TYPES.map((t) => (
-                    <Select.Item key={t} value={t}>
-                      {t}-type star
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
+              <TextField animated={false} placeholder="Planet name…" />
+              <Select value={still} onValueChange={setStill} animated={false}>
+                {STAR_TYPES.map((t) => (
+                  <Select.Item key={t} value={t}>
+                    {t}-type star
+                  </Select.Item>
+                ))}
+              </Select>
             </div>
           </section>
         </div>
@@ -480,17 +474,15 @@ export const Motion = () => {
         <Code
           label="Which components take it"
           code={`<Button animated={false}>Build planet</Button>
-<TextField.Root animated={false} />
+<TextField animated={false} />
 <TextArea animated={false} />
-<Select.Trigger animated={false} />
-<Select.Content animated={false} />
 <Tabs.Trigger animated={false} />
 
 // Slider has no ambient loop, so it takes no animated prop.`}
-        />
-      </section>
-    </div>
-  );
+      />
+    </section>
+  </div>
+);
 };
 
 Motion.meta = { fullBleed: true };

@@ -64,16 +64,13 @@ const PlanetCard = () => {
         <Text size="1" color="muted">
           Host star
         </Text>
-        <Select.Root value={star} onValueChange={setStar}>
-          <Select.Trigger />
-          <Select.Content>
-            {STAR_TYPES.map((t) => (
-              <Select.Item key={t} value={t}>
-                {t}-type star
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
+        <Select value={star} onValueChange={setStar}>
+          {STAR_TYPES.map((t) => (
+            <Select.Item key={t} value={t}>
+              {t}-type star
+            </Select.Item>
+          ))}
+        </Select>
       </div>
 
       <div className="docs-demo__actions">
@@ -161,16 +158,13 @@ const MotionDemo = () => {
         </header>
         <div className="docs-skindemo__stack">
           <Button>Build planet</Button>
-          <Select.Root value={liveStar} onValueChange={setLiveStar}>
-            <Select.Trigger />
-            <Select.Content>
-              {STAR_TYPES.map((t) => (
-                <Select.Item key={t} value={t}>
-                  {t}-type star
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
+          <Select value={liveStar} onValueChange={setLiveStar}>
+            {STAR_TYPES.map((t) => (
+              <Select.Item key={t} value={t}>
+                {t}-type star
+              </Select.Item>
+            ))}
+          </Select>
         </div>
         <pre className="docs-skindemo__code">&lt;Button /&gt;</pre>
       </section>
@@ -182,16 +176,13 @@ const MotionDemo = () => {
         </header>
         <div className="docs-skindemo__stack">
           <Button animated={false}>Build planet</Button>
-          <Select.Root value={stillStar} onValueChange={setStillStar}>
-            <Select.Trigger animated={false} />
-            <Select.Content animated={false}>
-              {STAR_TYPES.map((t) => (
-                <Select.Item key={t} value={t}>
-                  {t}-type star
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
+          <Select value={stillStar} onValueChange={setStillStar} animated={false}>
+            {STAR_TYPES.map((t) => (
+              <Select.Item key={t} value={t}>
+                {t}-type star
+              </Select.Item>
+            ))}
+          </Select>
         </div>
         <pre className="docs-skindemo__code">
           &lt;Button animated={"{false}"} /&gt;
@@ -592,8 +583,8 @@ export function Planet() {
 
 /* same look, no loops */
 <Button animated={false}>Build planet</Button>
-<TextField.Root animated={false} />
-<Select.Trigger animated={false} />`}
+<TextField animated={false} />
+<Select animated={false}>…</Select>`}
         />
 
         <p className="docs-section__intro" style={{ marginTop: 16, marginBottom: 0 }}>

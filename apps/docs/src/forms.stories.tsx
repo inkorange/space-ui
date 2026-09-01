@@ -11,9 +11,9 @@ const STAR_TYPES = ["O", "B", "A", "F", "G", "K", "M"];
 
 export const TextFieldStory = () => (
   <div style={column}>
-    <TextField.Root placeholder="Planet name…" />
-    <TextField.Root defaultValue="Kepler-442b" />
-    <TextField.Root disabled placeholder="Disabled" />
+    <TextField placeholder="Planet name…" />
+    <TextField defaultValue="Kepler-442b" />
+    <TextField disabled placeholder="Disabled" />
   </div>
 );
 TextFieldStory.storyName = "TextField";
@@ -67,16 +67,13 @@ export const SelectStory = () => {
 
   return (
     <div style={{ display: "grid", gap: 28, justifyItems: "start", maxWidth: 560 }}>
-      <Select.Root value={v} onValueChange={setV}>
-        <Select.Trigger />
-        <Select.Content>
-          {STAR_TYPES.map((s) => (
-            <Select.Item key={s} value={s}>
-              {s}-type star
-            </Select.Item>
-          ))}
-        </Select.Content>
-      </Select.Root>
+      <Select value={v} onValueChange={setV}>
+        {STAR_TYPES.map((s) => (
+          <Select.Item key={s} value={s}>
+            {s}-type star
+          </Select.Item>
+        ))}
+      </Select>
 
       {/* The width behaviour only shows at the extremes: the trigger sizes to
           its widest option, so a long list is what the cap exists for. */}
@@ -84,48 +81,39 @@ export const SelectStory = () => {
         <code style={{ fontSize: 12, opacity: 0.7 }}>
           long options — capped at --sp-select-trigger-max-width (20rem)
         </code>
-        <Select.Root value={capped} onValueChange={setCapped}>
-          <Select.Trigger />
-          <Select.Content>
-            {LONG_OPTIONS.map((o) => (
-              <Select.Item key={o.value} value={o.value}>
-                {o.label}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
+        <Select value={capped} onValueChange={setCapped}>
+          {LONG_OPTIONS.map((o) => (
+            <Select.Item key={o.value} value={o.value}>
+              {o.label}
+            </Select.Item>
+          ))}
+        </Select>
       </div>
 
       <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-narrow-select">
         <code style={{ fontSize: 12, opacity: 0.7 }}>
           fixed 220px width — the label ellipsizes, the panel still wraps
         </code>
-        <Select.Root value={narrow} onValueChange={setNarrow}>
-          <Select.Trigger />
-          <Select.Content>
-            {LONG_OPTIONS.map((o) => (
-              <Select.Item key={o.value} value={o.value}>
-                {o.label}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
+        <Select value={narrow} onValueChange={setNarrow}>
+          {LONG_OPTIONS.map((o) => (
+            <Select.Item key={o.value} value={o.value}>
+              {o.label}
+            </Select.Item>
+          ))}
+        </Select>
       </div>
 
       <div style={{ display: "grid", gap: 8, justifyItems: "start" }} className="story-wide-select">
         <code style={{ fontSize: 12, opacity: 0.7 }}>
           same options, cap raised to 34rem on an ancestor
         </code>
-        <Select.Root value={wide} onValueChange={setWide}>
-          <Select.Trigger />
-          <Select.Content>
-            {LONG_OPTIONS.map((o) => (
-              <Select.Item key={o.value} value={o.value}>
-                {o.label}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
+        <Select value={wide} onValueChange={setWide}>
+          {LONG_OPTIONS.map((o) => (
+            <Select.Item key={o.value} value={o.value}>
+              {o.label}
+            </Select.Item>
+          ))}
+        </Select>
       </div>
     </div>
   );
@@ -139,11 +127,11 @@ SelectStory.meta = {
 export const RadioGroupStory = () => {
   const [v, setV] = useState("public");
   return (
-    <RadioGroup.Root value={v} onValueChange={setV}>
+    <RadioGroup value={v} onValueChange={setV}>
       <RadioGroup.Item value="public">Public</RadioGroup.Item>
       <RadioGroup.Item value="unlisted">Unlisted</RadioGroup.Item>
       <RadioGroup.Item value="private">Private</RadioGroup.Item>
-    </RadioGroup.Root>
+    </RadioGroup>
   );
 };
 RadioGroupStory.storyName = "RadioGroup";

@@ -16,9 +16,20 @@ interface TabsCtx {
 const Ctx = createContext<TabsCtx | null>(null);
 const useTabs = () => {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("Tabs parts must be inside Tabs.Root");
+  if (!ctx) throw new Error("Tabs parts must be inside a Tabs");
   return ctx;
 };
+
+export interface TabsProps {
+  /** The selected tab's value. Fully controlled — there is no default. */
+  value: string;
+  /** Called with the newly selected tab's value. */
+  onValueChange: (v: string) => void;
+  /** Merged onto the wrapper div, which is otherwise unstyled. */
+  className?: string;
+  /** A `Tabs.List` and the `Tabs.Content`s it switches between. */
+  children?: ReactNode;
+}
 
 /**
  * Wraps a tab set and owns which tab is showing. Fully controlled — pass
@@ -26,18 +37,9 @@ const useTabs = () => {
  *
  * Renders a plain div, so it imposes no layout of its own. It also mints the
  * id that pairs each Trigger with its Content, which is why every part has to
- * sit inside a Root rather than being usable on its own.
+ * sit inside it rather than being usable on its own.
  */
-export function Root({ value, onValueChange, className, children }: {
-  /** The selected tab's value. Fully controlled — there is no default. */
-  value: string;
-  /** Called with the newly selected tab's value. */
-  onValueChange: (v: string) => void;
-  /** Merged onto the wrapper div, which is otherwise unstyled. */
-  className?: string;
-  /** A List and the Contents it switches between. */
-  children?: ReactNode;
-}) {
+function TabsRoot({ value, onValueChange, className, children }: TabsProps) {
   const id = useId();
   return (
     <Ctx.Provider value={{ value, onValueChange, id }}>
@@ -54,7 +56,7 @@ export function Root({ value, onValueChange, className, children }: {
  * Bottom-aligns its children, so an active tab that grows taller rises above
  * its neighbours instead of pushing the row down — the folder-tab effect.
  */
-export function List({
+function List({
   children,
 }: {
   /** The Triggers. Their order is the tab order. */
@@ -88,7 +90,7 @@ export function List({
  * Emits `data-state="active" | "inactive"`, which is the hook the active
  * styling keys off — useful if you are restyling tabs from outside.
  */
-export function Trigger({ value, className, children, ...rest }: {
+function Trigger({ value, className, children, ...rest }: {
   /** Selects this value. Must match the Content it reveals. */
   value: string;
   /** Merged with the tab's own classes rather than replacing them. */
@@ -124,7 +126,7 @@ export function Trigger({ value, className, children, ...rest }: {
  * Carries no styling: the surface a tab set seats onto is the consumer's, and
  * should match `--sp-tabs-surface-color` so the active tab connects to it.
  */
-export function Content({
+function Content({
   value,
   children,
 }: {
@@ -141,3 +143,7 @@ export function Content({
     </div>
   );
 }
+
+// The parts hang off the component rather than being separate exports, so the
+// whole API is reachable from the one name a consumer already imported.
+export const Tabs = Object.assign(TabsRoot, { List, Trigger, Content });

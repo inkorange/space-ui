@@ -18,16 +18,16 @@ import { Badge } from "./Badge";
 import { Separator } from "./Separator";
 import { Card } from "./Card";
 import { ScrollArea } from "./ScrollArea";
-import * as Select from "./Select";
-import * as TextField from "./TextField";
+import { Select } from "./Select";
+import { TextField } from "./TextField";
 import { TextArea } from "./TextArea";
 import { Slider } from "./Slider";
-import * as RadioGroup from "./RadioGroup";
+import { RadioGroup } from "./RadioGroup";
 import { Progress } from "./Progress";
-import * as Dialog from "./Dialog";
-import * as AlertDialog from "./AlertDialog";
-import * as DropdownMenu from "./DropdownMenu";
-import * as Tabs from "./Tabs";
+import { Dialog } from "./Dialog";
+import { AlertDialog } from "./AlertDialog";
+import { DropdownMenu } from "./DropdownMenu";
+import { Tabs } from "./Tabs";
 import { Button } from "./Button";
 import { Loader } from "./Loader";
 import { IconToggle } from "./IconToggle";
@@ -183,13 +183,10 @@ describe("ScrollArea", () => {
 
 describe("Select", () => {
   const sel = (
-    <Select.Root value="" onValueChange={() => {}}>
-      <Select.Trigger placeholder="Pick one" aria-label="Star type" />
-      <Select.Content>
-        <Select.Item value="G">G - Yellow</Select.Item>
-        <Select.Item value="M">M - Red Dwarf</Select.Item>
-      </Select.Content>
-    </Select.Root>
+    <Select value="" onValueChange={() => {}} placeholder="Pick one" aria-label="Star type">
+      <Select.Item value="G">G - Yellow</Select.Item>
+      <Select.Item value="M">M - Red Dwarf</Select.Item>
+    </Select>
   );
   it("renders a closed combobox button showing the placeholder", () => {
     const out = html(sel);
@@ -202,13 +199,10 @@ describe("Select", () => {
   });
   it("shows the selected item's label in the trigger (render-time resolution)", () => {
     const out = html(
-      <Select.Root value="M" onValueChange={() => {}}>
-        <Select.Trigger placeholder="Pick one" />
-        <Select.Content>
-          <Select.Item value="G">G - Yellow</Select.Item>
-          <Select.Item value="M">M - Red Dwarf</Select.Item>
-        </Select.Content>
-      </Select.Root>
+      <Select value="M" onValueChange={() => {}} placeholder="Pick one">
+        <Select.Item value="G">G - Yellow</Select.Item>
+        <Select.Item value="M">M - Red Dwarf</Select.Item>
+      </Select>
     );
     // The trigger renders a hidden sizer holding every label AND the
     // placeholder, so it is as wide as its widest possible content and never
@@ -223,12 +217,9 @@ describe("Select", () => {
   });
   it("renders a hidden listbox with options and aria-selected", () => {
     const out = html(
-      <Select.Root value="G" onValueChange={() => {}}>
-        <Select.Trigger placeholder="p" />
-        <Select.Content>
-          <Select.Item value="G">G - Yellow</Select.Item>
-        </Select.Content>
-      </Select.Root>
+      <Select value="G" onValueChange={() => {}} placeholder="p">
+        <Select.Item value="G">G - Yellow</Select.Item>
+      </Select>
     );
     expect(out).toContain('role="listbox"');
     expect(out).toContain('role="option"');
@@ -246,12 +237,9 @@ describe("Select", () => {
   });
   it("has no aria-activedescendant on the listbox when nothing is highlighted", () => {
     const out = html(
-      <Select.Root value="G" onValueChange={() => {}}>
-        <Select.Trigger placeholder="p" />
-        <Select.Content>
-          <Select.Item value="G">G - Yellow</Select.Item>
-        </Select.Content>
-      </Select.Root>
+      <Select value="G" onValueChange={() => {}} placeholder="p">
+        <Select.Item value="G">G - Yellow</Select.Item>
+      </Select>
     );
     expect(out).not.toContain("aria-activedescendant");
   });
@@ -260,7 +248,7 @@ describe("Select", () => {
 describe("TextField", () => {
   it("wrapper carries className/style; input receives input props", () => {
     const out = html(
-      <TextField.Root className="mine" style={{ minWidth: 220 }} placeholder="Name" maxLength={40} value="x" onChange={() => {}} />
+      <TextField className="mine" style={{ minWidth: 220 }} placeholder="Name" maxLength={40} value="x" onChange={() => {}} />
     );
     expect(out).toContain("spTextFieldRoot");
     expect(out).toContain("mine");
@@ -271,9 +259,9 @@ describe("TextField", () => {
   });
   it("renders a leading Slot", () => {
     const out = html(
-      <TextField.Root value="" onChange={() => {}}>
+      <TextField value="" onChange={() => {}}>
         <TextField.Slot><svg data-icon="mag" /></TextField.Slot>
-      </TextField.Root>
+      </TextField>
     );
     expect(out).toContain('data-icon="mag"');
     // Slot markup precedes the input
@@ -308,9 +296,9 @@ describe("Slider", () => {
 describe("RadioGroup", () => {
   it("with children: renders a label wrapping input + orb + text", () => {
     const out = html(
-      <RadioGroup.Root value="public" onValueChange={() => {}}>
+      <RadioGroup value="public" onValueChange={() => {}}>
         <RadioGroup.Item value="public">Public</RadioGroup.Item>
-      </RadioGroup.Root>
+      </RadioGroup>
     );
     expect(out).toContain('role="radiogroup"');
     expect(out).toMatch(/<label[^>]*>[\s\S]*type="radio"[\s\S]*spRadioOrb[\s\S]*Public[\s\S]*<\/label>/);
@@ -318,9 +306,9 @@ describe("RadioGroup", () => {
   });
   it("without children: renders span (no nested label) for outer-label composition", () => {
     const out = html(
-      <RadioGroup.Root value="G" onValueChange={() => {}}>
+      <RadioGroup value="G" onValueChange={() => {}}>
         <RadioGroup.Item value="G" />
-      </RadioGroup.Root>
+      </RadioGroup>
     );
     expect(out).not.toContain("<label");
     expect(out).toContain("spRadioOrb");
@@ -353,10 +341,10 @@ describe("RadioGroup", () => {
   it("every RadioGroup call site renders a styled control (no opt-in needed)", () => {
     // Guards the actual regression: a caller that just uses the component.
     const out = html(
-      <RadioGroup.Root value="private" onValueChange={() => {}}>
+      <RadioGroup value="private" onValueChange={() => {}}>
         <RadioGroup.Item value="public">Public</RadioGroup.Item>
         <RadioGroup.Item value="private">Private</RadioGroup.Item>
-      </RadioGroup.Root>
+      </RadioGroup>
     );
     // Both orbs present, and exactly the selected one is checked.
     expect(out.match(/spRadioOrb/g)).toHaveLength(2);
@@ -378,13 +366,13 @@ describe("Progress", () => {
 describe("Dialog", () => {
   it("renders a native dialog with aria title/description wiring", () => {
     const out = html(
-      <Dialog.Root open onOpenChange={() => {}}>
+      <Dialog open onOpenChange={() => {}}>
         <Dialog.Content maxWidth="420px">
           <Dialog.Title>Save your planet</Dialog.Title>
           <Dialog.Description size="2">Keep it forever.</Dialog.Description>
           body
         </Dialog.Content>
-      </Dialog.Root>
+      </Dialog>
     );
     expect(out).toMatch(/<dialog/);
     expect(out).toContain("spDialog");
@@ -401,12 +389,12 @@ describe("Dialog", () => {
   });
   it("Trigger and Close clone their child buttons", () => {
     const out = html(
-      <Dialog.Root>
+      <Dialog>
         <Dialog.Trigger><button type="button" className="t">open</button></Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Close><button type="button" className="c">Cancel</button></Dialog.Close>
         </Dialog.Content>
-      </Dialog.Root>
+      </Dialog>
     );
     expect(out).toContain('class="t"');
     expect(out).toContain('class="c"');
@@ -417,14 +405,14 @@ describe("Dialog", () => {
 describe("AlertDialog", () => {
   it("renders role=alertdialog with Cancel before Action", () => {
     const out = html(
-      <AlertDialog.Root open onOpenChange={() => {}}>
+      <AlertDialog open onOpenChange={() => {}}>
         <AlertDialog.Content size="3" maxWidth="420px">
           <AlertDialog.Title>Delete system?</AlertDialog.Title>
           <AlertDialog.Description size="2">This cannot be undone.</AlertDialog.Description>
           <AlertDialog.Cancel><button type="button">Cancel</button></AlertDialog.Cancel>
           <AlertDialog.Action><button type="button">Delete</button></AlertDialog.Action>
         </AlertDialog.Content>
-      </AlertDialog.Root>
+      </AlertDialog>
     );
     expect(out).toContain('role="alertdialog"');
     expect(out.indexOf(">Cancel<")).toBeLessThan(out.indexOf(">Delete<"));
@@ -434,15 +422,12 @@ describe("AlertDialog", () => {
 describe("DropdownMenu", () => {
   it("renders trigger with menu wiring and a closed popover menu", () => {
     const out = html(
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger><button type="button">acct</button></DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end">
-          <DropdownMenu.Label>you@x.test</DropdownMenu.Label>
-          <DropdownMenu.Item asChild><a href="/account">Account</a></DropdownMenu.Item>
-          <DropdownMenu.Separator />
-          <DropdownMenu.Item color="danger" onSelect={() => {}}>Sign out</DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+      <DropdownMenu label="acct" align="end">
+        <DropdownMenu.Label>you@x.test</DropdownMenu.Label>
+        <DropdownMenu.Item asChild><a href="/account">Account</a></DropdownMenu.Item>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Item color="danger" onSelect={() => {}}>Sign out</DropdownMenu.Item>
+      </DropdownMenu>
     );
     expect(out).toContain('aria-haspopup="menu"');
     expect(out).toContain('role="menu"');
@@ -460,14 +445,14 @@ describe("DropdownMenu", () => {
 
 describe("Tabs", () => {
   const tabs = (
-    <Tabs.Root value="environment" onValueChange={() => {}}>
+    <Tabs value="environment" onValueChange={() => {}}>
       <Tabs.List>
         <Tabs.Trigger value="elements">Elements</Tabs.Trigger>
         <Tabs.Trigger value="environment">Environment</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="elements">E</Tabs.Content>
       <Tabs.Content value="environment">V</Tabs.Content>
-    </Tabs.Root>
+    </Tabs>
   );
   it("marks the active trigger and renders only the active panel", () => {
     const out = html(tabs);
@@ -521,13 +506,12 @@ describe("icons", () => {
 describe("animated prop", () => {
   const cases: Array<[string, (animated?: boolean) => ReactElement]> = [
     ["Button", (a) => <Button animated={a}>go</Button>],
-    ["Select.Trigger", (a) => (
-      <Select.Root value="x" onValueChange={() => {}}>
-        <Select.Trigger animated={a} />
-        <Select.Content><Select.Item value="x">x</Select.Item></Select.Content>
-      </Select.Root>
+    ["Select", (a) => (
+      <Select value="x" onValueChange={() => {}} animated={a}>
+        <Select.Item value="x">x</Select.Item>
+      </Select>
     )],
-    ["TextField.Root", (a) => <TextField.Root animated={a} />],
+    ["TextField", (a) => <TextField animated={a} />],
     ["TextArea", (a) => <TextArea animated={a} />],
   ];
 
