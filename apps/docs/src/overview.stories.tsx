@@ -203,12 +203,12 @@ const PRINCIPLES = [
   },
   {
     name: "Seven gray roles",
-    body: "Grays are named for the job they do, not the step they sit on. Fifteen Radix variants collapsed into seven roles, which is why a theme change is a seven-line diff.",
+    body: "Grays are named for the job they do, not the step they sit on. Seven roles instead of fifteen numbered steps, which is why a theme change is a seven-line diff.",
     rule: "--sp-gray-text-dim",
   },
   {
     name: "No framework in the surface",
-    body: "No Radix, no runtime dependencies, no framework-specific props. A test suite fails the build if a Radix import reappears, so the boundary holds over time.",
+    body: "No framework in the public surface, no runtime dependencies, no framework-specific props. A test fails the build if that boundary is crossed, so it holds over time.",
     rule: "radixImports.test.ts",
   },
   {
@@ -309,11 +309,11 @@ export const Introduction = () => (
         <div className="docs-section__label">Design tokens</div>
         <h2 className="docs-section__title">Name the job, not the shade</h2>
         <p className="docs-section__intro">
-          Radix gave us fifteen numbered grays. A numbered ramp makes you guess
-          — is <code>gray-11</code> a label, a border, or a placeholder? SpaceUI
-          ships seven, each named for the work it does, so the name tells you
-          where it belongs and a reviewer can tell when it is wrong. Set a
-          role's value once and every correct use of it follows.
+          A numbered ramp makes you guess — is <code>gray-11</code> a label, a
+          border, or a placeholder? SpaceUI ships seven grays, each named for
+          the work it does, so the name tells you where it belongs and a
+          reviewer can tell when it is wrong. Set a role's value once and every
+          correct use of it follows.
         </p>
 
         <TokenExample />
@@ -375,8 +375,7 @@ export const Introduction = () => (
         />
 
         <p className="docs-section__intro" style={{ marginTop: 20, marginBottom: 0 }}>
-          Every token, its resolved value, and the Radix variant it replaced is
-          listed under{" "}
+          Every token and its resolved value is listed under{" "}
           <a href="?story=foundations--color" style={{ color: "var(--docs-readout)" }}>
             Foundations
           </a>
