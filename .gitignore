@@ -8,3 +8,6 @@ dist/
 # repo root so GitHub renders them too.
 packages/space-ui/README.md
 packages/space-ui/LICENSE
+
+# vitest coverage output — regenerated, never committed
+coverage/

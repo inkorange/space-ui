@@ -32,5 +32,14 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     css: { modules: { classNameStrategy: "non-scoped" } },
+    coverage: {
+      provider: "v8",
+      // Only the shipped source counts. Tests and the type-only barrel would
+      // flatter the number without telling anyone anything.
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.*", "src/index.ts"],
+      // json-summary is what scripts/badges.mjs reads.
+      reporter: ["text-summary", "json-summary"],
+    },
   },
 });
