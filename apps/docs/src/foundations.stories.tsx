@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from "react";
 import { Button, Select, TextField } from "@inkorange/space-ui";
 import { Code } from "./docs-code";
-import { components as componentDocs, skinTokens } from "virtual:space-docs";
+import { components as componentDocs } from "virtual:space-docs";
 
 export default {
   title: "Foundations",
@@ -318,7 +318,6 @@ export const TokenUsage = () => {
   const usage = usageByToken();
   const used = new Set(usage.map(([token]) => token));
   const unused = unusedTokens(used);
-  const skinned = Object.entries(skinTokens);
 
   return (
     <div className="docs-page">
@@ -377,20 +376,14 @@ export const TokenUsage = () => {
 
       <section className="docs-section">
         <div className="docs-section__label">Skin layer</div>
-        <h2 className="docs-section__title">spaceControls uses no tokens</h2>
+        <h2 className="docs-section__title">The glass uses no tokens</h2>
         <p className="docs-section__intro">
-          The glass skin is built from literal colours rather than tokens, so
-          retheming through the token layer will not restyle it. That is worth
-          knowing before you override an accent and wonder why the lit rim
-          stayed blue.
+          The lit-glass treatment is built from literal colours rather than
+          tokens, so retheming through the token layer will not restyle it.
+          That is worth knowing before you override an accent and wonder why
+          the lit rim stayed blue. It is applied by the components themselves —
+          there is nothing to compose and nothing to opt into.
         </p>
-        <div className="docs-chips">
-          {skinned.map(([cls, tokens]) => (
-            <code key={cls}>
-              .{cls} — {tokens.length === 0 ? "no tokens" : tokens.join(", ")}
-            </code>
-          ))}
-        </div>
       </section>
     </div>
   );

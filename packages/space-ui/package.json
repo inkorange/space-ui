@@ -40,12 +40,7 @@
       "require": "./dist/index.cjs"
     },
     "./styles.css": "./dist/space-ui.css",
-    "./tokens.css": "./dist/tokens.css",
-    "./spaceControls": {
-      "types": "./dist/styles/spaceControls.d.ts",
-      "import": "./dist/spaceControls.js",
-      "require": "./dist/spaceControls.cjs"
-    }
+    "./tokens.css": "./dist/tokens.css"
   },
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css",

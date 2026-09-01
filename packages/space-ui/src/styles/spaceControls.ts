@@ -1,7 +1,9 @@
-// The shared control-chrome class map, exported as a deliberate public API:
-// a consumer composes these onto its own elements (`ctl.spaceInput`, trigger
-// overrides, ...). Post-1.0 goal: fold the common uses into real component
-// variants and deprecate this raw surface.
+// The shared control-chrome class map — INTERNAL. Components apply this skin
+// themselves, so a consumer never composes it; it was a public subpath until
+// the skin became unconditional, which made every call site a no-op.
+//
+// Kept as a typed module rather than importing the SCSS directly, so a typo in
+// ctl.spaceInput is a compile error here rather than undefined at runtime.
 import ctlModule from "./spaceControls.module.scss";
 
 /** Declared explicitly rather than inferred from the SCSS module, so the

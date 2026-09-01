@@ -13,7 +13,7 @@ import {
 } from "react";
 import { cx } from "./propShared";
 import styles from "./Select.module.scss";
-import ctl from "../styles/spaceControls.module.scss";
+import ctl from "../styles/spaceControls";
 
 interface RootCtx {
   value: string;

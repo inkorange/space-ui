@@ -14,10 +14,7 @@
     // checker and the running app disagree, which is how a story calling a
     // prop that no longer exists went unnoticed.
     "paths": {
-      "@inkorange/space-ui": ["../../packages/space-ui/src/index.ts"],
-      "@inkorange/space-ui/spaceControls": [
-        "../../packages/space-ui/src/styles/spaceControls.ts"
-      ]
+      "@inkorange/space-ui": ["../../packages/space-ui/src/index.ts"]
     }
   },
   "include": ["src", ".ladle"]
