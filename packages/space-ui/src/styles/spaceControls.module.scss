@@ -146,7 +146,7 @@ $glass:
  *   Select's panel. Raise it for touch targets, lower it for dense lists.
  */
 
-/* Dropdown/popover panel (e.g. Radix Select.Content): glass card with a
+/* Dropdown/popover panel (e.g. the Select listbox): glass card with a
    quieter limb rim, squared enough to hold a list. */
 .spacePanel.spacePanel {
   border: 1px solid transparent;
@@ -193,7 +193,7 @@ $glass:
 }
 
 /* Text input in the same language: limb-lit glass capsule with the orbiting rim,
-   applied to a Radix TextField.Root. The inner <input> is made transparent so
+   applied to the TextField surface. The inner <input> is made transparent so
    our glass shows through instead of Radix's default field surface/border. */
 .spaceInput.spaceInput {
   /* The same height a Select trigger uses, so the two line up in a form. This

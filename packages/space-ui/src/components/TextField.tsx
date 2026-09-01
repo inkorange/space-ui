@@ -5,7 +5,7 @@ import { cx } from "./propShared";
 import styles from "./TextField.module.scss";
 import ctl from "../styles/spaceControls";
 
-export interface RootProps
+export interface TextFieldProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "style"> {
   /** Merged onto the field wrapper, not the inner input. */
   className?: string;
@@ -19,13 +19,17 @@ export interface RootProps
 }
 
 /**
- * Single-line text entry. Composed as a Root so slots can sit alongside the
- * input inside the same field surface.
+ * Single-line text entry. The field surface is a wrapper around the input so
+ * `TextField.Slot` can sit alongside it inside the same surface — that
+ * wrapper is built in rather than being something you compose.
  *
  * Props land on the inner input, so `value`, `onChange` and the rest behave
- * as they would on a bare input.
+ * as they would on a bare input. `className` and `style` land on the field
+ * surface instead, which is where width belongs.
+ *
+ * The ref forwards to the input, not the wrapper.
  */
-export const Root = forwardRef<HTMLInputElement, RootProps>(function Root(
+const TextFieldRoot = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
   { className, style, animated = true, children, ...inputProps },
   ref,
 ) {
@@ -46,7 +50,7 @@ export const Root = forwardRef<HTMLInputElement, RootProps>(function Root(
  * unit, a short affordance. Sits within the field's surface rather than
  * beside it, and does not shrink as the input fills.
  */
-export function Slot({
+function Slot({
   children,
 }: {
   /** The slot's contents — an icon, a unit, a short affordance. */
@@ -54,3 +58,7 @@ export function Slot({
 }) {
   return <span className={styles.slot}>{children}</span>;
 }
+
+// Slot hangs off the component rather than being a separate export, so the
+// whole API is reachable from the one name a consumer already imported.
+export const TextField = Object.assign(TextFieldRoot, { Slot });

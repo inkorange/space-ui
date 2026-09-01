@@ -6,7 +6,7 @@ export default {
 };
 
 export const DialogStory = () => (
-  <Dialog.Root>
+  <Dialog>
     <Dialog.Trigger><Button>Open dialog</Button></Dialog.Trigger>
     <Dialog.Content size="4" maxWidth="480px">
       <Dialog.Title>Add to a star system</Dialog.Title>
@@ -15,7 +15,7 @@ export const DialogStory = () => (
         <Dialog.Close><Button size="sm">Done</Button></Dialog.Close>
       </div>
     </Dialog.Content>
-  </Dialog.Root>
+  </Dialog>
 );
 DialogStory.storyName = "Dialog";
 DialogStory.meta = {
@@ -24,7 +24,7 @@ DialogStory.meta = {
 };
 
 export const AlertDialogStory = () => (
-  <AlertDialog.Root>
+  <AlertDialog>
     <AlertDialog.Trigger><Button>Delete planet</Button></AlertDialog.Trigger>
     <AlertDialog.Content>
       <AlertDialog.Title>Delete this planet?</AlertDialog.Title>
@@ -34,7 +34,7 @@ export const AlertDialogStory = () => (
         <AlertDialog.Action><Button size="sm">Delete</Button></AlertDialog.Action>
       </div>
     </AlertDialog.Content>
-  </AlertDialog.Root>
+  </AlertDialog>
 );
 AlertDialogStory.storyName = "AlertDialog";
 AlertDialogStory.meta = {
@@ -46,15 +46,12 @@ AlertDialogStory.meta = {
 };
 
 export const DropdownStory = () => (
-  <DropdownMenu.Root>
-    <DropdownMenu.Trigger><Button>Menu</Button></DropdownMenu.Trigger>
-    <DropdownMenu.Content>
-      <DropdownMenu.Item onSelect={() => {}}>Rename</DropdownMenu.Item>
-      <DropdownMenu.Item onSelect={() => {}}>Share</DropdownMenu.Item>
-      <DropdownMenu.Separator />
-      <DropdownMenu.Item onSelect={() => {}}>Delete</DropdownMenu.Item>
-    </DropdownMenu.Content>
-  </DropdownMenu.Root>
+  <DropdownMenu label="Menu">
+    <DropdownMenu.Item onSelect={() => {}}>Rename</DropdownMenu.Item>
+    <DropdownMenu.Item onSelect={() => {}}>Share</DropdownMenu.Item>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Item color="danger" onSelect={() => {}}>Delete</DropdownMenu.Item>
+  </DropdownMenu>
 );
 DropdownStory.storyName = "DropdownMenu";
 DropdownStory.meta = {
@@ -62,7 +59,7 @@ DropdownStory.meta = {
     "A menu of actions anchored to a trigger. Separators group related items.",
 };
 
-// Tabs.Root is fully controlled — it takes `value`/`onValueChange` and has no
+// Tabs is fully controlled — it takes `value`/`onValueChange` and has no
 // `defaultValue`. An earlier version of this story passed defaultValue, which
 // the component ignores, so no tab was ever active.
 export const TabsStory = () => {
@@ -72,7 +69,7 @@ export const TabsStory = () => {
     // drops its bottom border and punches a gap in that surface's top line.
     // Floating in open space the effect is invisible, so give them a panel.
     <div className="docs-tabs-demo">
-      <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs value={tab} onValueChange={setTab}>
         <Tabs.List>
           <Tabs.Trigger value="elements">Elements</Tabs.Trigger>
           <Tabs.Trigger value="environment">Environment</Tabs.Trigger>
@@ -90,7 +87,7 @@ export const TabsStory = () => {
             <Text>Moon designer.</Text>
           </Tabs.Content>
         </div>
-      </Tabs.Root>
+      </Tabs>
     </div>
   );
 };

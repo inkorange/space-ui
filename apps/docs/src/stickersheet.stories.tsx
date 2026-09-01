@@ -65,18 +65,15 @@ export const Stickersheet = () => {
         </Cell>
 
         <Cell label="Select">
-          <Select.Root value={star} onValueChange={setStar}>
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="G">G-type star</Select.Item>
-              <Select.Item value="K">K-type star</Select.Item>
-              <Select.Item value="M">M-type star</Select.Item>
-            </Select.Content>
-          </Select.Root>
+          <Select value={star} onValueChange={setStar}>
+            <Select.Item value="G">G-type star</Select.Item>
+            <Select.Item value="K">K-type star</Select.Item>
+            <Select.Item value="M">M-type star</Select.Item>
+          </Select>
         </Cell>
 
         <Cell label="TextField">
-          <TextField.Root defaultValue="Kepler-442b" />
+          <TextField defaultValue="Kepler-442b" />
         </Cell>
 
         <Cell label="Slider">
@@ -100,10 +97,10 @@ export const Stickersheet = () => {
         </Cell>
 
         <Cell label="RadioGroup">
-          <RadioGroup.Root value={band} onValueChange={setBand}>
+          <RadioGroup value={band} onValueChange={setBand}>
             <RadioGroup.Item value="habitable">Habitable</RadioGroup.Item>
             <RadioGroup.Item value="inner">Inner</RadioGroup.Item>
-          </RadioGroup.Root>
+          </RadioGroup>
         </Cell>
 
         <Cell label="Loader">
@@ -111,7 +108,7 @@ export const Stickersheet = () => {
         </Cell>
 
         <Cell label="Tabs" wide>
-          <Tabs.Root value={tab} onValueChange={setTab}>
+          <Tabs value={tab} onValueChange={setTab}>
             <Tabs.List>
               <Tabs.Trigger value="mass">Mass</Tabs.Trigger>
               <Tabs.Trigger value="orbit">Orbit</Tabs.Trigger>
@@ -122,7 +119,7 @@ export const Stickersheet = () => {
                 1.34 Earth masses, 1.11 Earth radii.
               </Text>
             </Tabs.Content>
-          </Tabs.Root>
+          </Tabs>
         </Cell>
 
         <Cell label="Icons">
