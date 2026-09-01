@@ -3,7 +3,7 @@ import type * as React from "react";
 import { forwardRef, type ReactNode } from "react";
 import { cx } from "./propShared";
 import styles from "./TextField.module.scss";
-import ctl from "../styles/spaceControls.module.scss";
+import ctl from "../styles/spaceControls";
 
 export interface RootProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "style"> {

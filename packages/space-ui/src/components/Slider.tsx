@@ -3,7 +3,7 @@ import type * as React from "react";
 import { forwardRef } from "react";
 import { cx } from "./propShared";
 import styles from "./Slider.module.scss";
-import ctl from "../styles/spaceControls.module.scss";
+import ctl from "../styles/spaceControls";
 
 export interface SliderProps {
   /** Current value, as a single-element array. Fully controlled. */

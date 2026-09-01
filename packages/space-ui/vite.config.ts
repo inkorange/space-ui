@@ -12,7 +12,6 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, "src/index.ts"),
-        spaceControls: resolve(__dirname, "src/styles/spaceControls.ts"),
       },
       formats: ["es", "cjs"],
       fileName: (format, name) => `${name}.${format === "es" ? "js" : "cjs"}`,

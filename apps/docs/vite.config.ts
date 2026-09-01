@@ -14,10 +14,6 @@ export default defineConfig({
         __dirname,
         "../../packages/space-ui/src/styles/tokens.css",
       ),
-      "@inkorange/space-ui/spaceControls": resolve(
-        __dirname,
-        "../../packages/space-ui/src/styles/spaceControls.ts",
-      ),
       "@inkorange/space-ui": resolve(__dirname, "../../packages/space-ui/src/index.ts"),
     },
   },

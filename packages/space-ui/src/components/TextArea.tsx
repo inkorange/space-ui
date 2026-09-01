@@ -3,7 +3,7 @@ import type * as React from "react";
 import { forwardRef } from "react";
 import { cx } from "./propShared";
 import styles from "./TextArea.module.scss";
-import ctl from "../styles/spaceControls.module.scss";
+import ctl from "../styles/spaceControls";
 
 export interface TextAreaProps
   extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "className" | "style"> {
