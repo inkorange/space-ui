@@ -31,20 +31,14 @@ const readToken = (name: string) =>
    COLOR
    --------------------------------------------------------------- */
 
-/**
- * The `was` column records the Radix variant each role replaced. Collapsing
- * fifteen grays into seven roles is the reason this system exists, so the
- * survey shows the trade rather than quietly presenting seven grays as if
- * they had always been the plan.
- */
 const GRAY_ROLES = [
-  { token: "--sp-gray-text", role: "Headings and primary text", was: "gray-12" },
-  { token: "--sp-gray-text-dim", role: "Secondary text, labels", was: "gray-11" },
-  { token: "--sp-gray-muted", role: "Placeholder, disabled, faint", was: "gray-9" },
-  { token: "--sp-gray-border", role: "Hairlines and control borders", was: "gray-a6" },
-  { token: "--sp-gray-surface", role: "Subtle washes: hovers, wells", was: "gray-a2" },
-  { token: "--sp-gray-panel", role: "Solid card and panel fills", was: "gray-2" },
-  { token: "--sp-gray-track", role: "Recessed meter and progress tracks", was: "gray-4" },
+  { token: "--sp-gray-text", role: "Headings and primary text" },
+  { token: "--sp-gray-text-dim", role: "Secondary text, labels" },
+  { token: "--sp-gray-muted", role: "Placeholder, disabled, faint" },
+  { token: "--sp-gray-border", role: "Hairlines and control borders" },
+  { token: "--sp-gray-surface", role: "Subtle washes: hovers, wells" },
+  { token: "--sp-gray-panel", role: "Solid card and panel fills" },
+  { token: "--sp-gray-track", role: "Recessed meter and progress tracks" },
 ];
 
 const ACCENT_GROUPS = [
@@ -104,13 +98,13 @@ export const Color = () => (
       <div className="docs-section__label">Grays</div>
       <h2 className="docs-section__title">Seven roles</h2>
       <p className="docs-section__intro">
-        Several of these are translucent by design, which is why the chips sit
-        on a checkerboard — a wash that reads as solid here would mislead you
-        about how it stacks over a panel.
+        Several are translucent by design, which is why the chips sit on a
+        checkerboard — a wash that reads as solid here would mislead you about
+        how it stacks over a panel.
       </p>
 
       <div className="docs-swatches">
-        {GRAY_ROLES.map(({ token, role, was }) => (
+        {GRAY_ROLES.map(({ token, role }) => (
           <div className="docs-swatch" key={token}>
             <div
               className="docs-swatch__chip"
@@ -120,7 +114,6 @@ export const Color = () => (
             <div className="docs-swatch__value">{readToken(token)}</div>
             <div className="docs-swatch__role">
               {role}
-              <span className="docs-swatch__was">replaced {was}</span>
             </div>
           </div>
         ))}

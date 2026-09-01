@@ -26,6 +26,7 @@ export default {
     const pinned = [
       "overview--introduction",
       "overview--installation",
+      "overview--stickersheet",
       "foundations--color",
       "foundations--spacing",
       "foundations--type-scale",
@@ -50,6 +51,43 @@ export default {
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta name="description" content="SpaceUI — a React 19 component library with zero runtime dependencies, precompiled CSS, and a seven-role token system.">
     <meta name="color-scheme" content="dark">
+
+    <!-- Ladle emits its own spoon favicon into the head first; these come
+         after it, so they win. Sizes are declared explicitly rather than left
+         to the browser, which otherwise picks whichever link it saw last
+         regardless of how well it fits. Files live in public/ and are all
+         downscales of public/space-ui-logo.png. -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#0090ff">
+
+    <!-- Appending is not enough on its own. Ladle's links are emitted BEFORE
+         these and its assets are content-hashed into the build, so they can
+         be neither overridden by filename from public/ nor removed from the
+         template. Two of them would otherwise win outright: only the FIRST
+         rel="manifest" counts, and Chrome prefers an SVG icon over a .ico
+         whatever the order. So drop Ladle's, by href, once ours are parsed. -->
+    <script>
+      (function () {
+        // A plain list, not a regex: appendToHead is a template literal, and
+        // every backslash in a pattern here is silently eaten before it ever
+        // reaches the browser.
+        var ours = [
+          "/favicon.ico",
+          "/favicon-32.png",
+          "/favicon-16.png",
+          "/apple-touch-icon.png",
+          "/site.webmanifest",
+        ];
+        var sel = 'link[rel~="icon"],link[rel="mask-icon"],link[rel="apple-touch-icon"],link[rel="manifest"]';
+        document.querySelectorAll(sel).forEach(function (l) {
+          if (ours.indexOf(l.getAttribute("href")) === -1) l.remove();
+        });
+      })();
+    </script>
   `,
 
   addons: {

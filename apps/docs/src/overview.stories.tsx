@@ -10,7 +10,13 @@ import {
 } from "@inkorange/space-ui";
 import { Code } from "./docs-code";
 import { Reveal, Starfield } from "./docs-motion";
-import { componentCount, iconCount, packageName, repoUrl } from "./system-facts";
+import {
+  componentCount,
+  iconCount,
+  minzipKb,
+  packageName,
+  repoUrl,
+} from "./system-facts";
 
 export default {
   title: "Overview",
@@ -195,6 +201,70 @@ const MotionDemo = () => {
   );
 };
 
+/** Every component, grouped the way the sidebar groups them, each pointing at
+ *  the page that documents it. Kept here rather than derived from the story
+ *  list because the grouping is editorial: Loader and Progress live under
+ *  Buttons in the tree, but a reader looking for them is thinking "feedback". */
+const CATALOGUE: Array<[string, Array<[string, string]>]> = [
+  ["Typography", [
+    ["Text", "components--typography--text-sizes"],
+    ["Heading", "components--typography--headings"],
+    ["Link", "components--typography--text-sizes"],
+    ["Badge", "components--typography--badges"],
+    ["Separator", "components--typography--separator"],
+  ]],
+  ["Layout", [
+    ["Card", "components--layout--card"],
+    ["Flex", "components--layout--flex-and-grid"],
+    ["Grid", "components--layout--flex-and-grid"],
+    ["Box", "components--layout--flex-and-grid"],
+    ["ScrollArea", "components--layout--scroll-area"],
+  ]],
+  ["Forms", [
+    ["TextField", "components--forms--text-field"],
+    ["TextArea", "components--forms--text-area"],
+    ["Select", "components--forms--select"],
+    ["Slider", "components--forms--slider"],
+    ["RadioGroup", "components--forms--radio-group"],
+  ]],
+  ["Buttons", [
+    ["Button", "components--buttons--buttons"],
+    ["IconToggle", "components--buttons--icon-toggle"],
+  ]],
+  ["Feedback", [
+    ["Loader", "components--buttons--loader"],
+    ["Progress", "components--buttons--progress"],
+  ]],
+  ["Overlays", [
+    ["Dialog", "components--overlays--dialog"],
+    ["AlertDialog", "components--overlays--alert-dialog"],
+    ["DropdownMenu", "components--overlays--dropdown-menu"],
+    ["Tabs", "components--overlays--tabs"],
+    ["Tooltip", "components--overlays--tooltip"],
+  ]],
+];
+
+const TOKEN_TIERS = [
+  {
+    reach: "every component",
+    name: "Palette roles",
+    body: "Named for the job the colour does, never the hue. Change one and every component playing that role moves with it.",
+    sample: "--sp-primary-solid",
+  },
+  {
+    reach: "every glass surface",
+    name: "Surface channels",
+    body: "The lit glass is layered translucency, so these carry colour channels and let each layer pick its own alpha. Give them bare channels, not a hex — the alpha maths needs something to work on.",
+    sample: "--sp-rim-rgb: 150 190 255",
+  },
+  {
+    reach: "one component",
+    name: "Component properties",
+    body: "Where a single component needs a dial of its own, it exposes one and nothing else reads it.",
+    sample: "--sp-progress-height",
+  },
+];
+
 const PRINCIPLES = [
   {
     name: "Eight-point spacing",
@@ -203,12 +273,12 @@ const PRINCIPLES = [
   },
   {
     name: "Seven gray roles",
-    body: "Grays are named for the job they do, not the step they sit on. Fifteen Radix variants collapsed into seven roles, which is why a theme change is a seven-line diff.",
+    body: "Grays are named for the job they do, not the step they sit on. Seven roles instead of fifteen numbered steps, which is why a theme change is a seven-line diff.",
     rule: "--sp-gray-text-dim",
   },
   {
     name: "No framework in the surface",
-    body: "No Radix, no runtime dependencies, no framework-specific props. A test suite fails the build if a Radix import reappears, so the boundary holds over time.",
+    body: "No framework in the public surface, no runtime dependencies, no framework-specific props. A test fails the build if that boundary is crossed, so it holds over time.",
     rule: "radixImports.test.ts",
   },
   {
@@ -236,9 +306,7 @@ export const Introduction = () => (
             className="docs-hero__title docs-rise"
             style={{ animationDelay: "120ms" }}
           >
-            Components for dark,
-            <br />
-            instrument-dense <em>interfaces</em>.
+            Dark interfaces with their own <em>light source</em>.
           </h1>
 
           <p
@@ -246,8 +314,9 @@ export const Introduction = () => (
             style={{ animationDelay: "220ms" }}
           >
             {componentCount} React components and {iconCount} icons on a
-            seven-role token system, with zero runtime dependencies — built for
-            dark, instrument-dense interfaces.
+            seven-role token system, with zero runtime dependencies. Lit glass,
+            an orbiting rim, faint starlight — the design arrives with the
+            component, not after it.
           </p>
 
           <div
@@ -283,13 +352,93 @@ export const Introduction = () => (
     </section>
 
     <Reveal>
-      <section className="docs-section">
-        <div className="docs-section__label">Principles</div>
-        <h2 className="docs-section__title">Four rules, enforced</h2>
+      <section className="docs-section docs-section--install">
+        <div className="docs-section__label">Installation</div>
+        <h2 className="docs-section__title">Running in three lines</h2>
         <p className="docs-section__intro">
-          Each of these is a constraint the build checks, not a preference the
-          docs describe. That is the difference between a design system and a
-          folder of components.
+          One package, one stylesheet, React 19 as a peer dependency. No build
+          tooling, no Sass, no theme to configure — the components arrive
+          already wearing the design.
+        </p>
+
+        <div className="docs-install">
+          <div className="docs-install__step">
+            <div className="docs-install__num">1</div>
+            <div className="docs-install__body">
+              <h3 className="docs-install__head">Install</h3>
+              <Code
+                label="Terminal"
+                language="bash"
+                code={`pnpm add ${packageName}`}
+              />
+            </div>
+          </div>
+
+          <div className="docs-install__step">
+            <div className="docs-install__num">2</div>
+            <div className="docs-install__body">
+              <h3 className="docs-install__head">Import the stylesheet once</h3>
+              <Code
+                label="main.tsx"
+                code={`import "${packageName}/styles.css";`}
+              />
+            </div>
+          </div>
+
+          <div className="docs-install__step">
+            <div className="docs-install__num">3</div>
+            <div className="docs-install__body">
+              <h3 className="docs-install__head">Use a component</h3>
+              <Code
+                label="Planet.tsx"
+                code={`import { Card, Heading, Badge, Button } from "${packageName}";
+
+export function Planet() {
+  return (
+    <Card>
+      <Heading size="5">Kepler-442b</Heading>
+      <Badge color="success">Temperate</Badge>
+      <Button>Build planet</Button>
+    </Card>
+  );
+}`}
+              />
+            </div>
+          </div>
+        </div>
+
+        <p className="docs-section__intro" style={{ marginBottom: 0 }}>
+          That is the whole setup. Requirements, the CJS and ESM entry points
+          and what to do about a dark background are covered under{" "}
+          <a
+            href="?story=overview--installation"
+            style={{ color: "var(--docs-readout)" }}
+          >
+            Installation
+          </a>
+          .
+        </p>
+      </section>
+    </Reveal>
+
+    <Reveal>
+      <section className="docs-section">
+        <div className="docs-section__label">The design language</div>
+        <h2 className="docs-section__title">
+          The design language is the component
+        </h2>
+        <p className="docs-section__intro">
+          Most systems hand you primitives and a theme to paint them with. This
+          one does not separate the two. A <code>Button</code> is a lit-glass
+          capsule whose rim catches light like a planet's atmosphere; a{" "}
+          <code>Slider</code> is a glass tube with a limb-lit moon you drag
+          along it. There is no plain mode, because a plain mode would be a
+          different library.
+        </p>
+        <p className="docs-section__intro">
+          Underneath it, four constraints the build actually checks — not
+          preferences the docs describe. That is the difference between a
+          design system and a folder of components.
         </p>
 
         <div className="docs-principles">
@@ -309,14 +458,40 @@ export const Introduction = () => (
         <div className="docs-section__label">Design tokens</div>
         <h2 className="docs-section__title">Name the job, not the shade</h2>
         <p className="docs-section__intro">
-          Radix gave us fifteen numbered grays. A numbered ramp makes you guess
-          — is <code>gray-11</code> a label, a border, or a placeholder? SpaceUI
-          ships seven, each named for the work it does, so the name tells you
-          where it belongs and a reviewer can tell when it is wrong. Set a
-          role's value once and every correct use of it follows.
+          A numbered ramp makes you guess — is <code>gray-11</code> a label, a
+          border, or a placeholder? SpaceUI ships seven grays, each named for
+          the work it does, so the name tells you where it belongs and a
+          reviewer can tell when it is wrong. Set a role's value once and every
+          correct use of it follows.
         </p>
 
         <TokenExample />
+
+        <h3 className="docs-subhead">Three tiers, one namespace</h3>
+        <p className="docs-section__intro">
+          Every value in the library resolves through a custom property under{" "}
+          <code>--sp-</code>. They fall into three tiers, and knowing which
+          tier you are reaching for tells you how far the change will travel.
+        </p>
+
+        <div className="docs-tiers">
+          {TOKEN_TIERS.map((t, i) => (
+            <Reveal key={t.name} delay={i * 70} className="docs-tier">
+              <div className="docs-tier__index">{t.reach}</div>
+              <div className="docs-tier__name">{t.name}</div>
+              <p className="docs-tier__body">{t.body}</p>
+              <code className="docs-tier__sample">{t.sample}</code>
+            </Reveal>
+          ))}
+        </div>
+
+        <p className="docs-section__intro">
+          Tier three follows one shape without exception —{" "}
+          <code>--sp-[component]-[modifier]-[type]</code> — so{" "}
+          <code>--sp-progress-track-color</code> tells you the component, the
+          part and the kind of value before you look it up. Each component page
+          lists its own in a <strong>Custom properties</strong> table.
+        </p>
 
         <h3 className="docs-subhead">Use them in your own CSS</h3>
         <p className="docs-section__intro">
@@ -375,8 +550,7 @@ export const Introduction = () => (
         />
 
         <p className="docs-section__intro" style={{ marginTop: 20, marginBottom: 0 }}>
-          Every token, its resolved value, and the Radix variant it replaced is
-          listed under{" "}
+          Every token and its resolved value is listed under{" "}
           <a href="?story=foundations--color" style={{ color: "var(--docs-readout)" }}>
             Foundations
           </a>
@@ -426,6 +600,45 @@ export const Introduction = () => (
           Readers who set <code>prefers-reduced-motion</code> get this without
           asking — the library honours it whatever the prop says.
         </p>
+      </section>
+    </Reveal>
+
+    <Reveal>
+      <section className="docs-section">
+        <div className="docs-section__label">The components</div>
+        <h2 className="docs-section__title">All {componentCount}, and what they cost</h2>
+        <p className="docs-section__intro">
+          Every page shows the component running, the source behind it, its
+          full prop table with defaults, and the custom properties it exposes.
+          The whole library is {iconCount} icons and {componentCount} components
+          in {minzipKb}&nbsp;kB gzipped, with no runtime dependencies.
+        </p>
+
+        <div className="docs-catalogue">
+          {CATALOGUE.map(([group, items], i) => (
+            <Reveal key={group} delay={i * 50} className="docs-catalogue__group">
+              <div className="docs-catalogue__name">{group}</div>
+              <ul className="docs-catalogue__list">
+                {items.map(([name, story]) => (
+                  <li key={name + story}>
+                    <a href={`?story=${story}`}>{name}</a>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          ))}
+
+          <Reveal delay={CATALOGUE.length * 50} className="docs-catalogue__group">
+            <div className="docs-catalogue__name">Icons</div>
+            <ul className="docs-catalogue__list">
+              <li>
+                <a href="?story=components--icons--all-icons">
+                  {iconCount} icons
+                </a>
+              </li>
+            </ul>
+          </Reveal>
+        </div>
       </section>
     </Reveal>
 

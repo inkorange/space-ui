@@ -29,6 +29,9 @@ import * as AlertDialog from "./AlertDialog";
 import * as DropdownMenu from "./DropdownMenu";
 import * as Tabs from "./Tabs";
 import { Button } from "./Button";
+import { Loader } from "./Loader";
+import { IconToggle } from "./IconToggle";
+import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
 
 const html = (el: ReactElement) => renderToStaticMarkup(el);
@@ -535,4 +538,82 @@ describe("animated prop", () => {
       expect(html(render(true))).not.toContain("data-animated");
     });
   }
+});
+
+/* Loader, IconToggle and Tooltip had no test at all — not a weak one, none:
+   they were never mounted, so nothing here would have caught a component that
+   stopped rendering. These cover the contract each one actually promises. */
+
+describe("Loader", () => {
+  it("is a live status region, named even without a label", () => {
+    const out = html(<Loader />);
+    expect(out).toContain('role="status"');
+    expect(out).toContain('aria-live="polite"');
+    // A spinner with no accessible name is announced as nothing at all.
+    expect(out).toContain('aria-label="Loading"');
+  });
+  it("uses the label as both caption and accessible name", () => {
+    const out = html(<Loader label="Charting orbit" />);
+    expect(out).toContain('aria-label="Charting orbit"');
+    expect(out).toContain(">Charting orbit<");
+  });
+  it("applies the size class and merges className", () => {
+    expect(html(<Loader size="lg" className="mine" />)).toContain("lg");
+    expect(html(<Loader size="lg" className="mine" />)).toContain("mine");
+  });
+});
+
+describe("IconToggle", () => {
+  const options = [
+    { value: "orbit" as const, icon: <Icons.PersonIcon />, label: "Orbit" },
+    { value: "surface" as const, icon: <Icons.BookmarkIcon />, label: "Surface" },
+  ];
+
+  it("renders every option, always visible", () => {
+    const out = html(
+      <IconToggle options={options} value="orbit" onValueChange={() => {}} />,
+    );
+    // A segmented control shows all its segments; a menu would not.
+    expect(out.match(/<button/g)).toHaveLength(2);
+    expect(out).toContain('role="group"');
+  });
+  it("marks only the selected segment pressed", () => {
+    const out = html(
+      <IconToggle options={options} value="surface" onValueChange={() => {}} />,
+    );
+    expect(out).toMatch(/aria-label="Orbit"[^>]*aria-pressed="false"/);
+    expect(out).toMatch(/aria-label="Surface"[^>]*aria-pressed="true"/);
+  });
+  it("names each segment from its label, since the icon alone is not a name", () => {
+    const out = html(
+      <IconToggle options={options} value="orbit" onValueChange={() => {}} />,
+    );
+    expect(out).toContain('aria-label="Orbit"');
+    expect(out).toContain('aria-label="Surface"');
+  });
+});
+
+describe("Tooltip", () => {
+  it("describes its trigger and renders the label in a tooltip role", () => {
+    const out = html(
+      <Tooltip label="Switch view">
+        <button type="button">x</button>
+      </Tooltip>,
+    );
+    expect(out).toContain('role="tooltip"');
+    expect(out).toContain("Switch view");
+    // The id must actually connect the two, or the description is orphaned.
+    const id = out.match(/aria-describedby="([^"]+)"/)?.[1];
+    expect(id).toBeTruthy();
+    expect(out).toContain(`id="${id}"`);
+  });
+  it("passes children straight through when there is no label", () => {
+    const out = html(
+      <Tooltip label="">
+        <button type="button">x</button>
+      </Tooltip>,
+    );
+    expect(out).toBe("<button type=\"button\">x</button>");
+    expect(out).not.toContain("aria-describedby");
+  });
 });

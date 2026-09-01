@@ -11,8 +11,8 @@
         "Components",
         "Buttons"
       ],
-      "locStart": 9,
-      "locEnd": 38,
+      "locStart": 8,
+      "locEnd": 22,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "Buttons",
       "meta": {
@@ -25,8 +25,8 @@
         "Components",
         "Buttons"
       ],
-      "locStart": 54,
-      "locEnd": 67,
+      "locStart": 40,
+      "locEnd": 53,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "IconToggleStory",
       "meta": {
@@ -39,10 +39,10 @@
         "Components",
         "Buttons"
       ],
-      "locStart": 40,
-      "locEnd": 40,
+      "locStart": 24,
+      "locEnd": 24,
       "filePath": "src/buttons.stories.tsx",
-      "namedExport": "Loader",
+      "namedExport": "LoaderStory",
       "meta": {
         "description": "An indeterminate progress indicator for work with no measurable end. Pair it with a label that names the work, not the state."
       }
@@ -53,26 +53,12 @@
         "Components",
         "Buttons"
       ],
-      "locStart": 42,
-      "locEnd": 47,
+      "locStart": 27,
+      "locEnd": 33,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "ProgressStory",
       "meta": {
-        "description": "A determinate bar for work you can measure. The track uses the dedicated track token rather than the border token — a solid recess, not a hairline."
-      }
-    },
-    "components--forms--animation": {
-      "name": "Animation",
-      "levels": [
-        "Components",
-        "Forms"
-      ],
-      "locStart": 74,
-      "locEnd": 106,
-      "filePath": "src/forms.stories.tsx",
-      "namedExport": "Animation",
-      "meta": {
-        "description": "The same controls with ambient motion stilled. Only the loops stop — the glass, gradients and rim shading are the component, not a layer. prefers-reduced-motion does this automatically."
+        "description": "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable through custom properties — see the table below."
       }
     },
     "components--forms--radio-group": {
@@ -81,8 +67,8 @@
         "Components",
         "Forms"
       ],
-      "locStart": 112,
-      "locEnd": 121,
+      "locStart": 139,
+      "locEnd": 148,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "RadioGroupStory",
       "meta": {
@@ -95,12 +81,12 @@
         "Components",
         "Forms"
       ],
-      "locStart": 48,
-      "locEnd": 62,
+      "locStart": 62,
+      "locEnd": 132,
       "filePath": "src/forms.stories.tsx",
       "namedExport": "SelectStory",
       "meta": {
-        "description": "A single-choice menu for lists too long to show inline. The trigger renders the selected item's own content."
+        "description": "A single-choice menu for lists too long to show inline. The trigger sizes itself to its widest option, so it never changes width as you select — the cap is what stops a long label producing an absurd control. Past the cap the trigger ellipsizes while the panel wraps, so you can always read an option in full before choosing it."
       }
     },
     "components--forms--slider": {
@@ -150,10 +136,23 @@
       "levels": [
         "Foundations"
       ],
-      "locStart": 71,
-      "locEnd": 129,
+      "locStart": 87,
+      "locEnd": 144,
       "filePath": "src/foundations.stories.tsx",
       "namedExport": "Color",
+      "meta": {
+        "fullBleed": true
+      }
+    },
+    "foundations--motion": {
+      "name": "Motion",
+      "levels": [
+        "Foundations"
+      ],
+      "locStart": 398,
+      "locEnd": 494,
+      "filePath": "src/foundations.stories.tsx",
+      "namedExport": "Motion",
       "meta": {
         "fullBleed": true
       }
@@ -163,8 +162,8 @@
       "levels": [
         "Foundations"
       ],
-      "locStart": 145,
-      "locEnd": 183,
+      "locStart": 160,
+      "locEnd": 196,
       "filePath": "src/foundations.stories.tsx",
       "namedExport": "Spacing",
       "meta": {
@@ -176,8 +175,8 @@
       "levels": [
         "Foundations"
       ],
-      "locStart": 297,
-      "locEnd": 377,
+      "locStart": 310,
+      "locEnd": 383,
       "filePath": "src/foundations.stories.tsx",
       "namedExport": "TokenUsage",
       "meta": {
@@ -189,8 +188,8 @@
       "levels": [
         "Foundations"
       ],
-      "locStart": 198,
-      "locEnd": 264,
+      "locStart": 211,
+      "locEnd": 277,
       "filePath": "src/foundations.stories.tsx",
       "namedExport": "TypeScale",
       "meta": {
@@ -208,6 +207,7 @@
       "filePath": "src/icons.stories.tsx",
       "namedExport": "AllIcons",
       "meta": {
+        "components": [],
         "description": "Every icon the package exports, rendered from the live module. Icons inherit currentColor and take width and height as props."
       }
     },
@@ -236,6 +236,10 @@
       "filePath": "src/layout.stories.tsx",
       "namedExport": "FlexAndGrid",
       "meta": {
+        "components": [
+          "Flex",
+          "Grid"
+        ],
         "description": "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it."
       }
     },
@@ -264,6 +268,9 @@
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "AlertDialogStory",
       "meta": {
+        "components": [
+          "Dialog"
+        ],
         "description": "A modal for destructive or irreversible actions. Unlike Dialog, it requires an explicit choice — no escape-to-dismiss."
       }
     },
@@ -287,8 +294,8 @@
         "Components",
         "Overlays"
       ],
-      "locStart": 45,
-      "locEnd": 55,
+      "locStart": 48,
+      "locEnd": 58,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "DropdownStory",
       "meta": {
@@ -301,8 +308,8 @@
         "Components",
         "Overlays"
       ],
-      "locStart": 91,
-      "locEnd": 91,
+      "locStart": 68,
+      "locEnd": 96,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "TabsStory",
       "meta": {
@@ -315,8 +322,8 @@
         "Components",
         "Overlays"
       ],
-      "locStart": 98,
-      "locEnd": 102,
+      "locStart": 103,
+      "locEnd": 107,
       "filePath": "src/overlays.stories.tsx",
       "namedExport": "TooltipStory",
       "meta": {
@@ -328,8 +335,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 458,
-      "locEnd": 561,
+      "locStart": 675,
+      "locEnd": 765,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Installation",
       "meta": {
@@ -341,13 +348,24 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 222,
-      "locEnd": 454,
+      "locStart": 291,
+      "locEnd": 671,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Introduction",
       "meta": {
         "fullBleed": true
       }
+    },
+    "overview--stickersheet": {
+      "name": "Stickersheet",
+      "levels": [
+        "Overview"
+      ],
+      "locStart": 45,
+      "locEnd": 181,
+      "filePath": "src/stickersheet.stories.tsx",
+      "namedExport": "Stickersheet",
+      "meta": {}
     },
     "components--typography--badges": {
       "name": "Badges",
@@ -355,8 +373,8 @@
         "Components",
         "Typography"
       ],
-      "locStart": 25,
-      "locEnd": 32,
+      "locStart": 29,
+      "locEnd": 36,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "Badges",
       "meta": {
@@ -370,7 +388,7 @@
         "Typography"
       ],
       "locStart": 7,
-      "locEnd": 13,
+      "locEnd": 17,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "Headings",
       "meta": {
@@ -383,8 +401,8 @@
         "Components",
         "Typography"
       ],
-      "locStart": 34,
-      "locEnd": 40,
+      "locStart": 38,
+      "locEnd": 44,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "SeparatorStory",
       "meta": {
@@ -397,11 +415,15 @@
         "Components",
         "Typography"
       ],
-      "locStart": 15,
-      "locEnd": 23,
+      "locStart": 19,
+      "locEnd": 27,
       "filePath": "src/typography.stories.tsx",
       "namedExport": "TextSizes",
       "meta": {
+        "components": [
+          "Text",
+          "Link"
+        ],
         "description": "Five body sizes plus the gray color role for secondary copy."
       }
     }

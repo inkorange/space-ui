@@ -1,5 +1,7 @@
 import * as UI from "@inkorange/space-ui";
 import { iconNames as generatedIconNames } from "virtual:space-docs";
+import pkg from "../../../packages/space-ui/package.json";
+import measured from "./measured.json";
 
 /**
  * Facts the gallery states publicly, derived from the library rather than
@@ -31,13 +33,24 @@ export const componentCount = componentNames.length;
 export const iconCount = iconNames.length;
 
 /**
- * The version the first publish will carry. The package sits at 0.0.0 with a
- * staged major changeset, so changesets resolves it to 1.0.0 on release.
+ * Read from the package rather than typed here. It was pinned to "1.0.0" by
+ * hand and the sidebar still claimed that at 1.0.3 — the exact stale-fact
+ * problem the rest of this file exists to avoid. changesets bumps
+ * package.json on release, so this follows automatically.
  */
-export const version = "1.0.0";
+export const version = pkg.version;
 
 /** Published state. 1.0.0 went to npm on 2026-08-31. */
 export const isPublished = true;
+
+/**
+ * Measured, not counted and not typed in: written by
+ * packages/space-ui/scripts/badges.mjs from a real build and a real coverage
+ * run, and re-checked by that script in CI. The README's badges read the same
+ * two numbers, so the site and the readme cannot disagree.
+ */
+export const minzipKb = measured.minzipKb;
+export const coveragePct = measured.coverageStatementsPct;
 
 export const packageName = "@inkorange/space-ui";
 export const repoUrl = "https://github.com/inkorange/space-ui";

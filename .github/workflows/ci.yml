@@ -22,8 +22,13 @@ jobs:
       # so a story calling a prop that does not exist is a real API regression
       # and used to pass CI silently.
       - run: pnpm --filter docs typecheck
-      - run: pnpm --filter @inkorange/space-ui test
+      # Coverage rather than a plain run: the README's coverage badge is a
+      # static value, and the badge check below re-measures it.
+      - run: pnpm --filter @inkorange/space-ui test:coverage
       - run: pnpm --filter @inkorange/space-ui build
+      # The coverage and minzip badges are measured from this build, not
+      # fetched from a service, so CI is what stops them going stale.
+      - run: pnpm --filter @inkorange/space-ui badges:check
       # Every path the exports map promises must exist after the build, and no
       # published .d.ts may import something the tarball does not carry. 1.0.1
       # shipped a subpath whose types pointed at a file that never existed, and
