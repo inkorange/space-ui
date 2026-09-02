@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
 ![coverage](https://img.shields.io/badge/coverage-82%25-green)
-![minzip](https://img.shields.io/badge/minzip-21.9%20kB-blue)
+![minzip](https://img.shields.io/badge/minzip-21.7%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
@@ -18,7 +18,7 @@ compose and nothing to opt into.
      resolve against the registry rather than the repository. This sheet is a
      screenshot of the real components, shot from the gallery — see
      `pnpm assets`. -->
-<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Loader, Tabs, icons, Text, TextArea, Card and ScrollArea on a dark ground"
+<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Loader, Tabs, icons, Text, TextArea and Card — plain and with an image — on a dark ground"
      src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/components.jpg"
      width="100%">
 
@@ -162,7 +162,7 @@ it exposes.
 | | |
 | --- | --- |
 | **Typography** | [Text](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Link](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Heading](https://space-components.vercel.app/?story=components--typography--headings) · [Badge](https://space-components.vercel.app/?story=components--typography--badges) · [Separator](https://space-components.vercel.app/?story=components--typography--separator) |
-| **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [ScrollArea](https://space-components.vercel.app/?story=components--layout--scroll-area) |
+| **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) |
 | **Forms** | [TextField](https://space-components.vercel.app/?story=components--forms--text-field) · [TextArea](https://space-components.vercel.app/?story=components--forms--text-area) · [Select](https://space-components.vercel.app/?story=components--forms--select) · [Slider](https://space-components.vercel.app/?story=components--forms--slider) · [RadioGroup](https://space-components.vercel.app/?story=components--forms--radio-group) |
 | **Buttons** | [Button](https://space-components.vercel.app/?story=components--buttons--buttons) · [IconToggle](https://space-components.vercel.app/?story=components--buttons--icon-toggle) |
 | **Feedback** | [Loader](https://space-components.vercel.app/?story=components--buttons--loader) · [Progress](https://space-components.vercel.app/?story=components--buttons--progress) |

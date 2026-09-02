@@ -17,7 +17,6 @@ import { Grid } from "./Grid";
 import { Badge } from "./Badge";
 import { Separator } from "./Separator";
 import { Card } from "./Card";
-import { ScrollArea } from "./ScrollArea";
 import { Select } from "./Select";
 import { TextField } from "./TextField";
 import { TextArea } from "./TextArea";
@@ -169,15 +168,6 @@ describe("Card", () => {
     const out = html(<Card data-type="gas-giant" data-score="88">x</Card>);
     expect(out).toContain('data-type="gas-giant"');
     expect(out).toContain('data-score="88"');
-  });
-});
-
-describe("ScrollArea", () => {
-  it("renders a scrollable div merging className", () => {
-    const out = html(<ScrollArea className="mine">x</ScrollArea>);
-    expect(out).toMatch(/^<div/);
-    expect(out).toContain("scrollArea");
-    expect(out).toContain("mine");
   });
 });
 

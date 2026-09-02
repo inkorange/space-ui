@@ -12,7 +12,6 @@ import {
   Loader,
   Progress,
   RadioGroup,
-  ScrollArea,
   Select,
   Separator,
   Slider,
@@ -160,22 +159,39 @@ export const Stickersheet = () => {
           </Card>
         </Cell>
 
-        <Cell label="ScrollArea" wide fill>
-          <ScrollArea style={{ maxHeight: 148 }}>
-            {["Kepler-442b", "Kepler-186f", "TRAPPIST-1e", "Proxima b", "Gliese 667 Cc", "TOI-700 d"].map(
-              (name) => (
-                <div key={name} className="docs-sheet__row">
-                  <Text size="2">{name}</Text>
-                  <Badge color="cyan">candidate</Badge>
-                </div>
-              ),
-            )}
-          </ScrollArea>
+        <Cell label="Card · image" wide>
+          <Card image={<SheetThumb />} className="docs-sheet__mediacard">
+            <div className="docs-demo__head">
+              <Heading size="5">TRAPPIST-1e</Heading>
+              <Badge color="cyan">Ocean</Badge>
+            </div>
+            <Text size="2" color="muted">
+              The card reserves the image box before it loads.
+            </Text>
+          </Card>
         </Cell>
+
       </div>
     </div>
   );
 };
+
+/** Stands in for a photograph. slice, not the default meet: an inline SVG
+ *  letterboxes where a raster image would crop. */
+const SheetThumb = () => (
+  <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="sheetThumb" cx="32%" cy="26%">
+        <stop offset="0%" stopColor="hsl(190 90% 62%)" />
+        <stop offset="100%" stopColor="hsl(215 70% 12%)" />
+      </radialGradient>
+    </defs>
+    <rect width="320" height="200" fill="hsl(220 60% 8%)" />
+    <circle cx="160" cy="116" r="72" fill="url(#sheetThumb)" />
+    <ellipse cx="160" cy="116" rx="110" ry="25" fill="none"
+             stroke="hsl(195 80% 70% / 0.5)" strokeWidth="2" />
+  </svg>
+);
 
 /** One labelled swatch. The label is the export name, so the sheet doubles as
  *  an index: see a component, know what to import. */

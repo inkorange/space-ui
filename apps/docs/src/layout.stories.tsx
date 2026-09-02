@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Card, ScrollArea, Text, Heading } from "@inkorange/space-ui";
+import { Box, Flex, Grid, Card, Text, Heading } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Layout",
@@ -70,25 +70,3 @@ export const FlexAndGrid = () => (
     </Grid>
   </Flex>
 );
-
-export const ScrollAreaStory = () => (
-  <ScrollArea style={{ height: 160, width: 300 }}>
-    <div style={{ padding: 12 }}>
-      {Array.from({ length: 30 }, (_, i) => (
-        <Text key={i} as="p" size="2">Row {i + 1}</Text>
-      ))}
-    </div>
-  </ScrollArea>
-);
-ScrollAreaStory.storyName = "ScrollArea";
-ScrollAreaStory.meta = {
-  description:
-    "A scroll container with styled overflow, for regions that scroll independently of the page.",
-};
-
-FlexAndGrid.meta = {
-  // Box and Text appear only as things to lay out.
-  components: ["Flex", "Grid"],
-  description:
-    "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it.",
-};

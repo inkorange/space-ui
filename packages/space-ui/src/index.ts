@@ -15,7 +15,6 @@ export { Grid, type GridProps } from "./components/Grid";
 export { Badge, type BadgeProps, type BadgeColor } from "./components/Badge";
 export { Separator, type SeparatorProps } from "./components/Separator";
 export { Card, type CardProps } from "./components/Card";
-export { ScrollArea, type ScrollAreaProps } from "./components/ScrollArea";
 export { Button, type ButtonProps } from "./components/Button";
 export { Loader, type LoaderProps } from "./components/Loader";
 export { IconToggle, type IconToggleOption } from "./components/IconToggle";

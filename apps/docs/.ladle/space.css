@@ -2149,3 +2149,11 @@ nav.ladle-aside a:focus-visible {
 .docs-card--wide {
   --sp-card-image-ratio: 3 / 1;
 }
+
+/* The stickersheet's media card spans two columns, where the default 16/10
+   crop would be ~500px tall and swamp every other specimen. A banner ratio
+   keeps it proportionate — and demonstrates the token doing its job. */
+.docs-sheet__mediacard {
+  width: 100%;
+  --sp-card-image-ratio: 3 / 1;
+}
