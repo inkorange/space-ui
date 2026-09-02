@@ -232,3 +232,13 @@ const Cell = ({
     <div className="docs-sheet__stage">{children}</div>
   </div>
 );
+
+Stickersheet.meta = {
+  description:
+    "Every component at its default size in one frame, and the source of the sheet in the README. Nothing here is composed on top: this is what the package renders.",
+  // Not a component page. There is no single API to tabulate, and the source
+  // is a list of examples rather than an example of use — both would be noise
+  // between a reader and the thing they came to look at.
+  components: [],
+  source: false,
+};

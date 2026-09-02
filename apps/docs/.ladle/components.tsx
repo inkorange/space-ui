@@ -331,7 +331,15 @@ export const Provider: GlobalProvider = ({
   const { name, levels } = parseStoryId(globalState.story);
 
   const meta = storyMeta as
-    | { description?: string; fullBleed?: boolean; components?: string[] }
+    | {
+        description?: string;
+        fullBleed?: boolean;
+        components?: string[];
+        /** Set false on a page whose source is a list of examples rather than
+         *  a usage example — a specimen sheet teaches nothing by showing how
+         *  it was assembled. */
+        source?: boolean;
+      }
     | undefined;
 
   // Overview and Foundations render as full pages; component stories render
@@ -417,7 +425,7 @@ export const Provider: GlobalProvider = ({
             {/* Source is always visible rather than behind a toggle: reading
                 the code is how someone decides whether to adopt a component,
                 so it should not cost a click to find. */}
-            {source && (
+            {source && meta?.source !== false && (
               <section className="docs-source">
                 <Code
                   code={source}
