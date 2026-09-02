@@ -362,7 +362,11 @@
       "locEnd": 185,
       "filePath": "src/stickersheet.stories.tsx",
       "namedExport": "Stickersheet",
-      "meta": {}
+      "meta": {
+        "description": "Every component at its default size in one frame, and the source of the sheet in the README. Nothing here is composed on top: this is what the package renders.",
+        "components": [],
+        "source": false
+      }
     },
     "components--typography--badges": {
       "name": "Badges",
