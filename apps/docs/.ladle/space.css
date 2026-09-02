@@ -2097,3 +2097,42 @@ nav.ladle-aside a:focus-visible {
   color: var(--docs-terminator);
   text-decoration: underline;
 }
+
+/* ---------- Icon sheet ----------
+   Four columns, not auto-fill: at 140px the longest name
+   (QuestionMarkCircledIcon) overflowed its cell, and because an <svg> is a
+   flex item with the default flex-shrink: 1, the label squeezed the icon to
+   zero width — it rendered, invisibly, at 0px. Hence the explicit
+   flex-shrink: 0 below; the wider cell alone would only hide the bug until
+   someone added a longer name. */
+.docs-iconsheet {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.docs-iconsheet__cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-raised);
+}
+
+.docs-iconsheet__cell > svg {
+  flex-shrink: 0;
+  color: var(--docs-text);
+}
+
+/* The name is the thing you copy, so let it wrap rather than truncate. */
+.docs-iconsheet__cell > :last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .docs-iconsheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

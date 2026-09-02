@@ -1,4 +1,4 @@
-// The 17 icons this app uses, ported verbatim from @radix-ui/react-icons
+// 20 icons, ported verbatim from @radix-ui/react-icons
 // (MIT License — Copyright (c) 2022 WorkOS; https://github.com/radix-ui/icons).
 // Uniform 15x15 viewBox, currentColor, decorative by default (aria-hidden) —
 // pass aria-label + aria-hidden={undefined} for semantic uses.

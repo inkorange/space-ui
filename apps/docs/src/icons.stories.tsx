@@ -15,11 +15,11 @@ export const AllIcons = () => {
     .map((name) => [name, (UI as Record<string, unknown>)[name]] as const)
     .filter(([, v]) => typeof v === "function");
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
+    <div className="docs-iconsheet">
       {icons.map(([name, Icon]) => (
-        <div key={name} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div key={name} className="docs-iconsheet__cell">
           {/* @ts-expect-error dynamic component */}
-          <Icon width={18} height={18} />
+          <Icon width={24} height={24} />
           <Text size="1" color="muted">{name}</Text>
         </div>
       ))}
