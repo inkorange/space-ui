@@ -25,37 +25,54 @@
         "Components",
         "Buttons"
       ],
-      "locStart": 40,
-      "locEnd": 53,
+      "locStart": 24,
+      "locEnd": 37,
       "filePath": "src/buttons.stories.tsx",
       "namedExport": "IconToggleStory",
       "meta": {
         "description": "A single-select group for switching view or mode. Options carry both an icon and a label; the label is what screen readers announce."
       }
     },
-    "components--buttons--loader": {
+    "components--feedback--loader": {
       "name": "Loader",
       "levels": [
         "Components",
-        "Buttons"
+        "Feedback"
       ],
-      "locStart": 24,
-      "locEnd": 24,
-      "filePath": "src/buttons.stories.tsx",
+      "locStart": 10,
+      "locEnd": 10,
+      "filePath": "src/feedback.stories.tsx",
       "namedExport": "LoaderStory",
       "meta": {
         "description": "An indeterminate progress indicator for work with no measurable end. Pair it with a label that names the work, not the state."
       }
     },
-    "components--buttons--progress": {
+    "components--feedback--message": {
+      "name": "Message",
+      "levels": [
+        "Components",
+        "Feedback"
+      ],
+      "locStart": 30,
+      "locEnd": 50,
+      "filePath": "src/feedback.stories.tsx",
+      "namedExport": "MessageStory",
+      "meta": {
+        "components": [
+          "Message"
+        ],
+        "description": "A banner about the state of the page — a risk, a result, a failure. The three variants do not merely change hue: info is lit like the rest of the system, warning warms the rim to amber, and alert takes the ember treatment the destructive Button wears. Each carries its own glyph so the kind of message reads before the words do. For a decision the reader has to make, reach for AlertDialog instead — a message states, it does not ask."
+      }
+    },
+    "components--feedback--progress": {
       "name": "Progress",
       "levels": [
         "Components",
-        "Buttons"
+        "Feedback"
       ],
-      "locStart": 27,
-      "locEnd": 33,
-      "filePath": "src/buttons.stories.tsx",
+      "locStart": 17,
+      "locEnd": 23,
+      "filePath": "src/feedback.stories.tsx",
       "namedExport": "ProgressStory",
       "meta": {
         "description": "A determinate bar for work you can measure. Same visual language as Slider — a glass tube with a starlight fill — because a progress bar and a slider track are the same object, one you watch and one you drag. Height and fill are overridable through custom properties — see the table below."
@@ -315,8 +332,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 665,
-      "locEnd": 755,
+      "locStart": 666,
+      "locEnd": 756,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Installation",
       "meta": {
@@ -328,8 +345,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 281,
-      "locEnd": 661,
+      "locStart": 282,
+      "locEnd": 662,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Introduction",
       "meta": {
@@ -341,8 +358,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 44,
-      "locEnd": 177,
+      "locStart": 45,
+      "locEnd": 183,
       "filePath": "src/stickersheet.stories.tsx",
       "namedExport": "Stickersheet",
       "meta": {}
