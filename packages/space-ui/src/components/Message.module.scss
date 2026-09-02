@@ -1,0 +1,113 @@
+/* A message is a lit panel with a bright leading edge — the edge is what
+   carries the variant, so the three read apart at a glance even in
+   peripheral vision, before the glyph or the words register.
+
+   @token --sp-message-info-rim-color The leading edge and glyph of an info
+     message.
+   @token --sp-message-info-wash-color Its surface tint, over the glass.
+   @token --sp-message-warning-rim-color The leading edge and glyph of a
+     warning.
+   @token --sp-message-warning-wash-color Its surface tint.
+   @token --sp-message-alert-rim-color The leading edge and glyph of an alert.
+   @token --sp-message-alert-wash-color Its surface tint. */
+.message {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  /* Left is 20px, not 16px: the 3px lit edge sits inside the box, so an even
+     16px would leave the glyph only 13px clear of it while the right side got
+     a full 16px. 20px puts 17px between the edge and the glyph, which reads
+     as balanced. A documented exception to the grid, like Card's 12px. */
+  padding: 12px 16px 12px 20px;
+  border-radius: 8px;
+  overflow: hidden;
+
+  /* The glass the whole system is built from, so a message sits in the same
+     material as everything around it. */
+  background:
+    linear-gradient(180deg, var(--_wash), transparent 60%),
+    linear-gradient(
+      180deg,
+      rgb(var(--sp-glass-rgb) / 0.55),
+      rgb(var(--sp-glass-deep-rgb) / 0.7)
+    );
+  border: 1px solid rgb(var(--sp-rim-rgb) / 0.14);
+  color: var(--sp-glass-text);
+}
+
+/* The leading edge. A 3px lit bar rather than a full coloured border: the
+   variant needs to be unmistakable without the whole panel shouting. */
+.message::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--_rim);
+  box-shadow: 0 0 12px -1px var(--_rim);
+}
+
+.info {
+  --_rim: var(--sp-message-info-rim-color);
+  --_wash: var(--sp-message-info-wash-color);
+}
+
+.warning {
+  --_rim: var(--sp-message-warning-rim-color);
+  --_wash: var(--sp-message-warning-wash-color);
+}
+
+/* Alert borrows the ember glass — the same warm limb the destructive Button
+   wears — so a failure looks like the rest of the system's bad news. */
+.alert {
+  --_rim: var(--sp-message-alert-rim-color);
+  --_wash: var(--sp-message-alert-wash-color);
+
+  background:
+    linear-gradient(180deg, var(--_wash), transparent 60%),
+    linear-gradient(
+      180deg,
+      rgb(var(--sp-ember-glass-rgb) / 0.55),
+      rgb(var(--sp-ember-glass-deep-rgb) / 0.7)
+    );
+  border-color: rgb(var(--sp-ember-rim-rgb) / 0.18);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  /* Match the first line's height and centre the glyph in it, rather than
+     nudging with a magic margin: the glyph is 15px and the line is 20px, so
+     a top-aligned icon sits 2.5px high. This stays right if either changes. */
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--_rim);
+}
+
+.body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* 4px, the grid's half-step. It was 2px, which was both too tight to
+     separate the title from its body and off the grid entirely. */
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--sp-font-sm);
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.text {
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
+  color: var(--sp-gray-text-dim);
+}
+
+/* With no title the body is a single line, and dimmed text alone reads as
+   disabled rather than informational. */
+.body > .text:only-child {
+  color: var(--sp-glass-text);
+}

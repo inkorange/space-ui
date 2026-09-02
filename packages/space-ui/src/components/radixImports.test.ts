@@ -9,7 +9,7 @@ import path from "node:path";
 
 const MIGRATED_BANNED = [
   "Text", "Heading", "Link", "Flex", "Box", "Grid",
-  "Badge", "Separator", "Card", "ScrollArea",
+  "Badge", "Separator", "Card",
   "Select", "TextField", "TextArea", "Slider", "RadioGroup", "Progress",
   "Dialog", "AlertDialog", "DropdownMenu", "Tabs",
 ];

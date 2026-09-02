@@ -1895,23 +1895,41 @@ nav.ladle-aside a:focus-visible {
    capture: a fixed measure so the shot is reproducible rather than dependent
    on whatever width the browser happened to have. */
 .docs-sheet {
-  width: 1200px;
-  padding: 40px;
+  /* Fluid, capped. It was a hard 1200px so the capture would be reproducible,
+     which also meant it ran off the side of any narrower gallery window. The
+     cap keeps the shot identical — the capture viewport is wider than this —
+     while letting the page decide below it. */
+  width: 100%;
+  max-width: 1200px;
   /* The library sets no font-family — every component inherits the host's.
      The capture runs in preview mode, outside the docs shell, so without this
      the whole sheet fell back to the browser's default serif and misrepresented
      what the components look like in a real app. */
   font-family: var(--docs-font-display);
   color: var(--docs-text);
-  background:
-    radial-gradient(120% 90% at 15% -10%, rgba(20, 40, 90, 0.55), transparent 60%),
-    var(--docs-void);
+  /* No ground and no inset of its own. Both exist for the README capture: on
+     the gallery page they painted a blue box around the sheet and pushed it
+     off its own gutter, when the page already supplies both. The capture
+     script adds them, so they exist only where they are wanted. */
 }
 
 .docs-sheet__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+}
+
+/* Below four columns a two-wide cell would be the whole row, and a full-width
+   one already is, so both collapse to the single span the row can hold. */
+@media (max-width: 1000px) {
+  .docs-sheet__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .docs-sheet__grid { grid-template-columns: minmax(0, 1fr); }
+  .docs-sheet__cell[data-wide],
+  .docs-sheet__cell[data-full] { grid-column: auto; }
+  .docs-sheet__cell[data-tall] { grid-row: auto; }
 }
 
 .docs-sheet__cell {
@@ -1927,6 +1945,7 @@ nav.ladle-aside a:focus-visible {
 
 .docs-sheet__cell[data-wide] { grid-column: span 2; }
 .docs-sheet__cell[data-tall] { grid-row: span 2; }
+.docs-sheet__cell[data-full] { grid-column: 1 / -1; }
 
 .docs-sheet__label {
   font-family: var(--docs-font-mono);
@@ -1934,6 +1953,17 @@ nav.ladle-aside a:focus-visible {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--docs-muted);
+}
+
+.docs-sheet__cell[data-full] .docs-sheet__stage { display: block; width: 100%; }
+
+/* Folder tabs seat onto the surface below them; with nothing there they float
+   and the design reads as a mistake. Same panel the Tabs story uses. */
+.docs-sheet__tabspanel {
+  background: var(--sp-tabs-surface-color);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 0 0 12px 12px;
+  padding: 16px;
 }
 
 /* Wrap rather than clip: a row of badges is the point of the Badge cell. */
@@ -2096,4 +2126,64 @@ nav.ladle-aside a:focus-visible {
 .docs-catalogue__list a:hover {
   color: var(--docs-terminator);
   text-decoration: underline;
+}
+
+/* ---------- Icon sheet ----------
+   Four columns, not auto-fill: at 140px the longest name
+   (QuestionMarkCircledIcon) overflowed its cell, and because an <svg> is a
+   flex item with the default flex-shrink: 1, the label squeezed the icon to
+   zero width — it rendered, invisibly, at 0px. Hence the explicit
+   flex-shrink: 0 below; the wider cell alone would only hide the bug until
+   someone added a longer name. */
+.docs-iconsheet {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.docs-iconsheet__cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-raised);
+}
+
+.docs-iconsheet__cell > svg {
+  flex-shrink: 0;
+  color: var(--docs-text);
+}
+
+/* The name is the thing you copy, so let it wrap rather than truncate. */
+.docs-iconsheet__cell > :last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .docs-iconsheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- Card specimens ----------
+   Width and crop live here rather than in a style attribute on the story: the
+   token is the interface, and an example that reaches for an inline custom
+   property teaches the habit the token system exists to replace. */
+.docs-card--demo,
+.docs-card--wide {
+  max-width: 300px;
+}
+
+.docs-card--wide {
+  --sp-card-image-ratio: 3 / 1;
+}
+
+/* The stickersheet's media card spans two columns, where the default 16/10
+   crop would be ~500px tall and swamp every other specimen. A banner ratio
+   keeps it proportionate — and demonstrates the token doing its job. */
+.docs-sheet__mediacard {
+  width: 100%;
+  --sp-card-image-ratio: 3 / 1;
 }

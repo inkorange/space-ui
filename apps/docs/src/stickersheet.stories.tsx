@@ -10,9 +10,9 @@ import {
   IconToggle,
   Link,
   Loader,
+  Message,
   Progress,
   RadioGroup,
-  ScrollArea,
   Select,
   Separator,
   Slider,
@@ -107,18 +107,20 @@ export const Stickersheet = () => {
           <Loader />
         </Cell>
 
-        <Cell label="Tabs" wide>
+        <Cell label="Tabs" wide fill>
           <Tabs value={tab} onValueChange={setTab}>
             <Tabs.List>
               <Tabs.Trigger value="mass">Mass</Tabs.Trigger>
               <Tabs.Trigger value="orbit">Orbit</Tabs.Trigger>
               <Tabs.Trigger value="star">Star</Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="mass">
-              <Text size="2" color="muted">
-                1.34 Earth masses, 1.11 Earth radii.
-              </Text>
-            </Tabs.Content>
+            <div className="docs-sheet__tabspanel">
+              <Tabs.Content value="mass">
+                <Text size="2" color="muted">
+                  1.34 Earth masses, 1.11 Earth radii.
+                </Text>
+              </Tabs.Content>
+            </div>
           </Tabs>
         </Cell>
 
@@ -160,22 +162,44 @@ export const Stickersheet = () => {
           </Card>
         </Cell>
 
-        <Cell label="ScrollArea" wide fill>
-          <ScrollArea style={{ maxHeight: 148 }}>
-            {["Kepler-442b", "Kepler-186f", "TRAPPIST-1e", "Proxima b", "Gliese 667 Cc", "TOI-700 d"].map(
-              (name) => (
-                <div key={name} className="docs-sheet__row">
-                  <Text size="2">{name}</Text>
-                  <Badge color="cyan">candidate</Badge>
-                </div>
-              ),
-            )}
-          </ScrollArea>
+        <Cell label="Card · image" wide>
+          <Card image={<SheetThumb />} className="docs-sheet__mediacard">
+            <div className="docs-demo__head">
+              <Heading size="5">TRAPPIST-1e</Heading>
+              <Badge color="cyan">Ocean</Badge>
+            </div>
+            <Text size="2" color="muted">
+              The card reserves the image box before it loads.
+            </Text>
+          </Card>
+        </Cell>
+
+        <Cell label="Message" full>
+          <Message variant="warning" title="Thin atmosphere">
+            Surface pressure is below 0.3 bar.
+          </Message>
         </Cell>
       </div>
     </div>
   );
 };
+
+/** Stands in for a photograph. slice, not the default meet: an inline SVG
+ *  letterboxes where a raster image would crop. */
+const SheetThumb = () => (
+  <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="sheetThumb" cx="32%" cy="26%">
+        <stop offset="0%" stopColor="hsl(190 90% 62%)" />
+        <stop offset="100%" stopColor="hsl(215 70% 12%)" />
+      </radialGradient>
+    </defs>
+    <rect width="320" height="200" fill="hsl(220 60% 8%)" />
+    <circle cx="160" cy="116" r="72" fill="url(#sheetThumb)" />
+    <ellipse cx="160" cy="116" rx="110" ry="25" fill="none"
+             stroke="hsl(195 80% 70% / 0.5)" strokeWidth="2" />
+  </svg>
+);
 
 /** One labelled swatch. The label is the export name, so the sheet doubles as
  *  an index: see a component, know what to import. */
@@ -185,11 +209,14 @@ const Cell = ({
   wide,
   tall,
   fill,
+  full,
 }: {
   label: string;
   children: React.ReactNode;
   wide?: boolean;
   tall?: boolean;
+  /** Spans the whole sheet — for a component that is a full-width banner. */
+  full?: boolean;
   /** Stage becomes a block so a full-width child (Progress, TextArea) gets
    *  the whole measure instead of collapsing inside the flex row. */
   fill?: boolean;
@@ -199,8 +226,19 @@ const Cell = ({
     data-wide={wide || undefined}
     data-tall={tall || undefined}
     data-fill={fill || undefined}
+    data-full={full || undefined}
   >
     <div className="docs-sheet__label">{label}</div>
     <div className="docs-sheet__stage">{children}</div>
   </div>
 );
+
+Stickersheet.meta = {
+  description:
+    "Every component at its default size in one frame, and the source of the sheet in the README. Nothing here is composed on top: this is what the package renders.",
+  // Not a component page. There is no single API to tabulate, and the source
+  // is a list of examples rather than an example of use — both would be noise
+  // between a reader and the thing they came to look at.
+  components: [],
+  source: false,
+};

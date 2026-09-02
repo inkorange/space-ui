@@ -10,3 +10,39 @@
   border-radius: 8px;
   padding: 12px;
 }
+
+/* The image is full-bleed: it cancels the card's own inset so it meets the
+   border, and its top corners match the card's radius. Insetting it instead
+   would leave a 12px frame of card showing above it, which reads as a mistake
+   at small sizes. */
+.image {
+  /* Negative margins rather than a padding-less card, so the body below keeps
+     the card's normal inset without every consumer re-adding it. */
+  margin: -12px -12px 12px;
+  border-radius: 7px 7px 0 0; /* 8px radius less the 1px border */
+  overflow: hidden;
+
+  /* Reserve the box BEFORE the image loads. This is what stops a row of cards
+     reflowing as thumbnails arrive, and it is why the image is a prop rather
+     than an ordinary child — a child cannot be sized by the card. */
+  aspect-ratio: var(--sp-card-image-ratio, 16 / 10);
+  background: var(--sp-gray-track);
+}
+
+/* Whatever element was passed — img, next/image, video, or a placeholder div
+   standing in for one that failed — fills the reserved box identically.
+   object-fit has no effect on an inline <svg>: that letterboxes to its own
+   viewBox instead, so pass preserveAspectRatio="xMidYMid slice" if you hand
+   this an SVG rather than a raster image. */
+.image > * {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Card sets position: relative for absolutely-positioned children (the app's
+   edit button sits over the thumbnail). Keep them above the image. */
+.hasImage > *:not(.image) {
+  position: relative;
+}

@@ -69,6 +69,11 @@
      screen on a small viewport. */
   --sp-select-panel-max-width: min(90vw, 28rem);
 
+  /* The box a Card reserves for its image before the image has loaded. Set it
+     per card for a different crop; the point is that every card in a row
+     agrees on a shape up front, so none of them reflow as thumbnails arrive. */
+  --sp-card-image-ratio: 16 / 10;
+
   /* ---- Component colours --------------------------------------------
      Values specific to one component's identity rather than a shared role.
      They live here, not in the component, so the promise holds: every colour
@@ -107,6 +112,17 @@
   --sp-slider-thumb-glow-hover-color: rgba(130, 175, 255, 0.75);
   --sp-slider-range-from-color: rgba(70, 110, 210, 0.85);
   --sp-panel-item-highlight-color: rgba(220, 230, 255, 0.45);
+
+  /* Message. The rim is the leading edge and the glyph; the wash is the
+     surface tint over the glass. Info is the system's own light, warning
+     warms to amber, alert borrows the ember limb the destructive Button
+     wears. */
+  --sp-message-info-rim-color: #70b8ff;
+  --sp-message-info-wash-color: rgba(0, 144, 255, 0.1);
+  --sp-message-warning-rim-color: #ffca16;
+  --sp-message-warning-wash-color: rgba(250, 130, 0, 0.12);
+  --sp-message-alert-rim-color: #ff9592;
+  --sp-message-alert-wash-color: rgba(255, 90, 60, 0.12);
 
   /* A faint neutral wash, for a badge carrying no status. */
   --sp-muted-soft: #ffffff12;
