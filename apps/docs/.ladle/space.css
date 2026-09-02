@@ -2136,3 +2136,16 @@ nav.ladle-aside a:focus-visible {
 @media (max-width: 900px) {
   .docs-iconsheet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ---------- Card specimens ----------
+   Width and crop live here rather than in a style attribute on the story: the
+   token is the interface, and an example that reaches for an inline custom
+   property teaches the habit the token system exists to replace. */
+.docs-card--demo,
+.docs-card--wide {
+  max-width: 300px;
+}
+
+.docs-card--wide {
+  --sp-card-image-ratio: 3 / 1;
+}

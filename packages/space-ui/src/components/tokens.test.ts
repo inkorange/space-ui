@@ -21,6 +21,7 @@ export const EXPECTED_TOKENS = [
   // Component sizing
   "--sp-control-height",
   "--sp-select-trigger-max-width", "--sp-select-panel-max-width",
+  "--sp-card-image-ratio",
   // Component colours
   "--sp-select-panel-color",
   "--sp-tabs-surface-color",
@@ -126,7 +127,7 @@ describe("design tokens", () => {
   });
 
   it("component tokens follow --sp-<component>-<modifier>-<type>", () => {
-    const TYPES = ["size", "color", "timer", "angle", "width", "height"];
+    const TYPES = ["size", "color", "timer", "angle", "width", "height", "ratio"];
     for (const file of walk(SCSS_ROOT)) {
       const css = readFileSync(file, "utf8");
       for (const m of css.matchAll(/var\(\s*(--sp-[a-zA-Z0-9-]+)\s*,/g)) {
