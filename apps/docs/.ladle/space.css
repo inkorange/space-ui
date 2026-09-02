@@ -1927,6 +1927,7 @@ nav.ladle-aside a:focus-visible {
 
 .docs-sheet__cell[data-wide] { grid-column: span 2; }
 .docs-sheet__cell[data-tall] { grid-row: span 2; }
+.docs-sheet__cell[data-full] { grid-column: 1 / -1; }
 
 .docs-sheet__label {
   font-family: var(--docs-font-mono);
@@ -1935,6 +1936,8 @@ nav.ladle-aside a:focus-visible {
   text-transform: uppercase;
   color: var(--docs-muted);
 }
+
+.docs-sheet__cell[data-full] .docs-sheet__stage { display: block; width: 100%; }
 
 /* Wrap rather than clip: a row of badges is the point of the Badge cell. */
 .docs-sheet__stage {

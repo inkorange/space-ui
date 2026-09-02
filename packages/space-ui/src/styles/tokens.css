@@ -113,6 +113,17 @@
   --sp-slider-range-from-color: rgba(70, 110, 210, 0.85);
   --sp-panel-item-highlight-color: rgba(220, 230, 255, 0.45);
 
+  /* Message. The rim is the leading edge and the glyph; the wash is the
+     surface tint over the glass. Info is the system's own light, warning
+     warms to amber, alert borrows the ember limb the destructive Button
+     wears. */
+  --sp-message-info-rim-color: #70b8ff;
+  --sp-message-info-wash-color: rgba(0, 144, 255, 0.1);
+  --sp-message-warning-rim-color: #ffca16;
+  --sp-message-warning-wash-color: rgba(250, 130, 0, 0.12);
+  --sp-message-alert-rim-color: #ff9592;
+  --sp-message-alert-wash-color: rgba(255, 90, 60, 0.12);
+
   /* A faint neutral wash, for a badge carrying no status. */
   --sp-muted-soft: #ffffff12;
   --sp-on-solid: #ffffff;          /* text on a solid accent fill */

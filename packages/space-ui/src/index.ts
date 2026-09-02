@@ -25,6 +25,7 @@ export { TextArea, type TextAreaProps } from "./components/TextArea";
 export { Slider, type SliderProps } from "./components/Slider";
 export { RadioGroup, type RadioGroupProps, type RadioGroupItemProps } from "./components/RadioGroup";
 export { Progress, type ProgressProps } from "./components/Progress";
+export { Message, type MessageProps, type MessageVariant } from "./components/Message";
 export { Dialog, type DialogProps } from "./components/Dialog";
 export { AlertDialog, type AlertDialogProps } from "./components/AlertDialog";
 export { DropdownMenu, type DropdownMenuProps, type DropdownMenuItemProps } from "./components/DropdownMenu";

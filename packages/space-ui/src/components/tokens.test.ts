@@ -22,6 +22,9 @@ export const EXPECTED_TOKENS = [
   "--sp-control-height",
   "--sp-select-trigger-max-width", "--sp-select-panel-max-width",
   "--sp-card-image-ratio",
+  "--sp-message-info-rim-color", "--sp-message-info-wash-color",
+  "--sp-message-warning-rim-color", "--sp-message-warning-wash-color",
+  "--sp-message-alert-rim-color", "--sp-message-alert-wash-color",
   // Component colours
   "--sp-select-panel-color",
   "--sp-tabs-surface-color",

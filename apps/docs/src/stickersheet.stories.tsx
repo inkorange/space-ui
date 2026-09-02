@@ -10,6 +10,7 @@ import {
   IconToggle,
   Link,
   Loader,
+  Message,
   Progress,
   RadioGroup,
   Select,
@@ -171,6 +172,11 @@ export const Stickersheet = () => {
           </Card>
         </Cell>
 
+        <Cell label="Message" full>
+          <Message variant="warning" title="Thin atmosphere">
+            Surface pressure is below 0.3 bar.
+          </Message>
+        </Cell>
       </div>
     </div>
   );
@@ -201,11 +207,14 @@ const Cell = ({
   wide,
   tall,
   fill,
+  full,
 }: {
   label: string;
   children: React.ReactNode;
   wide?: boolean;
   tall?: boolean;
+  /** Spans the whole sheet — for a component that is a full-width banner. */
+  full?: boolean;
   /** Stage becomes a block so a full-width child (Progress, TextArea) gets
    *  the whole measure instead of collapsing inside the flex row. */
   fill?: boolean;
@@ -215,6 +224,7 @@ const Cell = ({
     data-wide={wide || undefined}
     data-tall={tall || undefined}
     data-fill={fill || undefined}
+    data-full={full || undefined}
   >
     <div className="docs-sheet__label">{label}</div>
     <div className="docs-sheet__stage">{children}</div>

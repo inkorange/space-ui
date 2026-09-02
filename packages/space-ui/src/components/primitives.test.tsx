@@ -29,6 +29,7 @@ import { DropdownMenu } from "./DropdownMenu";
 import { Tabs } from "./Tabs";
 import { Button } from "./Button";
 import { Loader } from "./Loader";
+import { Message } from "./Message";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -589,5 +590,45 @@ describe("Tooltip", () => {
     );
     expect(out).toBe("<button type=\"button\">x</button>");
     expect(out).not.toContain("aria-describedby");
+  });
+});
+
+describe("Message", () => {
+  it("announces alerts assertively and everything else politely", () => {
+    // role="alert" interrupts a screen reader. Right for something already
+    // wrong, wrong for a note, so this distinction is load-bearing.
+    expect(html(<Message variant="alert">x</Message>)).toContain('role="alert"');
+    for (const v of ["info", "warning"] as const) {
+      const out = html(<Message variant={v}>x</Message>);
+      expect(out).toContain('role="status"');
+      expect(out).toContain('aria-live="polite"');
+    }
+  });
+  it("defaults to info", () => {
+    expect(html(<Message>x</Message>)).toContain("info");
+  });
+  it("carries a different glyph per variant", () => {
+    const glyph = (out: string) => out.match(/ d="([^"]{20,})"/)?.[1];
+    const seen = (["info", "warning", "alert"] as const).map((v) =>
+      glyph(html(<Message variant={v}>x</Message>)),
+    );
+    expect(seen.every(Boolean)).toBe(true);
+    expect(new Set(seen).size).toBe(3);
+  });
+  it("hides the glyph from assistive tech, since the role already says it", () => {
+    expect(html(<Message variant="warning">x</Message>)).toContain('aria-hidden="true"');
+  });
+  it("takes an icon override, and null for none", () => {
+    expect(html(<Message icon={<span>!</span>}>x</Message>)).toContain("<span>!</span>");
+    expect(html(<Message icon={null}>x</Message>)).not.toContain("<svg");
+  });
+  it("renders a title only when given one", () => {
+    expect(html(<Message title="Heads up">x</Message>)).toContain("Heads up");
+    expect(html(<Message>x</Message>)).not.toContain("title");
+  });
+  it("merges className rather than replacing it", () => {
+    const out = html(<Message className="mine">x</Message>);
+    expect(out).toContain("mine");
+    expect(out).toContain("message");
   });
 });

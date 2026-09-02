@@ -222,8 +222,9 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
     ["IconToggle", "components--buttons--icon-toggle"],
   ]],
   ["Feedback", [
-    ["Loader", "components--buttons--loader"],
-    ["Progress", "components--buttons--progress"],
+    ["Loader", "components--feedback--loader"],
+    ["Progress", "components--feedback--progress"],
+    ["Message", "components--feedback--message"],
   ]],
   ["Overlays", [
     ["Dialog", "components--overlays--dialog"],
