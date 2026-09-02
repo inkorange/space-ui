@@ -235,27 +235,7 @@
       "locEnd": 72,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "FlexAndGrid",
-      "meta": {
-        "components": [
-          "Flex",
-          "Grid"
-        ],
-        "description": "The two layout primitives. Gap values map onto the spacing scale, so layouts inherit the eight-point grid rather than restating it."
-      }
-    },
-    "components--layout--scroll-area": {
-      "name": "Scroll area",
-      "levels": [
-        "Components",
-        "Layout"
-      ],
-      "locStart": 74,
-      "locEnd": 82,
-      "filePath": "src/layout.stories.tsx",
-      "namedExport": "ScrollAreaStory",
-      "meta": {
-        "description": "A scroll container with styled overflow, for regions that scroll independently of the page."
-      }
+      "meta": {}
     },
     "components--overlays--alert-dialog": {
       "name": "Alert dialog",
@@ -335,8 +315,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 666,
-      "locEnd": 756,
+      "locStart": 665,
+      "locEnd": 755,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Installation",
       "meta": {
@@ -348,8 +328,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 282,
-      "locEnd": 662,
+      "locStart": 281,
+      "locEnd": 661,
       "filePath": "src/overview.stories.tsx",
       "namedExport": "Introduction",
       "meta": {
@@ -361,8 +341,8 @@
       "levels": [
         "Overview"
       ],
-      "locStart": 45,
-      "locEnd": 178,
+      "locStart": 44,
+      "locEnd": 177,
       "filePath": "src/stickersheet.stories.tsx",
       "namedExport": "Stickersheet",
       "meta": {}
