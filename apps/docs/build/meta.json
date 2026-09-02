@@ -217,12 +217,12 @@
         "Components",
         "Layout"
       ],
-      "locStart": 7,
-      "locEnd": 12,
+      "locStart": 28,
+      "locEnd": 48,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "CardStory",
       "meta": {
-        "description": "A translucent panel for grouping related content. The 12px inset is a deliberate exception to the spacing grid, kept for parity with the shipped app."
+        "description": "A translucent panel for grouping related content. Pass `image` for a media card: the card frames it full-bleed, matches its own corner radius, and reserves the box before the image loads so a row of cards never reflows as thumbnails arrive. The 12px inset is a deliberate exception to the spacing grid, kept for parity with the shipped app."
       }
     },
     "components--layout--flex-and-grid": {
@@ -231,8 +231,8 @@
         "Components",
         "Layout"
       ],
-      "locStart": 19,
-      "locEnd": 36,
+      "locStart": 55,
+      "locEnd": 72,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "FlexAndGrid",
       "meta": {
@@ -249,8 +249,8 @@
         "Components",
         "Layout"
       ],
-      "locStart": 38,
-      "locEnd": 46,
+      "locStart": 74,
+      "locEnd": 82,
       "filePath": "src/layout.stories.tsx",
       "namedExport": "ScrollAreaStory",
       "meta": {
