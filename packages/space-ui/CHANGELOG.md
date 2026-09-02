@@ -1,5 +1,82 @@
 # @inkorange/space-ui
 
+## 1.2.0
+
+### Minor Changes
+
+- bee49ce: `Card` takes an optional `image`.
+
+  ```tsx
+  <Card image={<img src={url} alt={name} />}>
+    <Heading size="4">Kepler-442b</Heading>
+  </Card>
+  ```
+
+  The card frames it: full-bleed to its edges, top corners matched to its own
+  radius, cropped to fill. It is a prop rather than an ordinary child because
+  the card reserves the box **before** the image loads — `--sp-card-image-ratio`,
+  default `16 / 10` — so a row of cards agrees on a shape up front and none of
+  them reflow as thumbnails arrive. A child could not be sized by the card.
+
+  Pass whatever your framework renders — a plain `<img>`, a `next/image`, a
+  `<video>`, or a placeholder standing in for one that failed. Nothing about the
+  slot is framework-specific.
+
+- bee49ce: New `Message` component, and a Feedback category to put it in.
+
+  ```tsx
+  <Message variant="warning" title="Thin atmosphere">
+    Surface pressure is below 0.3 bar.
+  </Message>
+  ```
+
+  Three variants that do not merely change hue. `info` is lit like the rest of
+  the system; `warning` warms its rim to amber; `alert` takes the ember
+  treatment the destructive Button wears. Each carries its own glyph, so the
+  kind of message reads before the words do, and the variant lives on a lit
+  leading edge rather than a full coloured border — unmistakable without the
+  whole panel shouting.
+
+  `alert` announces itself with `role="alert"`, which interrupts a screen
+  reader. That is right for something already wrong and wrong for everything
+  else, so `info` and `warning` are polite status regions that wait their turn.
+
+  For a decision the reader has to make, reach for `AlertDialog` — a message
+  states, it does not ask.
+
+  Three icons come with it, ported from the same MIT source as the rest:
+  `InfoCircledIcon`, `ExclamationTriangleIcon`, `CrossCircledIcon`.
+
+  `Loader` and `Progress` move out of the Buttons category, which neither of
+  them ever was — they report on work rather than start it. Their documentation
+  pages move with them, so any bookmark to `components--buttons--loader` is now
+  `components--feedback--loader`. No API change.
+
+- bee49ce: Remove `ScrollArea`.
+
+  It was a `<div>` with `overflow-y: auto` and themed scrollbars — nine
+  statements and thirteen lines of CSS — and it did not solve the part that is
+  actually hard. Its own doc-comment conceded as much: it needed a bounded
+  height from somewhere else, so every call site still had to supply the
+  `flex: 1; min-height: 0` that makes a region scroll at all. It took the easy
+  half and left the trap to the caller.
+
+  It also hardcoded `overflow-x: hidden` with no way to opt out, silently
+  clipping anything wider than the container.
+
+  Write a `<div>` and style it, or reach for a component that earns the name.
+  The scrollbar theming is not carried over — it was a rule that happened to be
+  wearing a component, and inflicting it globally on a consuming app's every
+  scrollable region would be worse than leaving it out.
+
+  Breaking, shipped as a minor: the package has one consumer and it is clearing
+  its two call sites ahead of this landing.
+
+### Patch Changes
+
+- bee49ce: Correct the icons module's header comment, which claimed 17 icons since before
+  there were 20. Comment only — no icon, prop or output changes.
+
 ## 1.1.0
 
 ### Minor Changes
