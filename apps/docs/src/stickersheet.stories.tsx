@@ -107,18 +107,20 @@ export const Stickersheet = () => {
           <Loader />
         </Cell>
 
-        <Cell label="Tabs" wide>
+        <Cell label="Tabs" wide fill>
           <Tabs value={tab} onValueChange={setTab}>
             <Tabs.List>
               <Tabs.Trigger value="mass">Mass</Tabs.Trigger>
               <Tabs.Trigger value="orbit">Orbit</Tabs.Trigger>
               <Tabs.Trigger value="star">Star</Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="mass">
-              <Text size="2" color="muted">
-                1.34 Earth masses, 1.11 Earth radii.
-              </Text>
-            </Tabs.Content>
+            <div className="docs-sheet__tabspanel">
+              <Tabs.Content value="mass">
+                <Text size="2" color="muted">
+                  1.34 Earth masses, 1.11 Earth radii.
+                </Text>
+              </Tabs.Content>
+            </div>
           </Tabs>
         </Cell>
 

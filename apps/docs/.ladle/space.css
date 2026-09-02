@@ -1895,23 +1895,41 @@ nav.ladle-aside a:focus-visible {
    capture: a fixed measure so the shot is reproducible rather than dependent
    on whatever width the browser happened to have. */
 .docs-sheet {
-  width: 1200px;
-  padding: 40px;
+  /* Fluid, capped. It was a hard 1200px so the capture would be reproducible,
+     which also meant it ran off the side of any narrower gallery window. The
+     cap keeps the shot identical — the capture viewport is wider than this —
+     while letting the page decide below it. */
+  width: 100%;
+  max-width: 1200px;
   /* The library sets no font-family — every component inherits the host's.
      The capture runs in preview mode, outside the docs shell, so without this
      the whole sheet fell back to the browser's default serif and misrepresented
      what the components look like in a real app. */
   font-family: var(--docs-font-display);
   color: var(--docs-text);
-  background:
-    radial-gradient(120% 90% at 15% -10%, rgba(20, 40, 90, 0.55), transparent 60%),
-    var(--docs-void);
+  /* No ground and no inset of its own. Both exist for the README capture: on
+     the gallery page they painted a blue box around the sheet and pushed it
+     off its own gutter, when the page already supplies both. The capture
+     script adds them, so they exist only where they are wanted. */
 }
 
 .docs-sheet__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+}
+
+/* Below four columns a two-wide cell would be the whole row, and a full-width
+   one already is, so both collapse to the single span the row can hold. */
+@media (max-width: 1000px) {
+  .docs-sheet__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .docs-sheet__grid { grid-template-columns: minmax(0, 1fr); }
+  .docs-sheet__cell[data-wide],
+  .docs-sheet__cell[data-full] { grid-column: auto; }
+  .docs-sheet__cell[data-tall] { grid-row: auto; }
 }
 
 .docs-sheet__cell {
@@ -1938,6 +1956,15 @@ nav.ladle-aside a:focus-visible {
 }
 
 .docs-sheet__cell[data-full] .docs-sheet__stage { display: block; width: 100%; }
+
+/* Folder tabs seat onto the surface below them; with nothing there they float
+   and the design reads as a mistake. Same panel the Tabs story uses. */
+.docs-sheet__tabspanel {
+  background: var(--sp-tabs-surface-color);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 0 0 12px 12px;
+  padding: 16px;
+}
 
 /* Wrap rather than clip: a row of badges is the point of the Badge cell. */
 .docs-sheet__stage {

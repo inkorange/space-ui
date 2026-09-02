@@ -89,6 +89,19 @@ const shoot = async ({ name, url, width, height, scale, clip, selector, settle =
   // otherwise be captured sitting on top of the content.
   await page.addStyleTag({ content: ".docs-exit-fullscreen { display: none !important; }" });
 
+  // The stickersheet has no ground or inset on the page — the gallery
+  // supplies both, and adding its own drew a blue box around the sheet and
+  // pushed it off the gutter. The README image does want a lit backdrop and
+  // breathing room, so they are added here, for the shot only.
+  if (selector === ".docs-sheet") {
+    await page.addStyleTag({
+      content:
+        ".docs-sheet { padding: 40px; background:" +
+        " radial-gradient(120% 90% at 15% -10%, rgba(20, 40, 90, 0.55), transparent 60%)," +
+        " var(--docs-void); }",
+    });
+  }
+
   const target = selector ? page.locator(selector) : page;
   if (selector) await target.waitFor({ timeout: 15_000 });
   // Rim and starfield animations never settle, so networkidle alone is not
