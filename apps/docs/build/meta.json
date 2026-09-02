@@ -359,7 +359,7 @@
         "Overview"
       ],
       "locStart": 45,
-      "locEnd": 183,
+      "locEnd": 185,
       "filePath": "src/stickersheet.stories.tsx",
       "namedExport": "Stickersheet",
       "meta": {}
