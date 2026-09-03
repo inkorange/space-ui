@@ -1,10 +1,14 @@
 // A text field with a result list hanging under it.
 //
-// Deliberately presentational: it never filters, fetches, sorts or caps. The
-// consumer hands it whatever rows it should show — from memory, from an API,
-// ranked however that domain ranks things — and it owns the popover, the
-// keyboard model and the aria wiring. Those are the parts every autocomplete
-// needs and nobody enjoys writing twice.
+// It never fetches and never ranks: the consumer hands it the candidate rows,
+// from memory or from an API, in whatever order that domain considers best.
+// What it does own is the narrowing — matching the typed text against those
+// rows — plus the popover, the keyboard model and the aria wiring. Those are
+// the parts every autocomplete needs and nobody enjoys writing twice.
+//
+// A caller whose rows were already matched server-side passes `preFiltered`
+// and the narrowing is skipped, so a fuzzy or synonym match made elsewhere is
+// not undone by a plain substring test here.
 "use client";
 import type * as React from "react";
 import {
@@ -26,6 +30,10 @@ export interface AutocompleteOption {
   meta?: ReactNode;
   /** Shown, but skipped by the keyboard and unselectable. */
   disabled?: boolean;
+  /** The text the typed query is matched against, when `label` is not a plain
+   *  string. Falls back to `label` if it is one, and to `value` otherwise —
+   *  and `value` is usually a slug, which is rarely what someone is typing. */
+  search?: string;
 }
 
 export interface AutocompleteProps
@@ -37,14 +45,23 @@ export interface AutocompleteProps
   value: string;
   /** Called on every keystroke. */
   onValueChange: (value: string) => void;
-  /** The rows to show, already filtered and ordered by you. An empty array
-   *  with no `loading` and no `emptyMessage` shows nothing at all, which is
-   *  how you keep the panel shut until a query is worth answering. */
+  /** The candidate rows, in the order you want them shown. They are narrowed
+   *  against what has been typed unless `preFiltered` is set; the order you
+   *  give is always preserved, so ranking stays yours. An empty array with no
+   *  `loading` and no `emptyMessage` shows nothing at all, which is how you
+   *  keep the panel shut until a query is worth answering. */
   options: AutocompleteOption[];
   /** Called when a row is chosen by click or Enter. */
   onSelect: (value: string, option: AutocompleteOption) => void;
   /** Renders a leading glyph inside the field — a magnifier, usually. */
   icon?: ReactNode;
+  /** Match exactly as typed, so `trappist` no longer finds `TRAPPIST`.
+   *  Default off, which is what nearly every search wants. */
+  caseSensitive?: boolean;
+  /** The rows were already matched — by a server, a fuzzy search, a synonym
+   *  table — so render them as given. Without this a substring test here
+   *  would silently drop rows a smarter match upstream had found. */
+  preFiltered?: boolean;
   /** Replaces the list with a waiting message while results are on their way. */
   loading?: boolean;
   /** What that waiting message says. Name the thing being fetched — "Loading
@@ -83,6 +100,8 @@ export function Autocomplete({
   options,
   onSelect,
   icon,
+  caseSensitive = false,
+  preFiltered = false,
   loading = false,
   loadingMessage = "Loading…",
   emptyMessage,
@@ -98,17 +117,32 @@ export function Autocomplete({
   const listRef = useRef<HTMLUListElement>(null);
   const listId = useId();
 
-  const selectable = useMemo(() => options.filter((o) => !o.disabled), [options]);
+  // What a row is matched on: its label when that is plain text, an explicit
+  // `search` when the label is markup, and the value as a last resort.
+  const haystack = (o: AutocompleteOption) =>
+    typeof o.label === "string" ? o.label : (o.search ?? o.value);
+
+  const shown = useMemo(() => {
+    if (preFiltered) return options;
+    const needle = caseSensitive ? value : value.toLowerCase();
+    if (needle === "") return options;
+    return options.filter((o) => {
+      const text = caseSensitive ? haystack(o) : haystack(o).toLowerCase();
+      return text.includes(needle);
+    });
+  }, [options, value, caseSensitive, preFiltered]);
+
+  const selectable = useMemo(() => shown.filter((o) => !o.disabled), [shown]);
 
   // Nothing to say, no panel. This is what lets a consumer keep the popover
   // shut below its minimum query length without managing open state: send no
   // options, no loading and no message, and there is nothing to show.
-  const hasContent = options.length > 0 || loading || emptyMessage != null;
+  const hasContent = shown.length > 0 || loading || emptyMessage != null;
   const showPanel = open && hasContent;
 
   // A changed result set invalidates the highlight — it pointed at a row that
   // may no longer exist, let alone be the best match.
-  useEffect(() => setActive(0), [options]);
+  useEffect(() => setActive(0), [shown]);
 
   // "nearest" scrolls only when the row is actually out of view, so walking a
   // visible list does not jump the container under the cursor.
@@ -140,11 +174,11 @@ export function Autocomplete({
 
   const move = (delta: number) => {
     if (selectable.length === 0) return;
-    const current = options[active];
+    const current = shown[active];
     const from = current && !current.disabled ? selectable.indexOf(current) : -1;
     const next = (from + delta + selectable.length) % selectable.length;
     const target = selectable[next];
-    if (target) setActive(options.indexOf(target));
+    if (target) setActive(shown.indexOf(target));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -168,13 +202,13 @@ export function Autocomplete({
     else if (e.key === "Home") {
       e.preventDefault();
       const first = selectable[0];
-      if (first) setActive(options.indexOf(first));
+      if (first) setActive(shown.indexOf(first));
     } else if (e.key === "End") {
       e.preventDefault();
       const last = selectable[selectable.length - 1];
-      if (last) setActive(options.indexOf(last));
+      if (last) setActive(shown.indexOf(last));
     } else if (e.key === "Enter") {
-      const chosen = options[active];
+      const chosen = shown[active];
       if (chosen && !chosen.disabled) {
         e.preventDefault();
         choose(chosen);
@@ -182,7 +216,7 @@ export function Autocomplete({
     }
   };
 
-  const activeOption = showPanel ? options[active] : undefined;
+  const activeOption = showPanel ? shown[active] : undefined;
 
   return (
     <div ref={wrapRef} className={cx(styles.wrap, className)} style={style}>
@@ -235,7 +269,7 @@ export function Autocomplete({
       >
         {loading && <p className={styles.status}>{loadingMessage}</p>}
 
-        {!loading && options.length === 0 && emptyMessage != null && (
+        {!loading && shown.length === 0 && emptyMessage != null && (
           <p className={styles.status}>{emptyMessage}</p>
         )}
 
@@ -244,9 +278,9 @@ export function Autocomplete({
           id={listId}
           role="listbox"
           className={styles.list}
-          hidden={loading || options.length === 0}
+          hidden={loading || shown.length === 0}
         >
-          {options.map((option, i) => (
+          {shown.map((option, i) => (
             <li
               key={option.value}
               id={`${listId}-${i}`}

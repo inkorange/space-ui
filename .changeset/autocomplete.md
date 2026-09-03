@@ -16,10 +16,20 @@ New `Autocomplete`: a text field that offers matching rows as you type.
 />
 ```
 
-It holds no data of its own and never filters, fetches, sorts or caps. You
-hand it rows — from memory, from an API, ranked however your domain ranks
-things — and it owns the parts every autocomplete needs and nobody enjoys
-writing twice: the popover, the keyboard model and the aria wiring.
+It never fetches and never ranks. You hand it the candidate rows, in the order
+your domain considers best, and it narrows them against what has been typed —
+keeping your order — then owns the parts every autocomplete needs and nobody
+enjoys writing twice: the popover, the keyboard model and the aria wiring.
+
+`caseSensitive` makes the match exact, so `trappist` no longer finds
+`TRAPPIST`. `preFiltered` skips the match altogether, for rows a server or a
+fuzzy search already chose — without it, a plain substring test here would
+silently drop rows a smarter match upstream had found. Both are ordinary
+booleans defaulting to false, so `<Autocomplete caseSensitive />` is enough.
+
+When `label` is markup rather than a string, give the option a `search` string
+to match against; it falls back to `value`, which is usually a slug and rarely
+what anyone is typing.
 
 Arrows move the highlight and skip disabled rows, Home and End jump to the
 ends, Enter selects, Escape and Tab close, and an outside pointerdown

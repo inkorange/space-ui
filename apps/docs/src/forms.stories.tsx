@@ -140,8 +140,8 @@ RadioGroupStory.meta = {
     "A single-choice control for short lists where seeing every option at once matters more than saving space.",
 };
 
-/** A small stand-in catalogue. The component never filters — this is the
- *  consumer's job, and doing it here shows where that line falls. */
+/** A small stand-in catalogue. The component narrows this against what is
+ *  typed; the order given here is the order kept, so ranking stays ours. */
 const PLANETS = [
   ["trappist-1b", "TRAPPIST-1 b", "Lava World", 0],
   ["trappist-1c", "TRAPPIST-1 c", "Lava World", 0],
@@ -155,50 +155,55 @@ const PLANETS = [
   ["proxima-b", "Proxima Centauri b", "Rocky Terrestrial", 71],
 ] as const;
 
-const MAX_RESULTS = 6;
+const asOptions = () =>
+  PLANETS.map(([slug, name, type, score]) => ({
+    value: slug,
+    label: name,
+    meta: `${type} · ${score}/100`,
+  }));
 
 export const AutocompleteStory = () => {
   const [query, setQuery] = useState("");
+  const [strictQuery, setStrictQuery] = useState("");
   const [chosen, setChosen] = useState<string | null>(null);
 
-  // Filtering, ranking and capping all live here, in the consumer. A prefix
-  // match is almost always the one they meant.
-  const needle = query.trim().toLowerCase();
-  const matched =
-    needle.length < 2
-      ? []
-      : PLANETS.filter(([, name]) => name.toLowerCase().includes(needle)).sort((a, b) => {
-          const ap = a[1].toLowerCase().startsWith(needle) ? 0 : 1;
-          const bp = b[1].toLowerCase().startsWith(needle) ? 0 : 1;
-          return ap - bp || a[1].length - b[1].length;
-        });
-
   return (
-    <div style={{ maxWidth: 560 }}>
-      <Autocomplete
-        value={query}
-        onValueChange={setQuery}
-        onSelect={(value) => setChosen(value)}
-        icon={<MagnifyingGlassIcon width={16} height={16} />}
-        placeholder="Search planets — try TRAPPIST or Kepler"
-        aria-label="Search planets by name"
-        options={matched.slice(0, MAX_RESULTS).map(([slug, name, type, score]) => ({
-          value: slug,
-          label: name,
-          meta: `${type} · ${score}/100`,
-        }))}
-        // Only once the query is worth answering — below two characters there
-        // are no options and no message, so no panel appears at all.
-        emptyMessage={needle.length >= 2 ? `Nothing matching “${query.trim()}”.` : undefined}
-        footer={
-          matched.length > MAX_RESULTS
-            ? `Showing ${MAX_RESULTS} of ${matched.length} matches — keep typing to narrow it down.`
-            : undefined
-        }
-      />
-      <Text size="2" color="muted" mt="3">
-        {chosen ? `Selected: ${chosen}` : "Nothing selected yet."}
-      </Text>
+    <div style={{ display: "grid", gap: 32, maxWidth: 560 }}>
+      <div>
+        <Text size="2" color="muted" mb="2">
+          Case-insensitive, the default — “trap” finds “TRAPPIST”.
+        </Text>
+        <Autocomplete
+          value={query}
+          onValueChange={setQuery}
+          onSelect={(value) => setChosen(value)}
+          icon={<MagnifyingGlassIcon width={16} height={16} />}
+          placeholder="Search planets — try trappist or kepler"
+          aria-label="Search planets by name"
+          options={asOptions()}
+          emptyMessage={`Nothing matching “${query.trim()}”.`}
+        />
+        <Text size="2" color="muted" mt="3">
+          {chosen ? `Selected: ${chosen}` : "Nothing selected yet."}
+        </Text>
+      </div>
+
+      <div>
+        <Text size="2" color="muted" mb="2">
+          <code>caseSensitive</code> — “trap” finds nothing; “TRAP” does.
+        </Text>
+        <Autocomplete
+          caseSensitive
+          value={strictQuery}
+          onValueChange={setStrictQuery}
+          onSelect={(value) => setChosen(value)}
+          icon={<MagnifyingGlassIcon width={16} height={16} />}
+          placeholder="Exact case — try TRAP"
+          aria-label="Search planets, matching case exactly"
+          options={asOptions()}
+          emptyMessage={`Nothing matching “${strictQuery.trim()}” exactly.`}
+        />
+      </div>
     </div>
   );
 };
@@ -206,5 +211,5 @@ AutocompleteStory.storyName = "Autocomplete";
 AutocompleteStory.meta = {
   components: ["Autocomplete"],
   description:
-    "A text field that offers matching rows as you type. It holds no data of its own — you hand it options, from memory or an API, filtered and ranked however your domain ranks things, and it owns the popover, the keyboard model and the aria wiring. Arrows move the highlight, Enter selects, Escape closes, and hovering moves the same highlight the keyboard uses so the two can never disagree about what Enter would do.",
+    "A text field that offers matching rows as you type. Give it the candidate rows — from memory or an API — and it narrows them against what has been typed, keeping the order you supplied so ranking stays yours. It never fetches. `caseSensitive` makes the match exact; `preFiltered` skips the match entirely, for rows a server or a fuzzy search already chose. Arrows move the highlight, Enter selects, Escape closes, and hovering moves the same highlight the keyboard uses so the two can never disagree about what Enter would do.",
 };

@@ -735,6 +735,77 @@ describe("Autocomplete", () => {
     expect(out).not.toContain("TRAPPIST-1 b Lava World");
   });
 
+  it("narrows case-insensitively by default", () => {
+    // The whole point: typing lowercase finds an uppercase name.
+    const out = html(
+      <Autocomplete
+        value="trappist-1 b"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={options}
+      />,
+    );
+    expect(out).toContain("TRAPPIST-1 b");
+    expect(out).not.toContain("TRAPPIST-1 c");
+  });
+
+  it("caseSensitive makes the same query miss", () => {
+    const out = html(
+      <Autocomplete
+        value="trappist-1 b"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={options}
+        caseSensitive
+      />,
+    );
+    expect(out).not.toContain("TRAPPIST-1 b");
+  });
+
+  it("caseSensitive still matches when the case agrees", () => {
+    const out = html(
+      <Autocomplete
+        value="TRAPPIST-1 b"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={options}
+        caseSensitive
+      />,
+    );
+    expect(out).toContain("TRAPPIST-1 b");
+  });
+
+  it("preFiltered renders rows as given, matching nothing itself", () => {
+    // A server or fuzzy match found these; a substring test here would throw
+    // away rows it could not see the reason for.
+    const out = html(
+      <Autocomplete
+        value="zzzz-no-substring-match"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={options}
+        preFiltered
+      />,
+    );
+    expect(out).toContain("TRAPPIST-1 b");
+  });
+
+  it("matches an explicit search field when the label is markup", () => {
+    const out = html(
+      <Autocomplete
+        value="proxima"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={[
+          { value: "p-b", label: <em>Proxima b</em>, search: "Proxima Centauri b" },
+          { value: "k-9", label: <em>Kepler-9</em>, search: "Kepler-9" },
+        ]}
+      />,
+    );
+    expect(out).toContain("Proxima b");
+    expect(out).not.toContain("Kepler-9");
+  });
+
   it("merges className onto the wrapper rather than replacing it", () => {
     const out = field({ className: "mine" });
     expect(out).toContain("mine");
