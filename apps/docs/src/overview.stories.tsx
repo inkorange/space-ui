@@ -211,6 +211,7 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
     ["Box", "components--layout--flex-and-grid"],
   ]],
   ["Forms", [
+    ["Autocomplete", "components--forms--autocomplete"],
     ["TextField", "components--forms--text-field"],
     ["TextArea", "components--forms--text-area"],
     ["Select", "components--forms--select"],

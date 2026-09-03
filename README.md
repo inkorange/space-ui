@@ -3,8 +3,8 @@
 <!-- badges:start -->
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
-![coverage](https://img.shields.io/badge/coverage-82%25-green)
-![minzip](https://img.shields.io/badge/minzip-23.8%20kB-blue)
+![coverage](https://img.shields.io/badge/coverage-80%25-yellowgreen)
+![minzip](https://img.shields.io/badge/minzip-25.4%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
@@ -163,7 +163,7 @@ it exposes.
 | --- | --- |
 | **Typography** | [Text](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Link](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Heading](https://space-components.vercel.app/?story=components--typography--headings) · [Badge](https://space-components.vercel.app/?story=components--typography--badges) · [Separator](https://space-components.vercel.app/?story=components--typography--separator) |
 | **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) |
-| **Forms** | [TextField](https://space-components.vercel.app/?story=components--forms--text-field) · [TextArea](https://space-components.vercel.app/?story=components--forms--text-area) · [Select](https://space-components.vercel.app/?story=components--forms--select) · [Slider](https://space-components.vercel.app/?story=components--forms--slider) · [RadioGroup](https://space-components.vercel.app/?story=components--forms--radio-group) |
+| **Forms** | [Autocomplete](https://space-components.vercel.app/?story=components--forms--autocomplete) · [TextField](https://space-components.vercel.app/?story=components--forms--text-field) · [TextArea](https://space-components.vercel.app/?story=components--forms--text-area) · [Select](https://space-components.vercel.app/?story=components--forms--select) · [Slider](https://space-components.vercel.app/?story=components--forms--slider) · [RadioGroup](https://space-components.vercel.app/?story=components--forms--radio-group) |
 | **Buttons** | [Button](https://space-components.vercel.app/?story=components--buttons--buttons) · [IconToggle](https://space-components.vercel.app/?story=components--buttons--icon-toggle) |
 | **Feedback** | [Loader](https://space-components.vercel.app/?story=components--feedback--loader) · [Progress](https://space-components.vercel.app/?story=components--feedback--progress) · [Message](https://space-components.vercel.app/?story=components--feedback--message) |
 | **Overlays** | [Dialog](https://space-components.vercel.app/?story=components--overlays--dialog) · [AlertDialog](https://space-components.vercel.app/?story=components--overlays--alert-dialog) · [DropdownMenu](https://space-components.vercel.app/?story=components--overlays--dropdown-menu) · [Tabs](https://space-components.vercel.app/?story=components--overlays--tabs) · [Tooltip](https://space-components.vercel.app/?story=components--overlays--tooltip) |

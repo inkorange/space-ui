@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField, TextArea, Slider, Select, RadioGroup } from "@inkorange/space-ui";
+import { Autocomplete, MagnifyingGlassIcon, RadioGroup, Select, Slider, Text, TextArea, TextField } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Forms",
@@ -138,4 +138,78 @@ RadioGroupStory.storyName = "RadioGroup";
 RadioGroupStory.meta = {
   description:
     "A single-choice control for short lists where seeing every option at once matters more than saving space.",
+};
+
+/** A small stand-in catalogue. The component narrows this against what is
+ *  typed; the order given here is the order kept, so ranking stays ours. */
+const PLANETS = [
+  ["trappist-1b", "TRAPPIST-1 b", "Lava World", 0],
+  ["trappist-1c", "TRAPPIST-1 c", "Lava World", 0],
+  ["trappist-1d", "TRAPPIST-1 d", "Rocky Terrestrial", 15],
+  ["trappist-1e", "TRAPPIST-1 e", "Rocky Terrestrial", 15],
+  ["trappist-1f", "TRAPPIST-1 f", "Rocky Terrestrial", 15],
+  ["trappist-1g", "TRAPPIST-1 g", "Rocky Terrestrial", 30],
+  ["trappist-1h", "TRAPPIST-1 h", "Rocky Terrestrial", 30],
+  ["kepler-186f", "Kepler-186 f", "Rocky Terrestrial", 62],
+  ["kepler-442b", "Kepler-442 b", "Super-Earth", 84],
+  ["proxima-b", "Proxima Centauri b", "Rocky Terrestrial", 71],
+] as const;
+
+const asOptions = () =>
+  PLANETS.map(([slug, name, type, score]) => ({
+    value: slug,
+    label: name,
+    meta: `${type} · ${score}/100`,
+  }));
+
+export const AutocompleteStory = () => {
+  const [query, setQuery] = useState("");
+  const [strictQuery, setStrictQuery] = useState("");
+  const [chosen, setChosen] = useState<string | null>(null);
+
+  return (
+    <div style={{ display: "grid", gap: 32, maxWidth: 560 }}>
+      <div>
+        <Text size="2" color="muted" mb="2">
+          Case-insensitive, the default — “trap” finds “TRAPPIST”.
+        </Text>
+        <Autocomplete
+          value={query}
+          onValueChange={setQuery}
+          onSelect={(value) => setChosen(value)}
+          icon={<MagnifyingGlassIcon width={16} height={16} />}
+          placeholder="Search planets — try trappist or kepler"
+          aria-label="Search planets by name"
+          options={asOptions()}
+          emptyMessage={`Nothing matching “${query.trim()}”.`}
+        />
+        <Text size="2" color="muted" mt="3">
+          {chosen ? `Selected: ${chosen}` : "Nothing selected yet."}
+        </Text>
+      </div>
+
+      <div>
+        <Text size="2" color="muted" mb="2">
+          <code>caseSensitive</code> — “trap” finds nothing; “TRAP” does.
+        </Text>
+        <Autocomplete
+          caseSensitive
+          value={strictQuery}
+          onValueChange={setStrictQuery}
+          onSelect={(value) => setChosen(value)}
+          icon={<MagnifyingGlassIcon width={16} height={16} />}
+          placeholder="Exact case — try TRAP"
+          aria-label="Search planets, matching case exactly"
+          options={asOptions()}
+          emptyMessage={`Nothing matching “${strictQuery.trim()}” exactly.`}
+        />
+      </div>
+    </div>
+  );
+};
+AutocompleteStory.storyName = "Autocomplete";
+AutocompleteStory.meta = {
+  components: ["Autocomplete"],
+  description:
+    "A text field that offers matching rows as you type. Give it the candidate rows — from memory or an API — and it narrows them against what has been typed, keeping the order you supplied so ranking stays yours. It never fetches. `caseSensitive` makes the match exact; `preFiltered` skips the match entirely, for rows a server or a fuzzy search already chose. Arrows move the highlight, Enter selects, Escape closes, and hovering moves the same highlight the keyboard uses so the two can never disagree about what Enter would do.",
 };

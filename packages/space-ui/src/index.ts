@@ -22,6 +22,11 @@ export { Tooltip } from "./components/Tooltip";
 export { Select, type SelectProps, type SelectItemProps } from "./components/Select";
 export { TextField, type TextFieldProps } from "./components/TextField";
 export { TextArea, type TextAreaProps } from "./components/TextArea";
+export {
+  Autocomplete,
+  type AutocompleteProps,
+  type AutocompleteOption,
+} from "./components/Autocomplete";
 export { Slider, type SliderProps } from "./components/Slider";
 export { RadioGroup, type RadioGroupProps, type RadioGroupItemProps } from "./components/RadioGroup";
 export { Progress, type ProgressProps } from "./components/Progress";
