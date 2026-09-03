@@ -19,8 +19,10 @@ import styles from "./Tooltip.module.scss";
 interface TooltipProps {
   /** The text to show. Nothing renders when this is empty. */
   label: string;
-  /** Preferred side; flips automatically when there isn't room. */
-  side?: "top" | "bottom";
+  /** Preferred side; flips to the opposite one when there isn't room.
+   *  `left`/`right` are for a control in a vertical stack, where a tooltip
+   *  above or below would land on the neighbouring item. */
+  side?: "top" | "bottom" | "left" | "right";
   /** The element the tooltip describes. Receives the hover and focus
    *  handlers, so it must accept a ref. */
   children: React.ReactElement;
@@ -125,22 +127,42 @@ export function Tooltip({ label, side = "bottom", children }: TooltipProps) {
     const w = content.offsetWidth;
     const h = content.offsetHeight;
 
-    // Flip to the other side when the preferred one has no room — these
-    // controls sit in both the top row and the bottom action bar.
+    // Centre on the trigger along the free axis, clamped inside the viewport.
+    const centre = (start: number, size: number, extent: number, viewport: number) =>
+      Math.min(
+        Math.max(start + size / 2 - extent / 2, COLLISION_PADDING),
+        Math.max(viewport - extent - COLLISION_PADDING, COLLISION_PADDING),
+      );
+
+    // Flip to the opposite side when the preferred one has no room — these
+    // controls sit in the top row, the bottom action bar, and now a rail down
+    // the edge, so any of the four can be the side without space.
+    const pick = (near: number, far: number, size: number, viewport: number) => {
+      const fitsFar = far + size <= viewport - COLLISION_PADDING;
+      const fitsNear = near >= COLLISION_PADDING;
+      return { fitsNear, fitsFar };
+    };
+
+    if (side === "left" || side === "right") {
+      const after = r.right + SIDE_OFFSET;
+      const before = r.left - w - SIDE_OFFSET;
+      const { fitsNear: fitsBefore, fitsFar: fitsAfter } =
+        pick(before, after, w, window.innerWidth);
+      const left = side === "right"
+        ? (fitsAfter || !fitsBefore ? after : before)
+        : (fitsBefore || !fitsAfter ? before : after);
+      setPos({ top: centre(r.top, r.height, h, window.innerHeight), left });
+      return;
+    }
+
     const below = r.bottom + SIDE_OFFSET;
     const above = r.top - h - SIDE_OFFSET;
-    const fitsBelow = below + h <= window.innerHeight - COLLISION_PADDING;
-    const fitsAbove = above >= COLLISION_PADDING;
+    const { fitsNear: fitsAbove, fitsFar: fitsBelow } =
+      pick(above, below, h, window.innerHeight);
     const top = side === "bottom"
       ? (fitsBelow || !fitsAbove ? below : above)
       : (fitsAbove || !fitsBelow ? above : below);
-
-    // Centred on the trigger, clamped inside the viewport.
-    const left = Math.min(
-      Math.max(r.left + r.width / 2 - w / 2, COLLISION_PADDING),
-      Math.max(window.innerWidth - w - COLLISION_PADDING, COLLISION_PADDING),
-    );
-    setPos({ top, left });
+    setPos({ top, left: centre(r.left, r.width, w, window.innerWidth) });
   }, [open, side, label]);
 
   if (!label || !isValidElement(children)) return <>{children}</>;

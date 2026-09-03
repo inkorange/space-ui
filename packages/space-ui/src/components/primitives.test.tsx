@@ -568,6 +568,45 @@ describe("IconToggle", () => {
   });
 });
 
+describe("IconToggle orientation", () => {
+  const options = [
+    { value: "a" as const, icon: <Icons.PersonIcon />, label: "A" },
+    { value: "b" as const, icon: <Icons.BookmarkIcon />, label: "B" },
+  ];
+  const render = (orientation?: "horizontal" | "vertical") =>
+    html(
+      <IconToggle
+        options={options}
+        value="a"
+        onValueChange={() => {}}
+        orientation={orientation}
+      />,
+    );
+
+  it("is horizontal by default", () => {
+    expect(render()).not.toContain("vertical");
+    expect(render("horizontal")).not.toContain("vertical");
+  });
+  it("adds the vertical class when asked", () => {
+    expect(render("vertical")).toContain("vertical");
+  });
+  it("keeps every segment and its labelling in both orientations", () => {
+    for (const o of [undefined, "vertical" as const]) {
+      const out = render(o);
+      expect(out.match(/<button/g)).toHaveLength(2);
+      expect(out).toContain('aria-label="A"');
+      expect(out).toContain('aria-pressed="true"');
+    }
+  });
+  it("merges className rather than replacing the group class", () => {
+    const out = html(
+      <IconToggle options={options} value="a" onValueChange={() => {}} className="mine" />,
+    );
+    expect(out).toContain("mine");
+    expect(out).toContain("group");
+  });
+});
+
 describe("Tooltip", () => {
   it("describes its trigger and renders the label in a tooltip role", () => {
     const out = html(

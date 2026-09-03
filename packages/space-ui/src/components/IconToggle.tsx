@@ -24,25 +24,41 @@ export function IconToggle<V extends string>({
   options,
   value,
   onValueChange,
+  orientation = "horizontal",
   className = "",
 }: {
   /** The segments, in display order. Every option is always visible —
    *  this is a segmented control, not a menu.
    */
   options: IconToggleOption<V>[];
-  /** The selected option's value. Fully controlled. */
-  value: V;
+  /** The selected option's value. Fully controlled.
+   *
+   *  NoInfer so V is derived from `options` alone. Without it a value that is
+   *  not among the options simply widened V to include itself, which made the
+   *  generic silently accept the one mistake it looks like it should catch. */
+  value: NoInfer<V>;
   /** Called with the newly selected value. Not called when the already
    *  selected option is clicked. */
   onValueChange(next: V): void;
+  /** Which way the pill runs. `vertical` for a rail down the edge of a
+   *  viewport, where a horizontal strip would eat the width. Default
+   *  `horizontal`. */
+  orientation?: "horizontal" | "vertical";
   /** Merged onto the group wrapper. */
   className?: string;
 }) {
+  const vertical = orientation === "vertical";
   return (
-    <div className={`${styles.group} ${className}`} role="group">
+    <div
+      className={`${styles.group} ${vertical ? styles.vertical : ""} ${className}`}
+      role="group"
+    >
       {options.map((opt) => (
-        // The pill sits at the top of the scene, so its tooltips hang below.
-        <Tooltip key={opt.value} label={opt.label} side="bottom">
+        // A horizontal pill sits at the top of the scene, so its tooltips hang
+        // below it. A vertical one has a segment directly below every segment,
+        // so they go to the side instead — otherwise each tooltip covers the
+        // next option along.
+        <Tooltip key={opt.value} label={opt.label} side={vertical ? "right" : "bottom"}>
           <button
             type="button"
             className={`${styles.segment} ${opt.value === value ? styles.active : ""}`}
