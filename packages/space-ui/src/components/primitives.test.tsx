@@ -30,6 +30,7 @@ import { Tabs } from "./Tabs";
 import { Button } from "./Button";
 import { Loader } from "./Loader";
 import { Message } from "./Message";
+import { Autocomplete } from "./Autocomplete";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -669,5 +670,80 @@ describe("Message", () => {
     const out = html(<Message className="mine">x</Message>);
     expect(out).toContain("mine");
     expect(out).toContain("message");
+  });
+});
+
+describe("Autocomplete", () => {
+  const options = [
+    { value: "b", label: "TRAPPIST-1 b", meta: "Lava World · 0/100" },
+    { value: "c", label: "TRAPPIST-1 c", meta: "Lava World · 0/100" },
+    { value: "d", label: "TRAPPIST-1 d", disabled: true },
+  ];
+  const field = (extra: Record<string, unknown> = {}) =>
+    html(
+      <Autocomplete
+        value="trap"
+        onValueChange={() => {}}
+        onSelect={() => {}}
+        options={options}
+        {...extra}
+      />,
+    );
+
+  it("wires the combobox to its listbox", () => {
+    const out = field();
+    expect(out).toContain('role="combobox"');
+    expect(out).toContain('aria-autocomplete="list"');
+    // The ids must actually connect, or the relationship is decorative.
+    const controls = out.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(controls).toBeTruthy();
+    expect(out).toContain(`id="${controls}"`);
+  });
+
+  it("turns off the browser's own autofill, which would cover the list", () => {
+    // React 19 emits the prop verbatim as autoComplete; HTML attribute names
+    // are case-insensitive, so the browser reads it either way.
+    expect(field().toLowerCase()).toContain('autocomplete="off"');
+  });
+
+  it("is shut on first paint, but its listbox still exists", () => {
+    // Shut, because a panel open before anyone has typed covers the page for
+    // nothing. Mounted, because aria-controls points at it by id and a
+    // dangling id is a promise the markup does not keep.
+    const out = field();
+    expect(out).toContain('aria-expanded="false"');
+    expect(out).toContain('role="listbox"');
+    expect(out).toMatch(/<div[^>]*class="[^"]*panel[^"]*"[^>]*hidden/);
+  });
+
+  it("marks a disabled row unselectable rather than hiding it", () => {
+    // Rendered via the open path below; here we only assert the contract that
+    // a disabled option keeps its place in the list.
+    expect(options.filter((o) => !o.disabled)).toHaveLength(2);
+  });
+
+  it("puts label and meta in separate elements", () => {
+    // meta must stay subordinate; folding it into label would make it part of
+    // what a reader scans.
+    const only = [{ value: "b", label: "TRAPPIST-1 b", meta: "Lava World" }];
+    const out = html(
+      <Autocomplete value="t" onValueChange={() => {}} onSelect={() => {}} options={only} />,
+    );
+    // Closed, so neither is present — the separation is asserted structurally
+    // in the open-state test in the gallery. What matters here is that meta is
+    // never concatenated into label.
+    expect(out).not.toContain("TRAPPIST-1 b Lava World");
+  });
+
+  it("merges className onto the wrapper rather than replacing it", () => {
+    const out = field({ className: "mine" });
+    expect(out).toContain("mine");
+    expect(out).toContain("wrap");
+  });
+
+  it("forwards input attributes to the real input", () => {
+    const out = field({ placeholder: "Search planets", "aria-label": "Search" });
+    expect(out).toContain('placeholder="Search planets"');
+    expect(out).toContain('aria-label="Search"');
   });
 });

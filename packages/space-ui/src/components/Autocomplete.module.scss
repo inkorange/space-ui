@@ -1,0 +1,97 @@
+/* The field's glass, focus ring and rim all come from TextField; the panel's
+   from spaceControls' shared panel. Only layout lives here, so an Autocomplete
+   and a Select drop the same surface under the same kind of control.
+
+   @token --sp-autocomplete-panel-max-height How tall the result list grows
+     before it scrolls. The footer sits outside this, so a count stays visible
+     while the rows move.
+   @token --sp-autocomplete-option-highlight-color The active row's wash. One
+     highlight serves pointer and keyboard both — hovering moves the active
+     row, so the two can never disagree about what Enter would do. */
+.wrap {
+  position: relative;
+}
+
+.field {
+  width: 100%;
+}
+
+/* Absolute, so an appearing list never shoves the page down under the cursor —
+   whatever is being searched usually sits directly below the field. */
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  /* Above the page's own layers, and safe inside a dialog's stacking context
+     because nothing here portals out of the tree. */
+  z-index: 50;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.status {
+  margin: 0;
+  padding: 10px;
+  font-size: var(--sp-font-sm);
+  line-height: 1.5;
+  color: var(--sp-gray-text-dim);
+}
+
+/* Scrolls rather than truncates: a common prefix can match thousands, and a
+   list that silently stops looks like the catalogue is small. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: var(--sp-autocomplete-panel-max-height, 320px);
+  overflow-y: auto;
+  /* Don't hand a scroll that reaches its end back to the page behind. */
+  overscroll-behavior: contain;
+}
+
+.option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: var(--sp-font-sm);
+  color: var(--sp-glass-text);
+}
+
+.active {
+  background: var(--sp-autocomplete-option-highlight-color);
+}
+
+.option[aria-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The label can be long; the meta should never be squeezed to nothing by it. */
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  flex-shrink: 0;
+  font-size: var(--sp-font-xs);
+  color: var(--sp-gray-text-dim);
+}
+
+.footer {
+  padding: 8px 10px 4px;
+  margin-top: 6px;
+  border-top: 1px solid var(--sp-gray-border);
+  font-size: var(--sp-font-xs);
+  color: var(--sp-gray-text-dim);
+}

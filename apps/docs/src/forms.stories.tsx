@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextField, TextArea, Slider, Select, RadioGroup } from "@inkorange/space-ui";
+import { Autocomplete, MagnifyingGlassIcon, RadioGroup, Select, Slider, Text, TextArea, TextField } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Forms",
@@ -138,4 +138,73 @@ RadioGroupStory.storyName = "RadioGroup";
 RadioGroupStory.meta = {
   description:
     "A single-choice control for short lists where seeing every option at once matters more than saving space.",
+};
+
+/** A small stand-in catalogue. The component never filters — this is the
+ *  consumer's job, and doing it here shows where that line falls. */
+const PLANETS = [
+  ["trappist-1b", "TRAPPIST-1 b", "Lava World", 0],
+  ["trappist-1c", "TRAPPIST-1 c", "Lava World", 0],
+  ["trappist-1d", "TRAPPIST-1 d", "Rocky Terrestrial", 15],
+  ["trappist-1e", "TRAPPIST-1 e", "Rocky Terrestrial", 15],
+  ["trappist-1f", "TRAPPIST-1 f", "Rocky Terrestrial", 15],
+  ["trappist-1g", "TRAPPIST-1 g", "Rocky Terrestrial", 30],
+  ["trappist-1h", "TRAPPIST-1 h", "Rocky Terrestrial", 30],
+  ["kepler-186f", "Kepler-186 f", "Rocky Terrestrial", 62],
+  ["kepler-442b", "Kepler-442 b", "Super-Earth", 84],
+  ["proxima-b", "Proxima Centauri b", "Rocky Terrestrial", 71],
+] as const;
+
+const MAX_RESULTS = 6;
+
+export const AutocompleteStory = () => {
+  const [query, setQuery] = useState("");
+  const [chosen, setChosen] = useState<string | null>(null);
+
+  // Filtering, ranking and capping all live here, in the consumer. A prefix
+  // match is almost always the one they meant.
+  const needle = query.trim().toLowerCase();
+  const matched =
+    needle.length < 2
+      ? []
+      : PLANETS.filter(([, name]) => name.toLowerCase().includes(needle)).sort((a, b) => {
+          const ap = a[1].toLowerCase().startsWith(needle) ? 0 : 1;
+          const bp = b[1].toLowerCase().startsWith(needle) ? 0 : 1;
+          return ap - bp || a[1].length - b[1].length;
+        });
+
+  return (
+    <div style={{ maxWidth: 560 }}>
+      <Autocomplete
+        value={query}
+        onValueChange={setQuery}
+        onSelect={(value) => setChosen(value)}
+        icon={<MagnifyingGlassIcon width={16} height={16} />}
+        placeholder="Search planets — try TRAPPIST or Kepler"
+        aria-label="Search planets by name"
+        options={matched.slice(0, MAX_RESULTS).map(([slug, name, type, score]) => ({
+          value: slug,
+          label: name,
+          meta: `${type} · ${score}/100`,
+        }))}
+        // Only once the query is worth answering — below two characters there
+        // are no options and no message, so no panel appears at all.
+        emptyMessage={needle.length >= 2 ? `Nothing matching “${query.trim()}”.` : undefined}
+        footer={
+          matched.length > MAX_RESULTS
+            ? `Showing ${MAX_RESULTS} of ${matched.length} matches — keep typing to narrow it down.`
+            : undefined
+        }
+      />
+      <Text size="2" color="muted" mt="3">
+        {chosen ? `Selected: ${chosen}` : "Nothing selected yet."}
+      </Text>
+    </div>
+  );
+};
+AutocompleteStory.storyName = "Autocomplete";
+AutocompleteStory.meta = {
+  components: ["Autocomplete"],
+  description:
+    "A text field that offers matching rows as you type. It holds no data of its own — you hand it options, from memory or an API, filtered and ranked however your domain ranks things, and it owns the popover, the keyboard model and the aria wiring. Arrows move the highlight, Enter selects, Escape closes, and hovering moves the same highlight the keyboard uses so the two can never disagree about what Enter would do.",
 };

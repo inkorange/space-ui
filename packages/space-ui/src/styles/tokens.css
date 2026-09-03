@@ -91,6 +91,11 @@
 
   --sp-select-panel-color: #101216;
 
+  /* Autocomplete. The panel's surface comes from the shared control skin; only
+     its height cap and the active row's wash are its own. */
+  --sp-autocomplete-panel-max-height: 320px;
+  --sp-autocomplete-option-highlight-color: rgb(150 190 255 / 0.14);
+
   --sp-radio-group-orb-highlight-color: #cfe0ff;
   --sp-radio-group-orb-mid-color: #8fb4ff;
   --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);
