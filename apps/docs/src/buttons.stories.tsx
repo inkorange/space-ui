@@ -22,18 +22,29 @@ export const Buttons = () => (
 );
 
 export const IconToggleStory = () => {
-  const [v, setV] = useState("a");
+  const [across, setAcross] = useState("a");
+  const [down, setDown] = useState("a");
+  const options = [
+    { value: "a", label: "Planet", icon: <span>🪐</span> },
+    { value: "b", label: "System", icon: <span>✦</span> },
+    { value: "c", label: "Surface", icon: <span>⛰</span> },
+  ];
   return (
-    <IconToggle
-      value={v}
-      onValueChange={setV}
-      options={[
-        { value: "a", label: "Planet", icon: <span>🪐</span> },
-        { value: "b", label: "System", icon: <span>✦</span> },
-        { value: "c", label: "Surface", icon: <span>⛰</span> },
-      ]}
-    />
+    <div style={{ display: "flex", gap: 40, alignItems: "flex-start" }}>
+      <IconToggle value={across} onValueChange={setAcross} options={options} />
+      <IconToggle
+        value={down}
+        onValueChange={setDown}
+        options={options}
+        orientation="vertical"
+      />
+    </div>
   );
+};
+IconToggleStory.storyName = "IconToggle";
+IconToggleStory.meta = {
+  description:
+    "A single-select group for switching view or mode. Options carry both an icon and a label; the label is what screen readers announce and what the tooltip shows. `orientation=\"vertical\"` turns it into a rail for an edge where horizontal width is the scarce dimension — its tooltips move to the side, since below would land on the next option.",
 };
 IconToggleStory.storyName = "IconToggle";
 IconToggleStory.meta = {

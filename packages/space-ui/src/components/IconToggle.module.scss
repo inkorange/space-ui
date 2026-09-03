@@ -40,3 +40,10 @@
   box-shadow: 0 0 10px var(--sp-icon-toggle-active-to-color);
   cursor: default;
 }
+
+/* Vertical: a rail rather than a strip, for an edge where horizontal width is
+   the scarce dimension. Only the axis changes — the pill, the segments and
+   the lit active state are the same control turned ninety degrees. */
+.vertical {
+  flex-direction: column;
+}
