@@ -1,5 +1,72 @@
 # @inkorange/space-ui
 
+## 1.3.0
+
+### Minor Changes
+
+- ff9f2a4: New `Autocomplete`: a text field that offers matching rows as you type.
+
+  ```tsx
+  <Autocomplete
+    value={query}
+    onValueChange={setQuery}
+    onSelect={(slug) => router.push(`/exoplanets/${slug}`)}
+    icon={<MagnifyingGlassIcon width={16} height={16} />}
+    options={matches.map((m) => ({
+      value: m.slug,
+      label: m.name,
+      meta: m.type,
+    }))}
+    emptyMessage="Nothing matching that."
+    footer="Showing 50 of 2,700 — keep typing to narrow it down."
+  />
+  ```
+
+  It never fetches and never ranks. You hand it the candidate rows, in the order
+  your domain considers best, and it narrows them against what has been typed —
+  keeping your order — then owns the parts every autocomplete needs and nobody
+  enjoys writing twice: the popover, the keyboard model and the aria wiring.
+
+  `caseSensitive` makes the match exact, so `trappist` no longer finds
+  `TRAPPIST`. `preFiltered` skips the match altogether, for rows a server or a
+  fuzzy search already chose — without it, a plain substring test here would
+  silently drop rows a smarter match upstream had found. Both are ordinary
+  booleans defaulting to false, so `<Autocomplete caseSensitive />` is enough.
+
+  When `label` is markup rather than a string, give the option a `search` string
+  to match against; it falls back to `value`, which is usually a slug and rarely
+  what anyone is typing.
+
+  Arrows move the highlight and skip disabled rows, Home and End jump to the
+  ends, Enter selects, Escape and Tab close, and an outside pointerdown
+  dismisses. Hovering moves the same highlight the keyboard uses, so a mouse
+  highlight and a keyboard highlight can never disagree about what Enter would
+  do. The list is a popover rather than a block in the flow, because results
+  that appear mid-keystroke and push the page down under the cursor are
+  disorienting.
+
+  Send no options, no `loading` and no `emptyMessage` and no panel appears at
+  all — which is how you keep it shut below a minimum query length without
+  managing open state yourself.
+
+- 4ba37b4: `IconToggle` takes an `orientation` — `"horizontal"` (the default, unchanged)
+  or `"vertical"` for a rail down the edge of a viewport, where a horizontal
+  strip eats the width you need.
+
+  Its tooltips move with it. A vertical pill has a segment directly below every
+  segment, so a tooltip hanging below would cover the next option; on a rail
+  they go to the side instead. That needed `Tooltip` to place on the horizontal
+  axis at all, so it now accepts `side="left"` and `side="right"` alongside top
+  and bottom, with the same flip-when-there-is-no-room behaviour on both axes.
+
+  `IconToggle`'s `value` is now `NoInfer<V>`. The generic is genuinely useful —
+  `onValueChange` hands you the union of your own option values rather than a
+  bare `string`, so a switch over it is exhaustive and it assigns straight into
+  narrow state. But `V` was inferring from `value` as well as `options`, so a
+  value that was not among the options simply widened `V` to include itself:
+  the generic silently accepted the one mistake it looks like it should catch.
+  It is now derived from `options` alone, and a mismatched `value` is an error.
+
 ## 1.2.0
 
 ### Minor Changes
