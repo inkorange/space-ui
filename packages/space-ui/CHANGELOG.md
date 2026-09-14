@@ -1,5 +1,26 @@
 # @inkorange/space-ui
 
+## 1.6.0
+
+### Minor Changes
+
+- 5a11eb5: Add Carousel: a row of slides that scrolls sideways, built on native CSS scroll snapping so a flick on a phone uses the platform's own momentum and lands on a slide; with a mouse, drag it. `perView` takes fractions (`2.5` leaves half a slide at the edge), `step` chooses whether the arrows move by one slide or by a page, and `showPagination` adds dots beneath. Override `--sp-carousel-view-count` in a media query to change how many slides fit at a breakpoint, and `--sp-carousel-gap-size` for the space between them.
+
+### Patch Changes
+
+- 9aa5e32: Fix `DropdownMenu` ignoring a click on its trigger shortly after the menu
+  closed.
+
+  The trigger guarded against a real race — pressing it while the menu is open
+  closes the menu during pointerdown, so the click that follows would otherwise
+  reopen it — with a 300ms window that ignored trigger clicks after any close.
+  Escape armed that window too, so pressing Escape and then clicking the trigger
+  again within 300ms did nothing.
+
+  The trigger now records, at pointerdown, whether the menu was open, and the
+  click acts on that. It no longer depends on event timing, and nothing is
+  swallowed. This is the same fix Popover shipped with.
+
 ## 1.5.0
 
 ### Minor Changes
