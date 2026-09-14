@@ -100,6 +100,10 @@
      rhythm; page numbers grow wider than it only when their digits need to. */
   --sp-pagination-item-size: 36px;
 
+  /* Popover. A cap on width, so a popover stays a small surface beside its
+     trigger rather than turning into a second page. */
+  --sp-popover-panel-max-width: 22rem;
+
   --sp-radio-group-orb-highlight-color: #cfe0ff;
   --sp-radio-group-orb-mid-color: #8fb4ff;
   --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);

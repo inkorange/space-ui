@@ -11,6 +11,8 @@ import {
   Link,
   Loader,
   Message,
+  Pagination,
+  Popover,
   Progress,
   RadioGroup,
   Select,
@@ -172,6 +174,23 @@ export const Stickersheet = () => {
               The card reserves the image box before it loads.
             </Text>
           </Card>
+        </Cell>
+
+        {/* Shown open, so the sheet documents the panel and not just a button.
+            defaultOpen leaves focus alone, so the sheet does not scroll to it. */}
+        <Cell label="Popover" wide>
+          <div className="docs-sheet__popoverstage">
+            <Popover label="Filter planets" defaultOpen>
+              <div className="docs-sheet__popoverbody">
+                <Text size="2" weight="bold">Minimum mass</Text>
+                <Text size="1" color="muted">40 Earth masses and above</Text>
+              </div>
+            </Popover>
+          </div>
+        </Cell>
+
+        <Cell label="Pagination" wide fill>
+          <Pagination pagination={{ page: 5, pageSize: 10, totalItems: 180 }} onPageClick={() => {}} />
         </Cell>
 
         <Cell label="Message" full>
