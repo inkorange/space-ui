@@ -2187,3 +2187,11 @@ nav.ladle-aside a:focus-visible {
   width: 100%;
   --sp-card-image-ratio: 3 / 1;
 }
+
+/* A data shape sits under the props that ask for it, set a little apart so it
+   reads as a separate object rather than more props. */
+.docs-api__shape {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--docs-hairline);
+}

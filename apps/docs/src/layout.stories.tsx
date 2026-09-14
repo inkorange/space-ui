@@ -1,4 +1,5 @@
-import { Box, Flex, Grid, Card, Text, Heading } from "@inkorange/space-ui";
+import { useState } from "react";
+import { Box, Card, Flex, Grid, Heading, Pagination, Text } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Layout",
@@ -70,3 +71,42 @@ export const FlexAndGrid = () => (
     </Grid>
   </Flex>
 );
+
+export const PaginationStory = () => {
+  // What an API typically returns next to a page of results. The component
+  // holds none of this — it reports the click, and the caller updates it.
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 120, totalItems: 2091 });
+  const [short, setShort] = useState({ page: 2, pageSize: 10, totalItems: 48 });
+
+  const from = (pagination.page - 1) * pagination.pageSize + 1;
+  const to = Math.min(pagination.page * pagination.pageSize, pagination.totalItems);
+
+  return (
+    <div style={{ display: "grid", gap: 32 }}>
+      <div style={{ display: "grid", gap: 12, justifyItems: "center" }}>
+        <Text size="2" color="muted">
+          Showing {from.toLocaleString()}–{to.toLocaleString()} of{" "}
+          {pagination.totalItems.toLocaleString()} gas giants
+        </Text>
+        <Pagination
+          pagination={pagination}
+          onPageClick={(page) => setPagination((p) => ({ ...p, page }))}
+        />
+      </div>
+
+      <div style={{ display: "grid", gap: 12, justifyItems: "center" }}>
+        <Text size="2" color="muted">Few enough pages to show them all</Text>
+        <Pagination
+          pagination={short}
+          onPageClick={(page) => setShort((p) => ({ ...p, page }))}
+        />
+      </div>
+    </div>
+  );
+};
+PaginationStory.storyName = "Pagination";
+PaginationStory.meta = {
+  components: ["Pagination"],
+  description:
+    "Page-by-page navigation for a long list. Give it the pagination object your API returns — page, page size and total items — and it reports which page was clicked through onPageClick; it holds no state of its own. The window stays the same width at every page, so the next click never lands on a different number than the last one did, and Previous and Next stay in place when they cannot be used. With one page or fewer it renders nothing.",
+};

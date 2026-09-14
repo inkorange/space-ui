@@ -48,6 +48,23 @@ export type ComponentDoc = {
   inherited: PropDoc[];
   /** How many props are inherited in total, most of which are not worth listing. */
   inheritedCount: number;
+  /**
+   * Data shapes a caller has to build to use the component — `PaginationState`
+   * behind `pagination`, `AutocompleteOption` behind `options`. A props table
+   * shows only the name of such a type, which tells a reader nothing about
+   * what to put in it.
+   */
+  types: TypeDoc[];
+};
+
+export type TypeDoc = {
+  /** "PaginationState". */
+  name: string;
+  /** JSDoc written above the type. */
+  description: string;
+  fields: PropDoc[];
+  /** The props whose type mentions it, so the table can say where it goes. */
+  usedBy: string[];
 };
 
 /**
@@ -439,7 +456,7 @@ const buildDocs = (): ComponentDoc[] => {
 
       docs.push({
         name, description, file, props, tokens, paletteTokens,
-        extendsFrom, inherited, inheritedCount,
+        extendsFrom, inherited, inheritedCount, types: [],
       });
       seen.add(name);
     });
@@ -505,10 +522,45 @@ const buildDocs = (): ComponentDoc[] => {
 
       docs.push({
         name, description: docOf(node), file, props, tokens, paletteTokens,
-        extendsFrom: intersected, inherited: [], inheritedCount: 0,
+        extendsFrom: intersected, inherited: [], inheritedCount: 0, types: [],
       });
       seen.add(name);
     });
+
+    // Data shapes. An exported interface that is not itself a *Props type, but
+    // that a documented prop's type names, is something a caller must build —
+    // so it earns a table beside the component that asks for it. Matching is
+    // on the prop's type text by whole word, which covers `PaginationState`,
+    // `AutocompleteOption[]` and `IconToggleOption<V>[]` alike.
+    const shapes: TypeDoc[] = [];
+    source.forEachChild((node) => {
+      if (!ts.isInterfaceDeclaration(node) || !isExported(node)) return;
+      const typeName = node.name.text;
+      if (typeName.endsWith("Props")) return;
+      const fields: PropDoc[] = [];
+      for (const member of node.members) {
+        if (!ts.isPropertySignature(member) || !member.name) continue;
+        fields.push({
+          name: member.name.getText(source).replace(/^["']|["']$/g, ""),
+          type: member.type ? member.type.getText(source).replace(/\s+/g, " ") : "unknown",
+          required: !member.questionToken,
+          description: docOf(member),
+          defaultValue: null,
+        });
+      }
+      if (fields.length) {
+        shapes.push({ name: typeName, description: docOf(node), fields, usedBy: [] });
+      }
+    });
+
+    for (const doc of docs) {
+      if (doc.file !== file) continue;
+      for (const shape of shapes) {
+        const word = new RegExp(`\\b${shape.name}\\b`);
+        const usedBy = doc.props.filter((pr) => word.test(pr.type)).map((pr) => pr.name);
+        if (usedBy.length) doc.types.push({ ...shape, usedBy });
+      }
+    }
   }
 
   return docs.sort((a, b) => a.name.localeCompare(b.name));

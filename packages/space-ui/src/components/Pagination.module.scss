@@ -1,0 +1,109 @@
+/* Every control wears the shared space skin — glass, star specks, the
+   conic rim — so a row of pages is the same material as a Select or a Button.
+   Only the current page keeps the rim's orbit; the others hold still.
+
+   Selectors here are nested under .nav on purpose. The shared skin doubles its
+   class to out-rank third-party styles, so a single class in this file would
+   lose to it on height, padding and the animation this component switches
+   off.
+
+   @token --sp-pagination-item-size The height of every control, and the
+     minimum width of a page number. */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav .item {
+  gap: 4px;
+  height: var(--sp-pagination-item-size, 36px);
+  min-width: var(--sp-pagination-item-size, 36px);
+  padding: 0 12px;
+  justify-content: center;
+  font-size: var(--sp-font-sm);
+  font-weight: 500;
+  /* Digits sit in a row and must not jitter as they change from 9 to 10. */
+  font-variant-numeric: tabular-nums;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+  }
+}
+
+/* The orbit marks where you are, so everything that is not where you are
+   holds its rim still. */
+.nav .item:not(.current) {
+  animation: none;
+}
+
+/* A page number is a circle until its digits need more room. */
+.nav .page {
+  padding: 0 8px;
+}
+
+/* Pages you are not on step back, so the one you are on is not merely a peer
+   with a brighter glow. */
+.nav .page:not(.current) {
+  color: var(--sp-gray-text-dim);
+}
+
+/* The current page is lit from inside as well as at the rim — a bright ring,
+   a filled glow, white bold numerals — against neighbours that have stepped
+   back. That contrast holds with the orbit stilled, so it does not depend on
+   motion to say where you are. */
+/* .item.current, not .current: the shared skin doubles its own class, so a
+   two-class selector here ties with it and loses on load order — the glow is
+   then silently discarded with nothing in the markup to say why. Three
+   classes out-rank it without !important. */
+.nav .item.current {
+  color: var(--sp-on-solid);
+  font-weight: 600;
+  cursor: default;
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.85),
+    inset 0 0 16px rgb(var(--sp-glow-rgb) / 0.45),
+    0 0 18px rgb(var(--sp-glow-rgb) / 0.45),
+    0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45);
+
+}
+
+/* Exactly as wide as a page number. The window always has the same number of
+   slots, but that only holds the control still if every slot is the same
+   width — a narrower gap made page 1 (one gap) 16px wider than page 5 (two),
+   and the row shifted under the cursor anyway. */
+.gap {
+  min-width: var(--sp-pagination-item-size, 36px);
+  text-align: center;
+  color: var(--sp-gray-muted);
+  user-select: none;
+}
+
+/* Narrow: Previous and Next give up their words, keep their chevrons and
+   their accessible names. The numbers are what needs the room. */
+@media (max-width: 480px) {
+  .stepText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .nav .step {
+    padding: 0;
+  }
+}

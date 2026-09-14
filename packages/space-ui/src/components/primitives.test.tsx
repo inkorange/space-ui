@@ -31,6 +31,7 @@ import { Button } from "./Button";
 import { Loader } from "./Loader";
 import { Message } from "./Message";
 import { Autocomplete } from "./Autocomplete";
+import { Pagination, pageCount, pageWindow } from "./Pagination";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -816,5 +817,121 @@ describe("Autocomplete", () => {
     const out = field({ placeholder: "Search planets", "aria-label": "Search" });
     expect(out).toContain('placeholder="Search planets"');
     expect(out).toContain('aria-label="Search"');
+  });
+});
+
+describe("pageWindow", () => {
+  it("shows every page when there are few enough", () => {
+    expect(pageWindow(1, 5)).toEqual([1, 2, 3, 4, 5]);
+    expect(pageWindow(4, 7)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  });
+
+  it("gaps only the far side near either end", () => {
+    expect(pageWindow(1, 18)).toEqual([1, 2, 3, 4, 5, null, 18]);
+    expect(pageWindow(18, 18)).toEqual([1, null, 14, 15, 16, 17, 18]);
+  });
+
+  it("gaps both sides in the middle", () => {
+    expect(pageWindow(9, 18)).toEqual([1, null, 8, 9, 10, null, 18]);
+  });
+
+  it("never spends an ellipsis on a single hidden page", () => {
+    // Page 4: a left gap would hide only page 2, so page 2 is shown instead.
+    expect(pageWindow(4, 18)).toEqual([1, 2, 3, 4, 5, null, 18]);
+    expect(pageWindow(15, 18)).toEqual([1, null, 14, 15, 16, 17, 18]);
+  });
+
+  it("holds the same length at every page, so the control never changes width", () => {
+    const lengths = new Set(
+      Array.from({ length: 40 }, (_, i) => pageWindow(i + 1, 40).length),
+    );
+    expect([...lengths]).toEqual([7]);
+    const wide = new Set(
+      Array.from({ length: 40 }, (_, i) => pageWindow(i + 1, 40, 2).length),
+    );
+    expect([...wide]).toEqual([9]);
+  });
+
+  it("always includes the first, last and current page", () => {
+    for (let page = 1; page <= 40; page++) {
+      const w = pageWindow(page, 40);
+      expect(w[0]).toBe(1);
+      expect(w[w.length - 1]).toBe(40);
+      expect(w).toContain(page);
+    }
+  });
+
+  it("clamps a page outside the range rather than inventing one", () => {
+    expect(pageWindow(99, 18)).toEqual(pageWindow(18, 18));
+    expect(pageWindow(0, 18)).toEqual(pageWindow(1, 18));
+  });
+});
+
+describe("pageCount", () => {
+  it("derives pages from items and size, rounding up", () => {
+    expect(pageCount({ page: 1, pageSize: 120, totalItems: 2091 })).toBe(18);
+    expect(pageCount({ page: 1, pageSize: 10, totalItems: 100 })).toBe(10);
+  });
+  it("is never less than one, even with nothing to show", () => {
+    expect(pageCount({ page: 1, pageSize: 10, totalItems: 0 })).toBe(1);
+    expect(pageCount({ page: 1, pageSize: 0, totalItems: 50 })).toBe(1);
+  });
+});
+
+describe("Pagination", () => {
+  const state = (page: number) => ({ page, pageSize: 10, totalItems: 180 });
+  const render = (page: number) =>
+    html(<Pagination pagination={state(page)} onPageClick={() => {}} />);
+
+  it("renders nothing for a single page", () => {
+    expect(
+      html(<Pagination pagination={{ page: 1, pageSize: 10, totalItems: 8 }} onPageClick={() => {}} />),
+    ).toBe("");
+  });
+
+  it("is a labelled nav with the current page marked", () => {
+    const out = render(9);
+    expect(out).toMatch(/^<nav[^>]*aria-label="Pagination"/);
+    expect(out).toMatch(/aria-label="Page 9"[^>]*aria-current="page"/);
+    expect(out.match(/aria-current="page"/g)).toHaveLength(1);
+  });
+
+  it("disables Previous on the first page and Next on the last, but keeps both", () => {
+    const first = render(1);
+    expect(first).toMatch(/<button[^>]*disabled=""[^>]*aria-label="Previous page"/);
+    expect(first).toContain('aria-label="Next page"');
+    const last = render(18);
+    expect(last).toMatch(/<button[^>]*disabled=""[^>]*aria-label="Next page"/);
+    expect(last).toContain('aria-label="Previous page"');
+  });
+
+  it("hides the ellipsis from assistive tech", () => {
+    expect(render(9)).toMatch(/<li[^>]*aria-hidden="true"[^>]*>…<\/li>/);
+  });
+
+  it("orbits only the current page, and animated={false} stills even that", () => {
+    const moving = render(9);
+    expect(moving).not.toContain('data-animated="false"');
+    const still = html(
+      <Pagination pagination={state(9)} onPageClick={() => {}} animated={false} />,
+    );
+    // Exactly one control ever animates, so exactly one needs stilling.
+    expect(still.match(/data-animated="false"/g)).toHaveLength(1);
+    expect(still).toMatch(/data-animated="false"[^>]*aria-current="page"/);
+  });
+
+  it("wears the shared space skin on every control", () => {
+    // Every button in the row, Previous and Next included.
+    const out = render(9);
+    const buttons = out.match(/<button[^>]*>/g) ?? [];
+    expect(buttons.length).toBeGreaterThan(0);
+    for (const b of buttons) expect(b).toContain("spaceControl");
+  });
+
+  it("accepts its own aria-label for a page with more than one", () => {
+    const out = html(
+      <Pagination pagination={state(2)} onPageClick={() => {}} aria-label="Search results pages" />,
+    );
+    expect(out).toContain('aria-label="Search results pages"');
   });
 });
