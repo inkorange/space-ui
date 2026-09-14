@@ -74,7 +74,7 @@ export function Popover({
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; placed: "top" | "bottom" } | null>(null);
 
   // Whether the next open came from the reader, as opposed to defaultOpen on
   // mount. Only a reader's open moves focus.
@@ -115,6 +115,11 @@ export function Popover({
     const top = side === "bottom"
       ? (fitsBelow || !fitsAbove ? below : above)
       : (fitsAbove || !fitsBelow ? above : below);
+    // Where it actually landed after any flip, so the reveal can travel away
+    // from the trigger rather than towards it. Written to the element as well
+    // as to state: the reveal reads it before React has re-rendered.
+    const placed = top === below ? "bottom" : "top";
+    panel.dataset.side = placed;
 
     const wanted =
       align === "start" ? r.left : align === "end" ? r.right - w : r.left + r.width / 2 - w / 2;
@@ -122,7 +127,11 @@ export function Popover({
       Math.max(wanted, EDGE_PADDING),
       Math.max(window.innerWidth - w - EDGE_PADDING, EDGE_PADDING),
     );
-    setPos({ top, left });
+    setPos((prev) =>
+      prev && prev.top === top && prev.left === left && prev.placed === placed
+        ? prev
+        : { top, left, placed },
+    );
   }, [side, align]);
 
   // Show before measuring: while the panel is display:none its size reads 0
@@ -132,7 +141,30 @@ export function Popover({
     const panel = panelRef.current;
     if (!panel) return;
     if (open) {
-      if (!panel.matches(":popover-open")) panel.showPopover();
+      if (!panel.matches(":popover-open")) {
+        // Decide the side BEFORE revealing. The reveal's starting offset is
+        // captured the instant the panel first renders, and which way it
+        // should travel depends on whether it flips — which needs its size,
+        // which needs it rendered. Showing first and measuring after locked a
+        // flipped panel into sliding down towards its own trigger. So it is
+        // measured while invisible and outside the transition, then returned
+        // to unrendered and committed there, so the real reveal still starts
+        // fresh from its starting style.
+        //
+        // Transitions stay off until it is unrendered again. The dismissal
+        // transition keeps a closing panel rendered while it fades, so
+        // stepping out of the measurement with it on counted as a dismissal:
+        // the panel stayed alive animating its offset, and the reveal then
+        // started from that live value instead of from its starting style.
+        panel.dataset.instant = "";
+        panel.dataset.measuring = "";
+        place();
+        delete panel.dataset.measuring;
+        void panel.offsetWidth;
+        delete panel.dataset.instant;
+        void panel.offsetWidth;
+        panel.showPopover();
+      }
       place();
       if (openedByReader.current) {
         openedByReader.current = false;
@@ -219,6 +251,7 @@ export function Popover({
         tabIndex={-1}
         className={cx(styles.panel, ctl.spacePanel, panelClassName)}
         data-animated={buttonProps.animated === false ? "false" : undefined}
+        data-side={pos?.placed ?? side}
         style={pos ? { top: pos.top, left: pos.left } : undefined}
         onKeyDown={(e) => {
           if (e.key === "Escape") {

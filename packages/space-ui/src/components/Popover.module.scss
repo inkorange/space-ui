@@ -20,8 +20,77 @@
      class — declaring one here only looked like it did something. */
   outline: none;
 
+  /* Reveal: it glides the last few pixels away from its trigger while the
+     fade finishes well before the glide does, so it is legible almost at once
+     and settles rather than snaps. The travel is small on purpose — a panel
+     that flies in draws the eye away from what it came to show.
+
+     Entering, the transition is read from the open state below; leaving, from
+     this closed state, which is why the two differ: dismissal is quicker,
+     because a reader who closed something has already moved on.
+
+     display and overlay transition as discrete values so the panel stays
+     visible and in the top layer until its fade out has finished. Browsers
+     without @starting-style or allow-discrete simply open and close without
+     motion. */
+  --_travel: -8px;
+  opacity: 0;
+  transform: translateY(var(--_travel));
+  transition:
+    opacity 100ms ease-in,
+    transform 160ms ease-in,
+    overlay 160ms allow-discrete,
+    display 160ms allow-discrete;
+
+  /* Flipped above its trigger, it rises into place instead of falling. */
+  &[data-side="top"] {
+    --_travel: 8px;
+  }
+
+  &:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 120ms ease-out,
+      /* An even ease-out, not an expo curve. An expo front-loads its motion,
+         which finished the glide in the same 100ms as the fade — measured, it
+         was 90% travelled by then — so nothing read as settling. This one is
+         still moving well after the panel is fully opaque. */
+      transform 380ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      overlay 380ms allow-discrete,
+      display 380ms allow-discrete;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(var(--_travel));
+    }
+  }
+
   &:not(:popover-open) {
     display: none;
+  }
+
+  /* Laid out but unseen, for the single measurement taken before a reveal.
+     After the closed rule above, so it wins the tie. */
+  &[data-measuring] {
+    display: block;
+    visibility: hidden;
+  }
+
+  /* No transitions at all, held across stepping in and out of measuring. */
+  &[data-instant] {
+    transition: none;
+  }
+
+  /* Reduced motion: no travel, and a fade short enough not to register as
+     movement. The panel still arrives softly rather than blinking. */
+  @media (prefers-reduced-motion: reduce) {
+    --_travel: 0px;
+    transition-duration: 80ms;
+
+    &:popover-open {
+      transition-duration: 80ms;
+    }
   }
 
   /* The panel takes focus only when it has no control of its own to hand it
