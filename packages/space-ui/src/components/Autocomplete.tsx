@@ -174,9 +174,20 @@ export function Autocomplete({
     return () => document.removeEventListener("pointerdown", onDown);
   }, [showPanel, close]);
 
+  // Whether the reader has moved the highlight with the keyboard since they
+  // last typed. Space selects only then: the first row is highlighted the
+  // moment results appear, so a Space that always selected would make it
+  // impossible to type "trappist-1 b" — the space after the 1 would choose a
+  // row instead.
+  const navigated = useRef(false);
+
   const choose = (option: AutocompleteOption) => {
     if (option.disabled) return;
+    // The chosen row's text goes into the field — the same text it was matched
+    // on, not its value, which is usually a slug nobody typed.
+    onValueChange(haystack(option));
     onSelect(option.value, option);
+    navigated.current = false;
     setOpen(false);
   };
 
@@ -205,17 +216,19 @@ export function Autocomplete({
       if (e.key === "ArrowDown") setOpen(true);
       return;
     }
-    if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+    if (e.key === "ArrowDown") { e.preventDefault(); navigated.current = true; move(1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); navigated.current = true; move(-1); }
     else if (e.key === "Home") {
       e.preventDefault();
+      navigated.current = true;
       const first = selectable[0];
       if (first) setActive(shown.indexOf(first));
     } else if (e.key === "End") {
       e.preventDefault();
+      navigated.current = true;
       const last = selectable[selectable.length - 1];
       if (last) setActive(shown.indexOf(last));
-    } else if (e.key === "Enter") {
+    } else if (e.key === "Enter" || (e.key === " " && navigated.current)) {
       const chosen = shown[active];
       if (chosen && !chosen.disabled) {
         e.preventDefault();
@@ -259,6 +272,8 @@ export function Autocomplete({
           onKeyDown(e);
         }}
         onChange={(e) => {
+          // Typing again hands Space back to the text.
+          navigated.current = false;
           onValueChange(e.target.value);
           setOpen(true);
         }}
