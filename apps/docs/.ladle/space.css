@@ -2213,6 +2213,31 @@ nav.ladle-aside a:focus-visible {
   color: var(--docs-text);
 }
 
+/* On a phone the 56px gutter beside the number starves the code of width.
+   The number and heading stay side by side; everything after the heading
+   drops beneath both and runs the full width. */
+@media (max-width: 767px) {
+  .docs-install__step {
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 12px;
+    align-items: center;
+  }
+
+  .docs-install__body {
+    display: contents;
+  }
+
+  .docs-install__head {
+    margin: 0;
+  }
+
+  .docs-install__body > :not(.docs-install__head) {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+}
+
 /* ---------- Token tiers ---------- */
 .docs-tiers {
   display: grid;
