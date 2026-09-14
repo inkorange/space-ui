@@ -3,14 +3,27 @@ import type * as React from "react";
 import { cx } from "./propShared";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
 import styles from "./Pagination.module.scss";
+import ctl from "../styles/spaceControls";
 
-/** The shape an API usually hands back alongside a page of results. */
+/**
+ * The data Pagination needs, in the shape most APIs return beside a page of
+ * results. Pass it as `pagination`. When `onPageClick` reports a page, hand
+ * back a copy with only `page` changed — the component works out everything
+ * else, including how many pages there are, from these three numbers. With
+ * `totalItems` at or below `pageSize` there is only one page, and the
+ * component renders nothing.
+ */
 export interface PaginationState {
-  /** The page being shown, counting from 1. */
+  /** The page being shown, counting from 1. If your API counts from 0, add
+   *  one before passing it in. A page past either end is clamped to the first
+   *  or last rather than rejected. */
   page: number;
-  /** How many items one page holds. */
+  /** How many items one page holds — the size you requested, not how many
+   *  came back on the final page. Must be above zero. */
   pageSize: number;
-  /** How many items there are across every page. */
+  /** How many items exist across every page: the full result count, not the
+   *  length of the page you are showing. Usually the `total` or `count` field
+   *  of the response. */
   totalItems: number;
 }
 
@@ -65,13 +78,20 @@ export interface PaginationProps
   onPageClick: (page: number) => void;
   /** Page numbers shown either side of the current one. Default 1. */
   siblings?: number;
+  /** Ambient motion: the lit arc orbiting the current page's rim. The glass
+   *  skin is always applied — only its motion is optional. Default true. */
+  animated?: boolean;
 }
 
 /**
  * Page-by-page navigation for a long list.
  *
  * Holds no state: give it the pagination object you already have and it
- * reports which page was clicked. Previous and Next stay in place when they
+ * reports which page was clicked.
+ *
+ * Every control is the same limb-lit glass as Select and Button, but only the
+ * current page's rim orbits. Nine arcs turning in one row would be noise; one
+ * turning is where you are. Previous and Next stay in place when they
  * cannot be used, so the numbers never slide sideways on the first and last
  * page.
  */
@@ -79,6 +99,7 @@ export function Pagination({
   pagination,
   onPageClick,
   siblings = 1,
+  animated = true,
   className,
   "aria-label": ariaLabel = "Pagination",
   ...rest
@@ -96,7 +117,7 @@ export function Pagination({
     <nav {...rest} aria-label={ariaLabel} className={cx(styles.nav, className)}>
       <button
         type="button"
-        className={cx(styles.item, styles.step)}
+        className={cx(ctl.spaceControl, styles.item, styles.step)}
         disabled={current <= 1}
         aria-label="Previous page"
         onClick={() => go(current - 1)}
@@ -118,7 +139,13 @@ export function Pagination({
             <li key={p}>
               <button
                 type="button"
-                className={cx(styles.item, styles.page, p === current && styles.current)}
+                className={cx(
+                  ctl.spaceControl,
+                  styles.item,
+                  styles.page,
+                  p === current && styles.current,
+                )}
+                data-animated={p === current && !animated ? "false" : undefined}
                 aria-label={`Page ${p}`}
                 aria-current={p === current ? "page" : undefined}
                 onClick={() => go(p)}
@@ -132,7 +159,7 @@ export function Pagination({
 
       <button
         type="button"
-        className={cx(styles.item, styles.step)}
+        className={cx(ctl.spaceControl, styles.item, styles.step)}
         disabled={current >= total}
         aria-label="Next page"
         onClick={() => go(current + 1)}

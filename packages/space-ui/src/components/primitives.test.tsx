@@ -909,6 +909,25 @@ describe("Pagination", () => {
     expect(render(9)).toMatch(/<li[^>]*aria-hidden="true"[^>]*>…<\/li>/);
   });
 
+  it("orbits only the current page, and animated={false} stills even that", () => {
+    const moving = render(9);
+    expect(moving).not.toContain('data-animated="false"');
+    const still = html(
+      <Pagination pagination={state(9)} onPageClick={() => {}} animated={false} />,
+    );
+    // Exactly one control ever animates, so exactly one needs stilling.
+    expect(still.match(/data-animated="false"/g)).toHaveLength(1);
+    expect(still).toMatch(/data-animated="false"[^>]*aria-current="page"/);
+  });
+
+  it("wears the shared space skin on every control", () => {
+    // Every button in the row, Previous and Next included.
+    const out = render(9);
+    const buttons = out.match(/<button[^>]*>/g) ?? [];
+    expect(buttons.length).toBeGreaterThan(0);
+    for (const b of buttons) expect(b).toContain("spaceControl");
+  });
+
   it("accepts its own aria-label for a page with more than one", () => {
     const out = html(
       <Pagination pagination={state(2)} onPageClick={() => {}} aria-label="Search results pages" />,

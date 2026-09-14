@@ -267,6 +267,37 @@ const PropsTable = ({ doc }: { doc: ComponentDoc }) => {
       )}
     </div>
 
+    {/* The objects a caller has to build. The props table names these types
+        and nothing more, which leaves a reader to go find the source to learn
+        what a `pagination` actually needs. */}
+    {doc.types.map((shape) => (
+      <div key={shape.name} className="docs-api__shape">
+        <div className="docs-api__head">
+          <span className="docs-api__name">{shape.name}</span>
+          <span className="docs-api__file">
+            passed as {shape.usedBy.map((u, i) => (
+              <span key={u}>
+                {i > 0 && ", "}
+                <code>{u}</code>
+              </span>
+            ))}
+          </span>
+        </div>
+        {shape.description && <p className="docs-api__about">{shape.description}</p>}
+        <div className="docs-api__table" role="table">
+          <div className="docs-api__row docs-api__row--head" role="row">
+            <span role="columnheader">Field</span>
+            <span role="columnheader">Type</span>
+            <span role="columnheader">Default</span>
+            <span role="columnheader">Description</span>
+          </div>
+          {shape.fields.map((f) => (
+            <PropRow key={f.name} prop={f} />
+          ))}
+        </div>
+      </div>
+    ))}
+
     {doc.extendsFrom.length > 0 && (
       <div className="docs-api__extends">
         <span className="docs-api__tokenlabel">Also accepts</span>

@@ -1,6 +1,11 @@
-/* The same material as IconToggle's segments: quiet glass at rest, and the
-   current page lit the way an active segment is, so "where am I" reads the
-   same across the system.
+/* Every control wears the shared space skin — glass, star specks, the
+   conic rim — so a row of pages is the same material as a Select or a Button.
+   Only the current page keeps the rim's orbit; the others hold still.
+
+   Selectors here are nested under .nav on purpose. The shared skin doubles its
+   class to out-rank third-party styles, so a single class in this file would
+   lose to it on height, padding and the animation this component switches
+   off.
 
    @token --sp-pagination-item-size The height of every control, and the
      minimum width of a page number. */
@@ -10,6 +15,8 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
+  /* Room for the current page's marker, which sits below the row. */
+  padding-bottom: 10px;
 }
 
 .pages {
@@ -21,60 +28,72 @@
   list-style: none;
 }
 
-.item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.nav .item {
   gap: 4px;
   height: var(--sp-pagination-item-size, 36px);
   min-width: var(--sp-pagination-item-size, 36px);
   padding: 0 12px;
-  border: 1px solid rgb(var(--sp-rim-rgb) / 0.16);
-  border-radius: 999px;
-  background: rgb(var(--sp-glass-deep-rgb) / 0.5);
-  color: var(--sp-gray-text-dim);
-  font: inherit;
+  justify-content: center;
   font-size: var(--sp-font-sm);
+  font-weight: 500;
   /* Digits sit in a row and must not jitter as they change from 9 to 10. */
   font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease;
 
   svg {
     display: block;
     flex-shrink: 0;
   }
+}
 
-  &:hover:not(:disabled):not(.current) {
-    color: var(--sp-gray-text);
-    border-color: rgb(var(--sp-rim-rgb) / 0.4);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sp-focus-ring);
-    outline-offset: 2px;
-  }
-
-  /* Kept in the layout rather than hidden, so the numbers do not slide
-     sideways between the first page and the rest. */
-  &:disabled {
-    opacity: 0.35;
-    cursor: default;
-  }
+/* The orbit marks where you are, so everything that is not where you are
+   holds its rim still. */
+.nav .item:not(.current) {
+  animation: none;
 }
 
 /* A page number is a circle until its digits need more room. */
-.page {
+.nav .page {
   padding: 0 8px;
 }
 
-.current {
+/* Pages you are not on step back, so the one you are on is not merely a peer
+   with a brighter glow. */
+.nav .page:not(.current) {
+  color: var(--sp-gray-text-dim);
+}
+
+/* The current page is lit from inside as well as at the rim — a bright ring,
+   a filled glow — and carries a small lit marker beneath it, the way a body
+   is marked on an orbit. The marker is what reads first at a glance, and it
+   stays when the orbit is stilled or a reader cannot perceive the colour
+   difference between the rim and its neighbours. */
+/* .item.current, not .current: the shared skin doubles its own class, so a
+   two-class selector here ties with it and loses on load order — the glow was
+   silently discarded while the marker, which the skin never touches, still
+   showed. Three classes out-rank it without !important. */
+.nav .item.current {
+  position: relative;
   color: var(--sp-on-solid);
-  background: rgb(var(--sp-glow-rgb) / 0.22);
-  border-color: rgb(var(--sp-rim-rgb) / 0.55);
-  box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.3);
   font-weight: 600;
   cursor: default;
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.85),
+    inset 0 0 16px rgb(var(--sp-glow-rgb) / 0.45),
+    0 0 18px rgb(var(--sp-glow-rgb) / 0.45),
+    0 4px 18px rgb(var(--sp-shadow-rgb) / 0.45);
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    background: rgb(var(--sp-glint-rgb));
+    box-shadow: 0 0 6px 1px rgb(var(--sp-glow-rgb) / 0.9);
+  }
 }
 
 /* Exactly as wide as a page number. The window always has the same number of
@@ -100,7 +119,7 @@
     white-space: nowrap;
   }
 
-  .step {
+  .nav .step {
     padding: 0;
   }
 }

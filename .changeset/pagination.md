@@ -24,5 +24,18 @@ number of slots, and a gap is exactly as wide as a page number, so the row
 never shifts under the cursor and the next click lands where the last one did.
 Previous and Next stay in place when they cannot be used, for the same reason.
 
+Every control wears the same limb-lit glass as Select and Button, but only the
+current page's rim orbits — nine arcs turning in one row would be noise. The
+current page is lit at the rim and from within and carries a small marker
+beneath it, while the other numbers step back, so it reads as where you are
+rather than as a brighter peer. `animated={false}` stills the orbit; the skin
+stays.
+
 `pageCount` and `pageWindow` are exported for anyone rendering their own
 markup.
+
+The gallery's API tables now document the data objects a component needs, not
+just its props. A props table could only show that `pagination` is a
+`PaginationState` — not what goes in one. Any exported interface a prop's type
+names now gets a table of its own beside that component, which also documents
+`AutocompleteOption` and `IconToggleOption` for the first time.

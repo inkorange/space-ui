@@ -22,6 +22,13 @@ declare module "virtual:space-docs" {
     extendsFrom: string[];
     inherited: PropDoc[];
     inheritedCount: number;
+    types: TypeDoc[];
+  };
+  export type TypeDoc = {
+    name: string;
+    description: string;
+    fields: PropDoc[];
+    usedBy: string[];
   };
   export const components: ComponentDoc[];
   export const skinTokens: Record<string, string[]>;
