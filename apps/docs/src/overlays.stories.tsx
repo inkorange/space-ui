@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, AlertDialog, DropdownMenu, Tabs, Tooltip, Button, Text } from "@inkorange/space-ui";
+import { AlertDialog, Badge, Button, Dialog, DropdownMenu, Flex, Popover, Slider, Tabs, Text, Tooltip } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Overlays",
@@ -106,4 +106,43 @@ TooltipStory.storyName = "Tooltip";
 TooltipStory.meta = {
   description:
     "A short label revealed on hover or focus. For naming a control, never for content the user must read.",
+};
+
+export const PopoverStory = () => {
+  const [mass, setMass] = useState([40]);
+  const [open, setOpen] = useState(false);
+
+  return (
+    // The panel lives in the top layer and adds nothing to this box's height,
+    // so the stage reserves room for it to open into.
+    <Flex gap="4" wrap="wrap" align="start" className="docs-popover-stage">
+      {/* Uncontrolled: the popover manages itself. */}
+      <Popover label="Filter planets">
+        <div style={{ display: "grid", gap: 12, width: 240 }}>
+          <Text size="2" weight="bold">Minimum mass</Text>
+          <Slider value={mass} onValueChange={setMass} min={0} max={100} step={1} aria-label="Minimum mass" />
+          <Text size="1" color="muted">{mass[0]} Earth masses and above</Text>
+        </div>
+      </Popover>
+
+      {/* Controlled, aligned to the trigger's end edge. */}
+      <Popover label="Habitability" align="end" open={open} onOpenChange={setOpen}>
+        <div style={{ display: "grid", gap: 8, width: 220 }}>
+          <Flex justify="between" align="center">
+            <Text size="2" weight="bold">Kepler-442b</Text>
+            <Badge color="success">84 / 100</Badge>
+          </Flex>
+          <Text size="1" color="muted">
+            Temperate, with enough mass to hold an atmosphere.
+          </Text>
+        </div>
+      </Popover>
+    </Flex>
+  );
+};
+PopoverStory.storyName = "Popover";
+PopoverStory.meta = {
+  components: ["Popover"],
+  description:
+    "A button that opens a floating panel of anything — a small form, a set of filters, a prompt. It rides the browser's own popover layer, so it stacks above everything and closes on Escape or a click elsewhere by the platform's rules. It flips above its trigger when there is no room below and follows it when the page scrolls. Opening moves focus to the panel's first control; Escape hands focus back to the trigger. For a list of actions use DropdownMenu; for a line of text, Tooltip.",
 };

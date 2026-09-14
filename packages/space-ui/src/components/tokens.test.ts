@@ -24,6 +24,7 @@ export const EXPECTED_TOKENS = [
   "--sp-card-image-ratio",
   "--sp-autocomplete-panel-max-height", "--sp-autocomplete-option-highlight-color",
   "--sp-pagination-item-size",
+  "--sp-popover-panel-max-width",
   "--sp-message-info-rim-color", "--sp-message-info-wash-color",
   "--sp-message-warning-rim-color", "--sp-message-warning-wash-color",
   "--sp-message-alert-rim-color", "--sp-message-alert-wash-color",

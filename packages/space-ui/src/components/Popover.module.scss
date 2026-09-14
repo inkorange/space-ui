@@ -1,0 +1,35 @@
+@use "../styles/reveal" as *;
+
+/* The panel's glass and orbiting rim come from the shared panel skin, the
+   same one Select and Autocomplete drop beneath their fields — so a popover
+   is recognisably the same material as every other floating surface here.
+
+   @token --sp-popover-panel-max-width How wide the panel may grow before its
+     contents wrap. Kept in check so a popover stays a small surface beside
+     its trigger rather than a second page. */
+.panel {
+  /* The browser's popover defaults centre the element in the viewport with
+     auto margins and a full inset. Anchoring to the trigger means undoing all
+     of that and placing it by top/left instead. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  max-width: min(var(--sp-popover-panel-max-width, 22rem), calc(100vw - 16px));
+  padding: 16px;
+  color: var(--sp-glass-text);
+  /* Its shadow comes from the shared panel skin, which out-ranks a single
+     class — declaring one here only looked like it did something. */
+  outline: none;
+
+  /* The shared reveal: glide away from the trigger while fading in, a quicker
+     fade out. Same timing as every other surface that appears. */
+  @include reveal(":popover-open", ":not(:popover-open)");
+  @include reveal-sides;
+
+  /* The panel takes focus only when it has no control of its own to hand it
+     to; no ring for that, since nothing there is actionable. */
+  &:focus-visible {
+    outline: none;
+  }
+}

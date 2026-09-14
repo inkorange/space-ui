@@ -2195,3 +2195,21 @@ nav.ladle-aside a:focus-visible {
   padding-top: 16px;
   border-top: 1px dashed var(--docs-hairline);
 }
+
+/* The popover cell reserves room below its trigger, because the open panel
+   renders in the top layer and would otherwise hang over the next row. */
+.docs-sheet__popoverstage {
+  min-height: 132px;
+}
+
+.docs-sheet__popoverbody {
+  display: grid;
+  gap: 6px;
+  width: 220px;
+}
+
+/* A popover's panel renders in the top layer and contributes nothing to its
+   container's height, so a specimen needs room reserved for it to open into. */
+.docs-popover-stage {
+  min-height: 220px;
+}

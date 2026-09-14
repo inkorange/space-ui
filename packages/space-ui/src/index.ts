@@ -42,4 +42,5 @@ export { Dialog, type DialogProps } from "./components/Dialog";
 export { AlertDialog, type AlertDialogProps } from "./components/AlertDialog";
 export { DropdownMenu, type DropdownMenuProps, type DropdownMenuItemProps } from "./components/DropdownMenu";
 export { Tabs, type TabsProps } from "./components/Tabs";
+export { Popover, type PopoverProps } from "./components/Popover";
 export * from "./components/icons";

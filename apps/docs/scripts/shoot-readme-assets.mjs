@@ -125,7 +125,11 @@ await shoot({
   name: "components.jpg",
   url: `${base}/?story=overview--stickersheet&mode=preview`,
   width: 1320,
-  height: 1000,
+  // Tall enough for the whole sheet. Anything anchored — the open Popover —
+  // measures its room against the viewport, and with the sheet running past
+  // the fold it found none below its trigger and flipped up over the row
+  // above. Correct behaviour, wrong photograph.
+  height: 2600,
   scale: 1.5,
   selector: ".docs-sheet",
 });

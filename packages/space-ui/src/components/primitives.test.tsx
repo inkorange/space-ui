@@ -32,6 +32,7 @@ import { Loader } from "./Loader";
 import { Message } from "./Message";
 import { Autocomplete } from "./Autocomplete";
 import { Pagination, pageCount, pageWindow } from "./Pagination";
+import { Popover } from "./Popover";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -736,6 +737,33 @@ describe("Autocomplete", () => {
     expect(out).not.toContain("TRAPPIST-1 b Lava World");
   });
 
+  it("offers nothing until something is typed", () => {
+    // Focusing an empty field must not drop the whole dataset open.
+    for (const value of ["", "   "]) {
+      const out = html(
+        <Autocomplete
+          value={value}
+          onValueChange={() => {}}
+          onSelect={() => {}}
+          options={options}
+          emptyMessage="Nothing matching."
+          loading={false}
+        />,
+      );
+      expect(out).not.toContain("TRAPPIST-1");
+      expect(out).not.toContain('role="option"');
+      // And no "nothing matching" for a search nobody has made.
+      expect(out).not.toContain("Nothing matching.");
+    }
+  });
+
+  it("offers nothing on an empty query even when preFiltered", () => {
+    const out = html(
+      <Autocomplete value="" onValueChange={() => {}} onSelect={() => {}} options={options} preFiltered />,
+    );
+    expect(out).not.toContain('role="option"');
+  });
+
   it("narrows case-insensitively by default", () => {
     // The whole point: typing lowercase finds an uppercase name.
     const out = html(
@@ -933,5 +961,56 @@ describe("Pagination", () => {
       <Pagination pagination={state(2)} onPageClick={() => {}} aria-label="Search results pages" />,
     );
     expect(out).toContain('aria-label="Search results pages"');
+  });
+});
+
+describe("Popover", () => {
+  const out = (extra: Record<string, unknown> = {}) =>
+    html(
+      <Popover label="Filters" {...extra}>
+        <input aria-label="Minimum mass" />
+      </Popover>,
+    );
+
+  it("renders its trigger as a Button, with the space skin", () => {
+    // The trigger is always a Button, so ButtonProps shape it directly.
+    expect(out()).toMatch(/^<button[^>]*>/);
+    expect(out({ size: "sm" })).toContain("sm");
+  });
+
+  it("wires the trigger to the panel it controls", () => {
+    const markup = out();
+    expect(markup).toContain('aria-haspopup="dialog"');
+    const controls = markup.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(controls).toBeTruthy();
+    // A dangling id is a promise the markup does not keep.
+    expect(markup).toContain(`id="${controls}"`);
+  });
+
+  it("labels the panel by its trigger, so it announces as the button said", () => {
+    const markup = out();
+    const triggerId = markup.match(/^<button[^>]*\sid="([^"]+)"/)?.[1];
+    expect(triggerId).toBeTruthy();
+    expect(markup).toMatch(new RegExp(`role="dialog"[^>]*aria-labelledby="${triggerId}"`));
+  });
+
+  it("is shut on first render, and says so", () => {
+    expect(out()).toContain('aria-expanded="false"');
+  });
+
+  it("reports itself open when controlled open", () => {
+    expect(out({ open: true, onOpenChange: () => {} })).toContain('aria-expanded="true"');
+  });
+
+  it("keeps its contents mounted, so the controls exist before it opens", () => {
+    expect(out()).toContain('aria-label="Minimum mass"');
+  });
+
+  it("uses the platform popover layer rather than a z-index", () => {
+    expect(out()).toContain('popover="auto"');
+  });
+
+  it("stills the panel rim when the trigger is told not to animate", () => {
+    expect(out({ animated: false })).toMatch(/role="dialog"[^>]*data-animated="false"|data-animated="false"[^>]*role="dialog"/);
   });
 });

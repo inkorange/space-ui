@@ -1,3 +1,5 @@
+@use "../styles/reveal" as *;
+
 .menu {
   position: fixed;
   margin: 0;
@@ -9,7 +11,9 @@
   border-radius: 10px;
   box-shadow: 0 10px 40px rgb(var(--sp-shadow-rgb) / 0.5);
 
-  &:not(:popover-open) { display: none; }
+  /* The shared reveal. It always opens below its trigger, so it falls into
+     place from the default offset. */
+  @include reveal(":popover-open", ":not(:popover-open)");
 }
 
 .label {

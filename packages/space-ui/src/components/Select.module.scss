@@ -1,3 +1,5 @@
+@use "../styles/reveal" as *;
+
 // src/components/ui/Select.module.scss
 // Structural styles only — the space skin (glass, rim, highlight colors)
 // stays in spaceControls.module.scss / page modules, re-anchored in the
@@ -103,6 +105,10 @@
   border-radius: 8px;
   padding: 4px;
   outline: none;
+
+  /* The shared reveal, keyed to the hidden attribute this listbox is toggled
+     with. It always hangs below its trigger. */
+  @include reveal(":not([hidden])", "[hidden]");
 }
 
 .item {

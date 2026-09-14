@@ -232,6 +232,7 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
     ["Dialog", "components--overlays--dialog"],
     ["AlertDialog", "components--overlays--alert-dialog"],
     ["DropdownMenu", "components--overlays--dropdown-menu"],
+    ["Popover", "components--overlays--popover"],
     ["Tabs", "components--overlays--tabs"],
     ["Tooltip", "components--overlays--tooltip"],
   ]],
