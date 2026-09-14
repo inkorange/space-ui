@@ -86,6 +86,10 @@
 .slide {
   // Lets a slide's content shrink to its column instead of widening it.
   min-width: 0;
+  // Every slide is as tall as the tallest, and a grid lets its content fill
+  // that height, so a row of cards with uneven text still ends in one line.
+  // Content that should keep its own height sets align-self: start.
+  display: grid;
   scroll-snap-align: none;
 
   // Where the row can come to rest: every slide in item mode, only page
@@ -132,12 +136,25 @@
   }
 }
 
+// Centred on the row's edge, half over the first or last visible slide and
+// half outside it. The carousel needs half an arrow's width of room either
+// side — give its container that much padding if it runs edge to edge.
 .prev {
-  left: 8px;
+  left: 0;
+  transform: translateX(-50%);
 }
 
 .next {
-  right: 8px;
+  right: 0;
+  transform: translateX(50%);
+}
+
+// A size down from Button's 46px icon button, so the arrows sit on the slides
+// without crowding them. Two classes, to out-rank Button's own sizing.
+.arrow .arrowButton {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
 }
 
 .dots {

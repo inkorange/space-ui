@@ -155,3 +155,47 @@ CarouselStory.meta = {
   description:
     "A row of slides that scrolls sideways. It is a native scroller with CSS scroll snapping, so a flick on a phone uses the platform's own momentum and lands cleanly on a slide, and nothing runs per frame while it moves. With a mouse, drag the row: it follows the pointer and glides to the next slide in that direction, and a drag never clicks a link inside a slide. `perView` sets how many slides fit and takes fractions — 2.5 leaves half a slide at the edge as a cue there is more. `step` chooses whether the arrows move one slide or a page of them; in page mode a flick also lands on a page. Set `--sp-carousel-view-count` in a media query to change how many fit at a breakpoint: it overrides the prop, and the arrows and dots follow what is actually rendered.",
 };
+
+const BLURBS = [
+  "A temperate super-earth.",
+  "The fourth planet out from an ultra-cool dwarf, rocky and close to Earth in size and density, and among the best candidates for liquid water yet found.",
+  "Nearest known exoplanet.",
+  "Orbits the third star of a triple system. Its sky would hold two more suns, one of them bright enough to read by at night.",
+  "Tidally locked, probably.",
+  "A dense rocky world whose long, slow orbit gives an atmosphere time to survive its star's early flares.",
+];
+
+export const CarouselUnevenHeights = () => (
+  <div style={{ display: "grid", gap: 48 }}>
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">By default every card stretches to the tallest, so the row ends in one line</Text>
+      <Carousel aria-label="Planets with uneven descriptions" perView={3.5} showPagination>
+        {BLURBS.map((blurb, i) => (
+          <Card key={PLANETS[i][0]}>
+            <Heading size="4">{PLANETS[i][0]}</Heading>
+            <Text color="muted" size="2">{blurb}</Text>
+          </Card>
+        ))}
+      </Carousel>
+    </div>
+
+    {/* Opting out is a rule on the slide content, not a carousel prop: here
+        a class setting align-self: start on each card. */}
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">Content that sets align-self: start keeps its own height</Text>
+      <Carousel aria-label="Planets at their natural height" perView={3.5} showPagination>
+        {BLURBS.map((blurb, i) => (
+          <Card key={PLANETS[i][0]} image={<Thumb hue={PLANETS[i][1]} />} className="docs-card--natural">
+            <Heading size="4">{PLANETS[i][0]}</Heading>
+            <Text color="muted" size="2">{blurb}</Text>
+          </Card>
+        ))}
+      </Carousel>
+    </div>
+  </div>
+);
+CarouselUnevenHeights.storyName = "Carousel uneven heights";
+CarouselUnevenHeights.meta = {
+  description:
+    "Slides with different amounts of content. Every slide is as tall as the tallest, and its content fills that height by default, so a row of cards ends in one line whatever their text. Content that should keep its own height sets `align-self: start`. The arrows stay centred on the row's full height either way.",
+};

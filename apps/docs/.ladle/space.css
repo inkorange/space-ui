@@ -2180,6 +2180,12 @@ nav.ladle-aside a:focus-visible {
   --sp-card-image-ratio: 3 / 1;
 }
 
+/* The uneven-heights story's opt-out: a card that keeps its own height
+   instead of stretching to the tallest slide. */
+.docs-card--natural {
+  align-self: start;
+}
+
 /* The Carousel story's breakpoint demo: the view count comes from here, not
    from a prop, so it can change with the viewport. */
 .docs-carousel--responsive {

@@ -314,6 +314,7 @@ export function Carousel({
         <span className={cx(styles.arrow, styles.prev)}>
           <Button
             iconOnly
+            className={styles.arrowButton}
             animated={animated}
             aria-label="Previous"
             aria-controls={trackId}
@@ -326,6 +327,7 @@ export function Carousel({
         <span className={cx(styles.arrow, styles.next)}>
           <Button
             iconOnly
+            className={styles.arrowButton}
             animated={animated}
             aria-label="Next"
             aria-controls={trackId}
