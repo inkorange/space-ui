@@ -845,6 +845,16 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   margin-bottom: 16px;
 }
 
+/* The hero carousel's moons: a banner crop, so the card stays compact. */
+.docs-demo__moon {
+  --sp-card-image-ratio: 5 / 2;
+}
+
+.docs-demo__moontext {
+  display: grid;
+  gap: 2px;
+}
+
 .docs-demo__actions {
   display: flex;
   flex-wrap: wrap;
