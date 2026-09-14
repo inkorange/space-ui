@@ -96,6 +96,10 @@
   --sp-autocomplete-panel-max-height: 320px;
   --sp-autocomplete-option-highlight-color: rgb(150 190 255 / 0.14);
 
+  /* Pagination. One size for every control, so the row stays a single
+     rhythm; page numbers grow wider than it only when their digits need to. */
+  --sp-pagination-item-size: 36px;
+
   --sp-radio-group-orb-highlight-color: #cfe0ff;
   --sp-radio-group-orb-mid-color: #8fb4ff;
   --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);
