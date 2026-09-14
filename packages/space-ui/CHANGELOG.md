@@ -1,5 +1,80 @@
 # @inkorange/space-ui
 
+## 1.5.0
+
+### Minor Changes
+
+- 49f0649: New `Popover`: a button that opens a floating panel of anything.
+
+  ```tsx
+  <Popover label="Filter planets" align="end">
+    <FilterForm />
+  </Popover>
+  ```
+
+  The trigger is always a Button, so `size`, `iconOnly` and the rest of
+  `ButtonProps` shape it directly; the children are the panel. For a list of
+  actions use DropdownMenu, and for a line of text, Tooltip.
+
+  It rides the browser's own popover layer, so the panel stacks above everything
+  without a z-index arms race and closes on Escape or a press elsewhere by the
+  platform's rules. It flips above its trigger when there is no room below, and
+  stays attached when the page scrolls or the layout around it shifts. Opening
+  moves focus to the panel's first control; Escape hands focus back to the
+  trigger. Controlled through `open` and `onOpenChange`, or left to manage
+  itself, with `defaultOpen` to show it on arrival without taking focus.
+
+  It reveals with a short glide away from its trigger and a quicker fade, so it
+  is readable almost at once and then settles, and dismisses faster still — a
+  reader who closed something has already moved on. When it flips above its
+  trigger it rises into place rather than falling. Reduced motion drops the
+  travel and keeps only a brief fade.
+
+  The stickersheet now shows an open Popover and a Pagination, and the README's
+  image is recaptured from it.
+
+- 49f0649: Everything that appears and disappears now reveals and dismisses the same way:
+  Popover, Tooltip, DropdownMenu, the Select and Autocomplete panels, and Dialog
+  with AlertDialog.
+
+  On reveal a surface glides eight pixels into place while fading in — opaque in
+  about 120ms, still settling to about 380ms, so it is readable almost at once
+  and then settles rather than snapping. Dismissal is a quicker fade, and the
+  surface stays rendered until it has finished. Dialog's backdrop dims in and
+  out with its panel.
+
+  Before this, Tooltip and Dialog each had their own short entry keyframe and no
+  exit at all, and DropdownMenu, Select and Autocomplete appeared and vanished
+  instantly. The timing now lives in one place, so they cannot drift apart
+  again.
+
+  A surface that can open on more than one side travels away from its trigger on
+  whichever side it lands — a tooltip flipped above rises, one to the right of a
+  control slides right. Reduced motion drops the travel everywhere and keeps a
+  brief fade. Browsers without `@starting-style` show and hide without motion.
+
+### Patch Changes
+
+- 49f0649: `Autocomplete` offers nothing until something is typed.
+
+  An empty query let every option through, so clicking into the field dropped
+  the whole dataset open before the reader had asked for anything. With nothing
+  typed — or only whitespace — there is now no panel at all: no rows, no loading
+  line, and no empty message reporting "nothing matching" for a search nobody
+  has made. ArrowDown on an empty field stays shut too. This holds with
+  `preFiltered` as well.
+
+  Choosing a row now puts its text in the field, by click, Enter or Space. It
+  used to call `onSelect` and leave whatever had been typed, so the field still
+  read "trap" after picking TRAPPIST-1 c. The text written is the row's label
+  (or its `search` string), not its `value`, which is usually a slug.
+
+  Space selects only after the highlight has been moved with the keyboard. The
+  first row is highlighted as soon as results appear, so a Space that always
+  selected would make it impossible to type a query containing one —
+  "trappist-1 b" would pick a row at the space. Typing again hands Space back to
+  the text.
+
 ## 1.4.0
 
 ### Minor Changes
