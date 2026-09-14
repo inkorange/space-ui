@@ -1,6 +1,6 @@
 /* A native horizontal scroller with CSS scroll snapping. Layout, snapping and
-   flicking all happen here; the component's script only drives the arrows and
-   the dots.
+   flicking all happen here; the component's script drives the arrows, the
+   dots, and dragging with a mouse.
 
    @token --sp-carousel-view-count How many slides fit the viewport, fractions
      allowed — 2.5 shows half a slide at the trailing edge. Not given a global
@@ -55,6 +55,31 @@
 
   @media (prefers-reduced-motion: reduce) {
     scroll-behavior: auto;
+  }
+
+  // A mouse can drag the row. Only a fine pointer gets the grab cursor:
+  // touch scrolls natively and shows no cursor.
+  @media (pointer: fine) {
+    .root[data-scrollable] & {
+      cursor: grab;
+
+      // Nested here so it out-ranks the grab above.
+      &[data-dragging] {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  // Held by a mouse: follows the pointer exactly, with nothing selected.
+  &[data-dragging] {
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+    user-select: none;
+  }
+
+  // Released and gliding to its stop. Snapping returns once it arrives.
+  &[data-settling] {
+    scroll-snap-type: none;
   }
 }
 

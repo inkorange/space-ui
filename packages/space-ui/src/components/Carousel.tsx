@@ -43,7 +43,12 @@ export interface CarouselProps extends Omit<React.HTMLAttributes<HTMLElement>, "
  * Slide widths come from a CSS calculation on the view count, so a breakpoint
  * can change how many fit without React knowing.
  *
- * Script does only what CSS cannot yet do everywhere: the arrows and the dots.
+ * A mouse can drag the row too. It follows the pointer, then glides to the
+ * next stop in the direction it was dragged; a drag never clicks a link or
+ * button in the slide it ends on.
+ *
+ * Script does only what CSS cannot yet do everywhere: the arrows, the dots,
+ * and the mouse drag.
  * It measures the rendered row — on mount and when it resizes, never on
  * scroll — to find where the row can stop, and on scroll it only compares
  * the scroll position with those stops, updating state when the active one
@@ -157,6 +162,107 @@ export function Carousel({
       track.removeEventListener("scroll", onScroll);
     };
   }, [measure, sync]);
+
+  // Dragging with a mouse. Touch and pen already scroll the row natively, with
+  // the platform's momentum; a mouse gets no such gesture, so it is added here
+  // and only for a mouse.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Movement under this is a click, not a drag, so links and buttons inside
+    // a slide still work.
+    const THRESHOLD = 4;
+    let pointer: number | null = null;
+    let startX = 0;
+    let startScroll = 0;
+    let dragging = false;
+    let settle = 0;
+
+    const endSettling = () => {
+      clearTimeout(settle);
+      delete track.dataset.settling;
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" || e.button !== 0) return;
+      if (track.scrollWidth <= track.clientWidth) return;
+      endSettling();
+      pointer = e.pointerId;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      dragging = false;
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerId !== pointer) return;
+      const dx = e.clientX - startX;
+      if (!dragging) {
+        if (Math.abs(dx) < THRESHOLD) return;
+        dragging = true;
+        track.setPointerCapture(e.pointerId);
+        // Snapping off and scrolling instant while held, or the row would
+        // fight the pointer: snap back to a slide, or ease behind it.
+        track.dataset.dragging = "";
+      }
+      track.scrollLeft = startScroll - dx;
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerId !== pointer) return;
+      pointer = null;
+      if (!dragging) return;
+      delete track.dataset.dragging;
+
+      // Land on the nearest stop, but never back where the drag began: any
+      // deliberate drag moves at least one stop in its direction.
+      const x = track.scrollLeft;
+      const all = stops.current;
+      let target = all.reduce((best, stop) => (Math.abs(stop - x) < Math.abs(best - x) ? stop : best), all[0]);
+      if (x > startScroll + 1 && target <= startScroll + 1) {
+        target = all.find((stop) => stop > startScroll + 1) ?? target;
+      } else if (x < startScroll - 1 && target >= startScroll - 1) {
+        target = [...all].reverse().find((stop) => stop < startScroll - 1) ?? target;
+      }
+
+      // Snapping stays off until the row arrives. Turned back on mid-glide,
+      // the browser would jump straight to a snap point.
+      track.dataset.settling = "";
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      track.scrollTo({ left: target, behavior: reduced ? "auto" : "smooth" });
+      // scrollend where supported; the timer covers browsers without it and a
+      // row that was already exactly on target, which scrolls nowhere.
+      track.addEventListener("scrollend", endSettling, { once: true });
+      settle = window.setTimeout(endSettling, 700);
+    };
+
+    // A drag that ends over a link or button inside a slide must not click it.
+    const onClick = (e: MouseEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // Images and links are natively draggable, which would hijack the gesture.
+    const onDragStart = (e: DragEvent) => e.preventDefault();
+
+    track.addEventListener("pointerdown", onPointerDown);
+    track.addEventListener("pointermove", onPointerMove);
+    track.addEventListener("pointerup", onPointerUp);
+    track.addEventListener("pointercancel", onPointerUp);
+    track.addEventListener("click", onClick, true);
+    track.addEventListener("dragstart", onDragStart);
+    return () => {
+      endSettling();
+      track.removeEventListener("pointerdown", onPointerDown);
+      track.removeEventListener("pointermove", onPointerMove);
+      track.removeEventListener("pointerup", onPointerUp);
+      track.removeEventListener("pointercancel", onPointerUp);
+      track.removeEventListener("click", onClick, true);
+      track.removeEventListener("dragstart", onDragStart);
+    };
+  }, []);
 
   // No behaviour passed, so the stylesheet's scroll-behavior decides: smooth,
   // or instant under reduced motion.
