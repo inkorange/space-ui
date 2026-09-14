@@ -79,6 +79,22 @@ export const Stickersheet = () => {
           <TextField defaultValue="Kepler-442b" />
         </Cell>
 
+        {/* A premier specimen, so it sits near the top of the image. Half a
+            slide at the edge says "this scrolls" in a still picture. */}
+        <Cell label="Carousel" full>
+          <Carousel aria-label="Planets" perView={3.5} showPagination>
+            {SHEET_PLANETS.map(([name, hue, badge, color]) => (
+              <Card key={name} image={<PlanetThumb hue={hue} />} className="docs-sheet__slide">
+                <div className="docs-demo__head">
+                  <Heading size="5">{name}</Heading>
+                  <Badge color={color}>{badge}</Badge>
+                </div>
+                <Text size="2" color="muted">Habitable zone</Text>
+              </Card>
+            ))}
+          </Carousel>
+        </Cell>
+
         <Cell label="Slider">
           <Slider value={mass} onValueChange={setMass} min={0} max={100} step={1} />
         </Cell>
@@ -194,18 +210,6 @@ export const Stickersheet = () => {
           <Pagination pagination={{ page: 5, pageSize: 10, totalItems: 180 }} onPageClick={() => {}} />
         </Cell>
 
-        {/* Half a slide at the edge, so the still image says "this scrolls". */}
-        <Cell label="Carousel" full>
-          <Carousel aria-label="Planets" perView={3.5} showPagination>
-            {["Kepler-442b", "TRAPPIST-1e", "Proxima b", "Gliese 667 Cc", "Kepler-186f", "K2-18b"].map((name) => (
-              <Card key={name}>
-                <Heading size="5">{name}</Heading>
-                <Text size="2" color="muted">Habitable zone</Text>
-              </Card>
-            ))}
-          </Carousel>
-        </Cell>
-
         <Cell label="Message" full>
           <Message variant="warning" title="Thin atmosphere">
             Surface pressure is below 0.3 bar.
@@ -274,3 +278,28 @@ Stickersheet.meta = {
   components: [],
   source: false,
 };
+
+const SHEET_PLANETS = [
+  ["Kepler-442b", 210, "Temperate", "success"],
+  ["TRAPPIST-1e", 280, "Ocean", "cyan"],
+  ["Proxima b", 20, "Thin air", "warning"],
+  ["Gliese 667 Cc", 160, "Temperate", "success"],
+  ["Kepler-186f", 120, "Hostile", "danger"],
+  ["K2-18b", 190, "Ocean", "cyan"],
+] as const;
+
+/** A planet per slide, each its own hue, so the row reads as a collection. */
+const PlanetThumb = ({ hue }: { hue: number }) => (
+  <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id={`sheetPlanet${hue}`} cx="30%" cy="25%">
+        <stop offset="0%" stopColor={`hsl(${hue} 90% 62%)`} />
+        <stop offset="100%" stopColor={`hsl(${hue + 30} 70% 12%)`} />
+      </radialGradient>
+    </defs>
+    <rect width="320" height="200" fill={`hsl(${hue + 20} 60% 8%)`} />
+    <circle cx="160" cy="118" r="74" fill={`url(#sheetPlanet${hue})`} />
+    <ellipse cx="160" cy="118" rx="112" ry="26" fill="none"
+             stroke={`hsl(${hue} 80% 70% / 0.55)`} strokeWidth="2" />
+  </svg>
+);

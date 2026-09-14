@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from "react";
+import { PackageLinks } from "./docs-links";
 import {
   Badge,
   Card,
@@ -290,6 +291,8 @@ export const Introduction = () => (
 
       <div className="docs-hero__grid">
         <div className="docs-hero__copy">
+          <PackageLinks className="docs-links--hero docs-rise" />
+
           <div
             className="docs-hero__eyebrow docs-rise"
             style={{ animationDelay: "40ms" }}

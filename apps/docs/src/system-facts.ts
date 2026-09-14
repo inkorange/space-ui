@@ -54,3 +54,4 @@ export const coveragePct = measured.coverageStatementsPct;
 
 export const packageName = "@inkorange/space-ui";
 export const repoUrl = "https://github.com/inkorange/space-ui";
+export const npmUrl = `https://www.npmjs.com/package/${packageName}`;

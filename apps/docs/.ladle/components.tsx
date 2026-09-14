@@ -8,6 +8,7 @@ import {
 } from "virtual:space-docs";
 import { storySource, stories } from "virtual:generated-list";
 import { Code } from "../src/docs-code";
+import { PackageLinks } from "../src/docs-links";
 import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
@@ -66,6 +67,8 @@ const Brand = () => (
       </span>
     </a>
 
+    <PackageLinks className="docs-links--sidebar" />
+
     <div className="docs-telemetry">
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">{componentCount}</div>
@@ -77,7 +80,7 @@ const Brand = () => (
       </div>
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">0</div>
-        <div className="docs-telemetry__label">Runtime deps</div>
+        <div className="docs-telemetry__label">Dependencies</div>
       </div>
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">19</div>

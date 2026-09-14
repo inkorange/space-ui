@@ -167,6 +167,74 @@ nav.ladle-aside {
   letter-spacing: 0.02em;
 }
 
+/* Where to get it: npm and GitHub, at the top of the sidebar and the
+   introduction page. Quiet pills — findable at a glance, never louder than
+   the brand or the hero's own call to action. */
+.docs-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.docs-links--sidebar {
+  margin-top: 16px;
+}
+
+.docs-links--sidebar .docs-links__link {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+/* The sidebar is too narrow for the version, and its status line just below
+   already reads "v… on npm". */
+.docs-links--sidebar .docs-links__meta {
+  display: none;
+}
+
+.docs-links--hero {
+  margin-bottom: 24px;
+}
+
+.docs-links__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 999px;
+  background: var(--docs-raised);
+  color: var(--docs-text);
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.docs-links__link:hover {
+  border-color: var(--docs-terminator);
+  background: #0090ff14;
+}
+
+.docs-links__link:focus-visible {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+}
+
+.docs-links__icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.docs-links__meta {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--docs-readout);
+}
+
 /* Telemetry: real, counted-at-runtime facts about the library.
    Structural, not decorative — the release status in particular
    is the single most important thing a visitor needs to know. */
@@ -2202,6 +2270,12 @@ nav.ladle-aside a:focus-visible {
   .docs-carousel--responsive {
     --sp-carousel-view-count: 4;
   }
+}
+
+/* The stickersheet carousel's cards: a shorter crop than the default, so a
+   full-width row of them stays a band rather than a wall. */
+.docs-sheet__slide {
+  --sp-card-image-ratio: 2 / 1;
 }
 
 /* The stickersheet's media card spans two columns, where the default 16/10
