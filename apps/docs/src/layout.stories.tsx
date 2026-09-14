@@ -188,6 +188,6 @@ CarouselStory.storyName = "Carousel";
 CarouselStory.meta = {
   components: ["Carousel"],
   description:
-    "A row of slides that scrolls sideways. It is a native scroller with CSS scroll snapping, so a flick on a phone uses the platform's own momentum and lands cleanly on a slide, and nothing runs per frame while it moves. With a mouse, drag the row: it follows the pointer and glides to the next slide in that direction, and a drag never clicks a link inside a slide. `perView` sets how many slides fit and takes fractions — 2.5 leaves half a slide at the edge as a cue there is more. `step` chooses whether the arrows move one slide or a page of them; in page mode a flick also lands on a page. Set `--sp-carousel-view-count` in a media query to change how many fit at a breakpoint: it overrides the prop, and the arrows and dots follow what is actually rendered. Slides with uneven content all take the tallest slide's height, and their content fills it, so a row of cards ends in one line; content that should keep its own height sets `align-self: start`.",
+    "A row of slides on native CSS scroll snapping: flick it on a phone, drag it with a mouse. `perView` takes fractions — 2.5 leaves half a slide showing — and `step` sets whether the arrows move a slide or a page. Override `--sp-carousel-view-count` at a breakpoint to change how many fit. Slides share the tallest one's height; `align-self: start` opts out.",
 };
 

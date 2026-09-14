@@ -1920,10 +1920,112 @@ nav.ladle-aside a:focus-visible {
   outline: none;
 }
 
+/* ---------- Mobile navigation ----------
+   The bar and scrim exist at every width but show only on a phone, where
+   the sidebar becomes a drawer. See useMobileNav in components.tsx. */
+.docs-mobilebar,
+.docs-mobilebar__scrim {
+  display: none;
+}
+
 @media (max-width: 767px) {
   nav.ladle-aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    width: min(320px, 86vw);
+    overflow-y: auto;
     background: var(--docs-hull);
+    border-right: 1px solid var(--docs-hairline);
+    box-shadow: 16px 0 48px -12px #000c;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.28s cubic-bezier(0.16, 0.84, 0.44, 1), visibility 0.28s;
+  }
+
+  html[data-docs-nav="open"] nav.ladle-aside {
+    transform: none;
+    visibility: visible;
+  }
+
+  /* The whole drawer scrolls as one, brand block and all. The desktop rule
+     scrolls only the tree beneath the brand, which on a phone left a list
+     under half the screen tall. contain keeps a scroll that reaches the end
+     of the list from moving the page behind. */
+  nav.ladle-aside > ul[role="tree"] {
+    flex: none;
+    overflow: visible;
+  }
+
+  nav.ladle-aside {
+    overscroll-behavior: contain;
+  }
+
+  .docs-mobilebar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 56px;
+    padding: 0 16px;
+    background: color-mix(in srgb, var(--docs-hull) 88%, transparent);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--docs-hairline);
+  }
+
+  .docs-mobilebar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--docs-text);
+    text-decoration: none;
+    font-family: var(--docs-font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .docs-mobilebar__brand img {
+    border-radius: 6px;
+  }
+
+  .docs-mobilebar__menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--docs-hairline);
+    border-radius: 999px;
+    background: var(--docs-raised);
+    color: var(--docs-text);
+    font: 600 13px var(--docs-font-display);
+    cursor: pointer;
+  }
+
+  .docs-mobilebar__menu:focus-visible {
+    outline: 2px solid var(--docs-terminator);
+    outline-offset: 2px;
+  }
+
+  .docs-mobilebar__scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: block;
+    background: #000a;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+
+  html[data-docs-nav="open"] .docs-mobilebar__scrim {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .docs-hero__grid {
