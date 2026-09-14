@@ -6,6 +6,7 @@ import {
 import { cx } from "./propShared";
 import { Button, type ButtonProps } from "./Button";
 import styles from "./Popover.module.scss";
+import { showMeasured } from "../internal/showMeasured";
 import ctl from "../styles/spaceControls";
 
 const OFFSET = 8;
@@ -141,30 +142,9 @@ export function Popover({
     const panel = panelRef.current;
     if (!panel) return;
     if (open) {
-      if (!panel.matches(":popover-open")) {
-        // Decide the side BEFORE revealing. The reveal's starting offset is
-        // captured the instant the panel first renders, and which way it
-        // should travel depends on whether it flips — which needs its size,
-        // which needs it rendered. Showing first and measuring after locked a
-        // flipped panel into sliding down towards its own trigger. So it is
-        // measured while invisible and outside the transition, then returned
-        // to unrendered and committed there, so the real reveal still starts
-        // fresh from its starting style.
-        //
-        // Transitions stay off until it is unrendered again. The dismissal
-        // transition keeps a closing panel rendered while it fades, so
-        // stepping out of the measurement with it on counted as a dismissal:
-        // the panel stayed alive animating its offset, and the reveal then
-        // started from that live value instead of from its starting style.
-        panel.dataset.instant = "";
-        panel.dataset.measuring = "";
-        place();
-        delete panel.dataset.measuring;
-        void panel.offsetWidth;
-        delete panel.dataset.instant;
-        void panel.offsetWidth;
-        panel.showPopover();
-      }
+      // Placed before it is shown, so the reveal travels away from the trigger
+      // on whichever side it lands.
+      showMeasured(panel, place);
       place();
       if (openedByReader.current) {
         openedByReader.current = false;

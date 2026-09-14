@@ -15,6 +15,7 @@ import {
   cloneElement, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState,
 } from "react";
 import styles from "./Tooltip.module.scss";
+import { showMeasured } from "../internal/showMeasured";
 
 interface TooltipProps {
   /** The text to show. Nothing renders when this is empty. */
@@ -118,51 +119,59 @@ export function Tooltip({ label, side = "bottom", children }: TooltipProps) {
       if (content.matches(":popover-open")) content.hidePopover();
       return;
     }
-    // Show before measuring: while display:none the offset sizes read 0 and
-    // every clamp below would be computed against nothing.
-    if (!content.matches(":popover-open")) content.showPopover();
     const trigger = triggerRef.current;
     if (!trigger) return;
-    const r = trigger.getBoundingClientRect();
-    const w = content.offsetWidth;
-    const h = content.offsetHeight;
 
-    // Centre on the trigger along the free axis, clamped inside the viewport.
-    const centre = (start: number, size: number, extent: number, viewport: number) =>
-      Math.min(
-        Math.max(start + size / 2 - extent / 2, COLLISION_PADDING),
-        Math.max(viewport - extent - COLLISION_PADDING, COLLISION_PADDING),
-      );
+    // Measured while laid out — its size reads 0 while display:none — and
+    // records the side it lands on, so the reveal can travel away from the
+    // trigger. Run once before it is shown (see showMeasured) and again on a
+    // label change while already open.
+    const place = () => {
+      const r = trigger.getBoundingClientRect();
+      const w = content.offsetWidth;
+      const h = content.offsetHeight;
 
-    // Flip to the opposite side when the preferred one has no room — these
-    // controls sit in the top row, the bottom action bar, and now a rail down
-    // the edge, so any of the four can be the side without space.
-    const pick = (near: number, far: number, size: number, viewport: number) => {
-      const fitsFar = far + size <= viewport - COLLISION_PADDING;
-      const fitsNear = near >= COLLISION_PADDING;
-      return { fitsNear, fitsFar };
+      // Centre on the trigger along the free axis, clamped inside the viewport.
+      const centre = (start: number, size: number, extent: number, viewport: number) =>
+        Math.min(
+          Math.max(start + size / 2 - extent / 2, COLLISION_PADDING),
+          Math.max(viewport - extent - COLLISION_PADDING, COLLISION_PADDING),
+        );
+
+      // Flip to the opposite side when the preferred one has no room — these
+      // controls sit in the top row, the bottom action bar, and a rail down
+      // the edge, so any of the four can be the side without space.
+      const fits = (near: number, far: number, size: number, viewport: number) => ({
+        fitsNear: near >= COLLISION_PADDING,
+        fitsFar: far + size <= viewport - COLLISION_PADDING,
+      });
+
+      if (side === "left" || side === "right") {
+        const after = r.right + SIDE_OFFSET;
+        const before = r.left - w - SIDE_OFFSET;
+        const { fitsNear: fitsBefore, fitsFar: fitsAfter } =
+          fits(before, after, w, window.innerWidth);
+        const left = side === "right"
+          ? (fitsAfter || !fitsBefore ? after : before)
+          : (fitsBefore || !fitsAfter ? before : after);
+        content.dataset.side = left === after ? "right" : "left";
+        setPos({ top: centre(r.top, r.height, h, window.innerHeight), left });
+        return;
+      }
+
+      const below = r.bottom + SIDE_OFFSET;
+      const above = r.top - h - SIDE_OFFSET;
+      const { fitsNear: fitsAbove, fitsFar: fitsBelow } =
+        fits(above, below, h, window.innerHeight);
+      const top = side === "bottom"
+        ? (fitsBelow || !fitsAbove ? below : above)
+        : (fitsAbove || !fitsBelow ? above : below);
+      content.dataset.side = top === below ? "bottom" : "top";
+      setPos({ top, left: centre(r.left, r.width, w, window.innerWidth) });
     };
 
-    if (side === "left" || side === "right") {
-      const after = r.right + SIDE_OFFSET;
-      const before = r.left - w - SIDE_OFFSET;
-      const { fitsNear: fitsBefore, fitsFar: fitsAfter } =
-        pick(before, after, w, window.innerWidth);
-      const left = side === "right"
-        ? (fitsAfter || !fitsBefore ? after : before)
-        : (fitsBefore || !fitsAfter ? before : after);
-      setPos({ top: centre(r.top, r.height, h, window.innerHeight), left });
-      return;
-    }
-
-    const below = r.bottom + SIDE_OFFSET;
-    const above = r.top - h - SIDE_OFFSET;
-    const { fitsNear: fitsAbove, fitsFar: fitsBelow } =
-      pick(above, below, h, window.innerHeight);
-    const top = side === "bottom"
-      ? (fitsBelow || !fitsAbove ? below : above)
-      : (fitsAbove || !fitsBelow ? above : below);
-    setPos({ top, left: centre(r.left, r.width, w, window.innerWidth) });
+    if (content.matches(":popover-open")) place();
+    else showMeasured(content, place);
   }, [open, side, label]);
 
   if (!label || !isValidElement(children)) return <>{children}</>;

@@ -1,3 +1,5 @@
+@use "../styles/reveal" as *;
+
 // src/components/ui/Dialog.module.scss
 // Metrics from the measured Radix dark dialog (Step 0 extraction — see
 // task-1-report.md for the raw node/regex output). Every inventoried site
@@ -31,18 +33,39 @@
     0 16px 64px rgb(var(--sp-shadow-rgb) / 0.4),
     0 16px 36px -20px rgb(var(--sp-shadow-rgb) / 0.9);
 
+  // The shared reveal, keyed to the native open attribute.
+  @include reveal("[open]", ":not([open])");
+
+  // The backdrop dims in and out with the panel rather than cutting on and
+  // off a beat before or after it. Opacity rather than the background colour,
+  // so the overlay keeps its token.
   &::backdrop {
     background: rgb(var(--sp-shadow-rgb) / 0.6); // measured: dark-theme --color-overlay (--black-a8)
+    opacity: 0;
+    transition:
+      opacity 160ms ease-in,
+      overlay 160ms allow-discrete,
+      display 160ms allow-discrete;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    &[open] { animation: dialogIn 160ms ease-out; }
-  }
-}
+  &[open]::backdrop {
+    opacity: 1;
+    transition:
+      opacity 200ms ease-out,
+      overlay 380ms allow-discrete,
+      display 380ms allow-discrete;
 
-@keyframes dialogIn {
-  from { opacity: 0; transform: translateY(6px) scale(0.98); }
-  to { opacity: 1; transform: none; }
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::backdrop,
+    &[open]::backdrop {
+      transition-duration: 80ms;
+    }
+  }
 }
 
 .inner { position: relative; padding: 24px; } // measured: size-3 --dialog-content-padding (--space-5)

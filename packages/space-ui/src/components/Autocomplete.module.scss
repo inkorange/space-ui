@@ -1,3 +1,5 @@
+@use "../styles/reveal" as *;
+
 /* The field's glass, focus ring and rim all come from TextField; the panel's
    from spaceControls' shared panel. Only layout lives here, so an Autocomplete
    and a Select drop the same surface under the same kind of control.
@@ -28,6 +30,11 @@
   z-index: 50;
   padding: 6px;
   border-radius: 10px;
+
+  /* The shared reveal, keyed to the hidden attribute the panel is toggled
+     with. Only the panel itself: the list inside it also uses hidden, and
+     animating that too would restart the reveal on every keystroke. */
+  @include reveal(":not([hidden])", "[hidden]");
 }
 
 .status {
