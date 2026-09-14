@@ -1440,6 +1440,89 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   margin-top: 40px;
 }
 
+/* ---------- How to ----------
+   Guides read as numbered steps, because they are: each builds on the one
+   before. Prose width is capped for reading; code blocks run the full width. */
+.docs-howto {
+  margin-top: 40px;
+}
+
+.docs-howto__guide + .docs-howto__guide {
+  margin-top: 32px;
+}
+
+.docs-howto__question {
+  margin: 12px 0 6px;
+  font-family: var(--docs-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--docs-text);
+}
+
+.docs-howto__intro,
+.docs-howto__text {
+  max-width: 680px;
+  margin: 0;
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--docs-text-dim);
+}
+
+.docs-howto__intro {
+  margin-bottom: 16px;
+}
+
+.docs-howto__steps {
+  display: grid;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: howto;
+}
+
+.docs-howto__step {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding-inline-start: 36px;
+  counter-increment: howto;
+}
+
+.docs-howto__step::before {
+  content: counter(howto);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+.docs-howto code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 0.88em;
+  color: var(--docs-readout);
+}
+
+.docs-howto .docs-code code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
 .docs-apis__title {
   font-family: var(--docs-font-display);
   font-size: 20px;

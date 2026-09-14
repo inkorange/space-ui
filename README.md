@@ -134,6 +134,17 @@ exposes one, always named `--sp-[component]-[modifier]-[type]`:
 --sp-loader-moon-size: 10px;
 ```
 
+A component property can carry layout, not just looks.
+`--sp-carousel-view-count` sets how many slides a Carousel shows, and it
+overrides the `perView` prop. So the count responds to screen width in plain
+CSS, with no resize listeners and no re-render:
+
+```css
+@media (max-width: 639px) {
+  .featured { --sp-carousel-view-count: 1.2; }
+}
+```
+
 Every component page in the gallery lists its own in a **Custom properties**
 table, saying what each one changes.
 

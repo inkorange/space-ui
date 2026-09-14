@@ -3,9 +3,10 @@
    dots, and dragging with a mouse.
 
    @token --sp-carousel-view-count How many slides fit the viewport, fractions
-     allowed — 2.5 shows half a slide at the trailing edge. Not given a global
-     default on purpose: set it on the carousel or an ancestor, typically in a
-     media query, and it overrides the perView prop at that width.
+     allowed — 2.5 shows half a slide at the trailing edge. Overrides the
+     perView prop wherever it is set, so set it in media or container queries
+     on a class or section to vary the count by width. Deliberately has no
+     global default: on :root it would override every carousel's perView.
    @token --sp-carousel-gap-size The space between slides. */
 .root {
   position: relative;

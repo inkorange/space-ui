@@ -9,6 +9,7 @@ import {
 import { storySource, stories } from "virtual:generated-list";
 import { Code } from "../src/docs-code";
 import { PackageLinks } from "../src/docs-links";
+import { howTo, type HowTo } from "../src/howto";
 import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
@@ -188,6 +189,43 @@ const MobileBar = ({ open, onToggle }: { open: boolean; onToggle: () => void }) 
     {/* The scrim is for pointers; keyboard users close with Escape. */}
     <div className="docs-mobilebar__scrim" aria-hidden="true" onClick={onToggle} />
   </>
+);
+
+
+/** Inline `code` in guide prose, without pulling in a markdown parser. */
+const Prose = ({ text }: { text: string }) => (
+  <>
+    {text.split(/(`[^`]+`)/).map((part, i) =>
+      part.startsWith("`") && part.endsWith("`") ? (
+        // eslint-disable-next-line react/no-array-index-key
+        <code key={i}>{part.slice(1, -1)}</code>
+      ) : (
+        part
+      ),
+    )}
+  </>
+);
+
+const HowToGuide = ({ guide }: { guide: HowTo }) => (
+  <article className="docs-howto__guide">
+    <h3 className="docs-howto__question">{guide.title}</h3>
+    {guide.intro && (
+      <p className="docs-howto__intro">
+        <Prose text={guide.intro} />
+      </p>
+    )}
+    <ol className="docs-howto__steps">
+      {guide.steps.map((step, i) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <li key={i} className="docs-howto__step">
+          <p className="docs-howto__text">
+            <Prose text={step.text} />
+          </p>
+          {step.code && <Code code={step.code} language={step.language ?? "tsx"} label={step.label} />}
+        </li>
+      ))}
+    </ol>
+  </article>
 );
 
 /** `components--buttons--loader` → levels ["Components", "Buttons"], name "Loader". */
@@ -552,6 +590,15 @@ export const Provider: GlobalProvider = ({
                   label={stories[globalState.story]?.entry ?? "Source"}
                   maxHeight={460}
                 />
+              </section>
+            )}
+
+            {howTo[globalState.story] && (
+              <section className="docs-howto">
+                <h2 className="docs-apis__title">How to</h2>
+                {howTo[globalState.story].map((guide) => (
+                  <HowToGuide key={guide.title} guide={guide} />
+                ))}
               </section>
             )}
 

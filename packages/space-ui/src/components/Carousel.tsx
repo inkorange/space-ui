@@ -15,9 +15,10 @@ export interface CarouselProps extends Omit<React.HTMLAttributes<HTMLElement>, "
    *  trailing edge — `2.5` is two whole slides and half a third, a cue that
    *  there is more to swipe to. Default 1.
    *
-   *  A stylesheet can override this at a breakpoint by setting
-   *  `--sp-carousel-view-count` on the carousel or any ancestor; the arrows,
-   *  dots and paging follow what is actually rendered, not this prop. */
+   *  This is the count wherever no stylesheet overrides it. To vary it by
+   *  screen width, do not switch this prop from JavaScript: set the
+   *  `--sp-carousel-view-count` token in media queries instead, which always
+   *  wins over the prop. See "Responsive view count" on {@link Carousel}. */
   perView?: number;
   /** What an arrow moves by, and what a dot stands for. `item` moves one
    *  slide and shows a dot per stopping point; `page` moves by the number of
@@ -47,12 +48,49 @@ export interface CarouselProps extends Omit<React.HTMLAttributes<HTMLElement>, "
  * next stop in the direction it was dragged; a drag never clicks a link or
  * button in the slide it ends on.
  *
+ * ## Responsive view count
+ *
+ * The number of slides in view is a design token, not state. Vary it by
+ * screen width in CSS; never by swapping `perView` from a resize listener or
+ * `matchMedia`, which re-renders, and can disagree with the server render.
+ *
+ * 1. Pass `perView` for the widest layout.
+ * 2. Set `--sp-carousel-view-count` on a class (or any ancestor) in media or
+ *    container queries for the other widths. Fractions are fine.
+ * 3. Nothing else. Widths are computed in CSS, and the arrows, dots and page
+ *    size are measured from the rendered row whenever it resizes.
+ *
+ * Precedence: `--sp-carousel-view-count` from a stylesheet, then `perView`,
+ * then 1. The prop is passed as a private default (`--_view-count-default`),
+ * not as the public token, precisely so a stylesheet can override it.
+ *
+ * Setting the token on `:root` overrides `perView` on every carousel in the
+ * app; scope it to a class or section instead. `--sp-carousel-gap-size` can be
+ * varied the same way.
+ *
+ * @example
+ * ```tsx
+ * <Carousel aria-label="Featured planets" perView={4} className="featured">
+ *   {slides}
+ * </Carousel>
+ * ```
+ * ```css
+ * @media (max-width: 639px) {
+ *   .featured { --sp-carousel-view-count: 1.2; }
+ * }
+ * @media (min-width: 640px) and (max-width: 1079px) {
+ *   .featured { --sp-carousel-view-count: 2.5; }
+ * }
+ * // 1080px and up: nothing set, so perView={4} applies.
+ * ```
+ *
+ * ## How the script stays small
+ *
  * Script does only what CSS cannot yet do everywhere: the arrows, the dots,
- * and the mouse drag.
- * It measures the rendered row — on mount and when it resizes, never on
- * scroll — to find where the row can stop, and on scroll it only compares
- * the scroll position with those stops, updating state when the active one
- * actually changes.
+ * and the mouse drag. It measures the rendered row — on mount and when it
+ * resizes, never on scroll — to find where the row can stop, and on scroll it
+ * only compares the scroll position with those stops, updating state when the
+ * active one actually changes.
  */
 export function Carousel({
   children,
