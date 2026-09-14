@@ -1,0 +1,161 @@
+/* A native horizontal scroller with CSS scroll snapping. Layout, snapping and
+   flicking all happen here; the component's script only drives the arrows and
+   the dots.
+
+   @token --sp-carousel-view-count How many slides fit the viewport, fractions
+     allowed — 2.5 shows half a slide at the trailing edge. Not given a global
+     default on purpose: set it on the carousel or an ancestor, typically in a
+     media query, and it overrides the perView prop at that width.
+   @token --sp-carousel-gap-size The space between slides. */
+.root {
+  position: relative;
+  min-width: 0;
+}
+
+.viewport {
+  position: relative;
+}
+
+.track {
+  // The view count a stylesheet set, else the perView prop, else one. The
+  // prop arrives as a private property rather than the public one, so a
+  // stylesheet setting the public property always wins over it.
+  --_count: var(--sp-carousel-view-count, var(--_view-count-default, 1));
+  --_gap: var(--sp-carousel-gap-size, 16px);
+
+  // Positioned, so each slide's offsetLeft is measured from the row itself.
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  // Every slide is the viewport less the gaps between the slides in view,
+  // shared by the view count. With a fraction, the last slide simply runs
+  // past the edge.
+  grid-auto-columns: calc((100% - var(--_gap) * (var(--_count) - 1)) / var(--_count));
+  gap: var(--_gap);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  // A flick that reaches either end stops there, instead of dragging the
+  // page sideways or triggering the browser's back gesture.
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+
+  // Arrows and dots do the job a scrollbar would.
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-focus-ring);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+}
+
+.slide {
+  // Lets a slide's content shrink to its column instead of widening it.
+  min-width: 0;
+  scroll-snap-align: none;
+
+  // Where the row can come to rest: every slide in item mode, only page
+  // starts in page mode, so a flick lands on a page too.
+  &[data-snap] {
+    scroll-snap-align: start;
+  }
+
+  // The end of the row must be reachable even when no slide starts there.
+  &:last-child {
+    scroll-snap-align: end;
+  }
+}
+
+// Positioned by a wrapper rather than a transform on the button itself: Button
+// uses transform for its own hover lift, and the two would fight.
+.arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  // Only the button takes pointer events, so the strip either side of it
+  // does not block a swipe on the slide beneath.
+  pointer-events: none;
+
+  transition: opacity 0.2s ease, visibility 0.2s;
+
+  > * {
+    pointer-events: auto;
+  }
+
+  // At either end the arrow that cannot be used goes, rather than dimming: a
+  // dimmed button over a slide only obscures the slide's content.
+  &:has(> :disabled) {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  // Nothing to scroll to, nothing to press.
+  .root:not([data-scrollable]) & {
+    display: none;
+  }
+}
+
+.prev {
+  left: 8px;
+}
+
+.next {
+  right: 8px;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+// A 24px target around an 8px dot: small to look at, easy to hit with a thumb.
+.dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgb(var(--sp-rim-rgb) / 0.28);
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  &:hover::before {
+    background: rgb(var(--sp-rim-rgb) / 0.55);
+  }
+
+  // Lit the way Pagination's current page is.
+  &[aria-current="true"]::before {
+    background: rgb(var(--sp-glint-rgb));
+    box-shadow: 0 0 8px rgb(var(--sp-glow-rgb) / 0.8);
+    transform: scale(1.25);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-focus-ring);
+    outline-offset: 0;
+  }
+}

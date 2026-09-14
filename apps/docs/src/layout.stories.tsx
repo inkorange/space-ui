@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Card, Flex, Grid, Heading, Pagination, Text } from "@inkorange/space-ui";
+import { Box, Card, Carousel, Flex, Grid, Heading, Pagination, Text } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Layout",
@@ -109,4 +109,49 @@ PaginationStory.meta = {
   components: ["Pagination"],
   description:
     "Page-by-page navigation for a long list. Give it the pagination object your API returns — page, page size and total items — and it reports which page was clicked through onPageClick; it holds no state of its own. The window stays the same width at every page, so the next click never lands on a different number than the last one did, and Previous and Next stay in place when they cannot be used. With one page or fewer it renders nothing.",
+};
+
+const PLANETS = [
+  ["Kepler-442b", 210], ["TRAPPIST-1e", 280], ["Proxima b", 20], ["Gliese 667 Cc", 160],
+  ["Kepler-186f", 120], ["LHS 1140 b", 330], ["Teegarden b", 45], ["K2-18b", 190],
+] as const;
+
+const planetCards = PLANETS.map(([name, hue]) => (
+  <Card key={name} image={<Thumb hue={hue} />}>
+    <Heading size="4">{name}</Heading>
+    <Text color="muted" size="2">Habitable-zone candidate</Text>
+  </Card>
+));
+
+export const CarouselStory = () => (
+  <div style={{ display: "grid", gap: 48 }}>
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">2.5 in view, arrows step one slide, with dots</Text>
+      <Carousel aria-label="Habitable-zone planets" perView={2.5} showPagination>
+        {planetCards}
+      </Carousel>
+    </div>
+
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">3 in view, arrows step a page</Text>
+      <Carousel aria-label="Habitable-zone planets, paged" perView={3} step="page" showPagination>
+        {planetCards}
+      </Carousel>
+    </div>
+
+    {/* The view count set from a stylesheet at breakpoints — the class, not
+        the perView prop, decides here. Resize the window to see it change. */}
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">Responsive: 1.2 on a phone, 2.5 on a tablet, 4 on a desktop</Text>
+      <Carousel aria-label="Habitable-zone planets, responsive" className="docs-carousel--responsive">
+        {planetCards}
+      </Carousel>
+    </div>
+  </div>
+);
+CarouselStory.storyName = "Carousel";
+CarouselStory.meta = {
+  components: ["Carousel"],
+  description:
+    "A row of slides that scrolls sideways. It is a native scroller with CSS scroll snapping, so a flick on a phone uses the platform's own momentum and lands cleanly on a slide, and nothing runs per frame while it moves. `perView` sets how many slides fit and takes fractions — 2.5 leaves half a slide at the edge as a cue there is more. `step` chooses whether the arrows move one slide or a page of them; in page mode a flick also lands on a page. Set `--sp-carousel-view-count` in a media query to change how many fit at a breakpoint: it overrides the prop, and the arrows and dots follow what is actually rendered.",
 };

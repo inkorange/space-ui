@@ -5,6 +5,7 @@ import {
   Button,
   CheckIcon,
   Card,
+  Carousel,
   Heading,
   HeartIcon,
   IconToggle,
@@ -191,6 +192,18 @@ export const Stickersheet = () => {
 
         <Cell label="Pagination" wide fill>
           <Pagination pagination={{ page: 5, pageSize: 10, totalItems: 180 }} onPageClick={() => {}} />
+        </Cell>
+
+        {/* Half a slide at the edge, so the still image says "this scrolls". */}
+        <Cell label="Carousel" full>
+          <Carousel aria-label="Planets" perView={3.5} showPagination>
+            {["Kepler-442b", "TRAPPIST-1e", "Proxima b", "Gliese 667 Cc", "Kepler-186f", "K2-18b"].map((name) => (
+              <Card key={name}>
+                <Heading size="5">{name}</Heading>
+                <Text size="2" color="muted">Habitable zone</Text>
+              </Card>
+            ))}
+          </Carousel>
         </Cell>
 
         <Cell label="Message" full>

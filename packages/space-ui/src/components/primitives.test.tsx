@@ -33,6 +33,7 @@ import { Message } from "./Message";
 import { Autocomplete } from "./Autocomplete";
 import { Pagination, pageCount, pageWindow } from "./Pagination";
 import { Popover } from "./Popover";
+import { Carousel } from "./Carousel";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -1012,5 +1013,80 @@ describe("Popover", () => {
 
   it("stills the panel rim when the trigger is told not to animate", () => {
     expect(out({ animated: false })).toMatch(/role="dialog"[^>]*data-animated="false"|data-animated="false"[^>]*role="dialog"/);
+  });
+});
+
+describe("Carousel", () => {
+  const slides = (n: number) => Array.from({ length: n }, (_, i) => <div key={i}>Slide {i + 1}</div>);
+  const render = (props: Record<string, unknown> = {}, n = 10) =>
+    html(<Carousel aria-label="Featured planets" {...props}>{slides(n)}</Carousel>);
+
+  it("is a labelled carousel region with numbered slides", () => {
+    const out = render();
+    expect(out).toMatch(/^<section[^>]*aria-roledescription="carousel"/);
+    expect(out).toContain('aria-label="Featured planets"');
+    expect(out.match(/aria-roledescription="slide"/g)).toHaveLength(10);
+    expect(out).toContain('aria-label="1 of 10"');
+    expect(out).toContain('aria-label="10 of 10"');
+  });
+
+  it("points both arrows at the row they scroll", () => {
+    const out = render();
+    const trackId = out.match(/<div[^>]*\sid="([^"]+)"[^>]*tabindex="0"/)?.[1];
+    expect(trackId).toBeTruthy();
+    expect(out.match(new RegExp(`aria-controls="${trackId}"`, "g"))?.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("passes perView as the default view count, which a stylesheet can override", () => {
+    // The private default, not the public property: a stylesheet setting
+    // --sp-carousel-view-count must win over the prop.
+    const out = render({ perView: 2.5 });
+    expect(out).toContain("--_view-count-default:2.5");
+    expect(out).not.toContain("--sp-carousel-view-count:");
+  });
+
+  it("starts at the beginning: Previous disabled, Next available", () => {
+    const out = render({ perView: 2 });
+    expect(out).toMatch(/disabled=""[^>]*aria-label="Previous"|aria-label="Previous"[^>]*disabled=""/);
+    expect(out).not.toMatch(/aria-label="Next"[^>]*disabled=""|disabled=""[^>]*aria-label="Next"/);
+  });
+
+  it("hides the dots unless asked", () => {
+    expect(render({ perView: 2 })).not.toContain('aria-label="Position');
+  });
+
+  it("estimates a dot per stopping point in item mode before measuring", () => {
+    // 10 slides, 2.5 in view: the starts of slides 1–8, and the end of the
+    // row half a slide past the eighth.
+    const out = render({ perView: 2.5, showPagination: true });
+    expect(out.match(/aria-label="Position \d+ of 9"/g)).toHaveLength(9);
+  });
+
+  it("adds no extra stop when a whole view count ends on a slide", () => {
+    const out = render({ perView: 3, showPagination: true });
+    expect(out.match(/aria-label="Position \d+ of 8"/g)).toHaveLength(8);
+  });
+
+  it("estimates a dot per page in page mode before measuring", () => {
+    // 10 slides, 2.5 in view, pages of 2: 5 pages.
+    const out = render({ perView: 2.5, step: "page", showPagination: true });
+    expect(out.match(/aria-label="Page \d+ of 5"/g)).toHaveLength(5);
+  });
+
+  it("snaps only at page starts in page mode", () => {
+    const out = render({ perView: 2.5, step: "page" });
+    const snaps = out.match(/aria-roledescription="slide"[^>]*data-snap=""/g) ?? [];
+    expect(snaps).toHaveLength(5);
+  });
+
+  it("marks exactly one dot current", () => {
+    const out = render({ perView: 2, showPagination: true });
+    expect(out.match(/aria-current="true"/g)).toHaveLength(1);
+  });
+
+  it("shows no arrows or dots when everything already fits", () => {
+    const out = render({ perView: 3, showPagination: true }, 3);
+    expect(out).not.toContain("data-scrollable");
+    expect(out).not.toContain('aria-label="Position');
   });
 });

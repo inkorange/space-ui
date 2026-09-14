@@ -206,6 +206,7 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
   ]],
   ["Layout", [
     ["Card", "components--layout--card"],
+    ["Carousel", "components--layout--carousel"],
     ["Flex", "components--layout--flex-and-grid"],
     ["Grid", "components--layout--flex-and-grid"],
     ["Box", "components--layout--flex-and-grid"],
