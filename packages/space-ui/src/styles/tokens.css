@@ -104,6 +104,11 @@
      trigger rather than turning into a second page. */
   --sp-popover-panel-max-width: 22rem;
 
+  /* Carousel. Only the gap has a global default. The view count deliberately
+     does not: declared here, it would override every carousel's perView prop.
+     Set --sp-carousel-view-count on a carousel or its ancestor instead. */
+  --sp-carousel-gap-size: 16px;
+
   --sp-radio-group-orb-highlight-color: #cfe0ff;
   --sp-radio-group-orb-mid-color: #8fb4ff;
   --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);

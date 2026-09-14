@@ -25,6 +25,7 @@ export const EXPECTED_TOKENS = [
   "--sp-autocomplete-panel-max-height", "--sp-autocomplete-option-highlight-color",
   "--sp-pagination-item-size",
   "--sp-popover-panel-max-width",
+  "--sp-carousel-gap-size",
   "--sp-message-info-rim-color", "--sp-message-info-wash-color",
   "--sp-message-warning-rim-color", "--sp-message-warning-wash-color",
   "--sp-message-alert-rim-color", "--sp-message-alert-wash-color",
@@ -133,7 +134,9 @@ describe("design tokens", () => {
   });
 
   it("component tokens follow --sp-<component>-<modifier>-<type>", () => {
-    const TYPES = ["size", "color", "timer", "angle", "width", "height", "ratio"];
+    // `count` for how many of something fit — a view count of 2.5 is neither
+    // a size nor a ratio of two lengths.
+    const TYPES = ["size", "color", "timer", "angle", "width", "height", "ratio", "count"];
     for (const file of walk(SCSS_ROOT)) {
       const css = readFileSync(file, "utf8");
       for (const m of css.matchAll(/var\(\s*(--sp-[a-zA-Z0-9-]+)\s*,/g)) {

@@ -167,6 +167,74 @@ nav.ladle-aside {
   letter-spacing: 0.02em;
 }
 
+/* Where to get it: npm and GitHub, at the top of the sidebar and the
+   introduction page. Quiet pills — findable at a glance, never louder than
+   the brand or the hero's own call to action. */
+.docs-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.docs-links--sidebar {
+  margin-top: 16px;
+}
+
+.docs-links--sidebar .docs-links__link {
+  flex: 1 1 0;
+  justify-content: center;
+}
+
+/* The sidebar is too narrow for the version, and its status line just below
+   already reads "v… on npm". */
+.docs-links--sidebar .docs-links__meta {
+  display: none;
+}
+
+.docs-links--hero {
+  margin-bottom: 24px;
+}
+
+.docs-links__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 999px;
+  background: var(--docs-raised);
+  color: var(--docs-text);
+  font-family: var(--docs-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.docs-links__link:hover {
+  border-color: var(--docs-terminator);
+  background: #0090ff14;
+}
+
+.docs-links__link:focus-visible {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+}
+
+.docs-links__icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.docs-links__meta {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--docs-readout);
+}
+
 /* Telemetry: real, counted-at-runtime facts about the library.
    Structural, not decorative — the release status in particular
    is the single most important thing a visitor needs to know. */
@@ -777,6 +845,16 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   margin-bottom: 16px;
 }
 
+/* The hero carousel's moons: a banner crop, so the card stays compact. */
+.docs-demo__moon {
+  --sp-card-image-ratio: 5 / 2;
+}
+
+.docs-demo__moontext {
+  display: grid;
+  gap: 2px;
+}
+
 .docs-demo__actions {
   display: flex;
   flex-wrap: wrap;
@@ -1362,6 +1440,89 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   margin-top: 40px;
 }
 
+/* ---------- How to ----------
+   Guides read as numbered steps, because they are: each builds on the one
+   before. Prose width is capped for reading; code blocks run the full width. */
+.docs-howto {
+  margin-top: 40px;
+}
+
+.docs-howto__guide + .docs-howto__guide {
+  margin-top: 32px;
+}
+
+.docs-howto__question {
+  margin: 12px 0 6px;
+  font-family: var(--docs-font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--docs-text);
+}
+
+.docs-howto__intro,
+.docs-howto__text {
+  max-width: 680px;
+  margin: 0;
+  font-family: var(--docs-font-display);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--docs-text-dim);
+}
+
+.docs-howto__intro {
+  margin-bottom: 16px;
+}
+
+.docs-howto__steps {
+  display: grid;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: howto;
+}
+
+.docs-howto__step {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding-inline-start: 36px;
+  counter-increment: howto;
+}
+
+.docs-howto__step::before {
+  content: counter(howto);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--docs-hairline);
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+.docs-howto code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--docs-raised);
+  font-family: var(--docs-font-mono);
+  font-size: 0.88em;
+  color: var(--docs-readout);
+}
+
+.docs-howto .docs-code code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
 .docs-apis__title {
   font-family: var(--docs-font-display);
   font-size: 20px;
@@ -1842,10 +2003,112 @@ nav.ladle-aside a:focus-visible {
   outline: none;
 }
 
+/* ---------- Mobile navigation ----------
+   The bar and scrim exist at every width but show only on a phone, where
+   the sidebar becomes a drawer. See useMobileNav in components.tsx. */
+.docs-mobilebar,
+.docs-mobilebar__scrim {
+  display: none;
+}
+
 @media (max-width: 767px) {
   nav.ladle-aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    width: min(320px, 86vw);
+    overflow-y: auto;
     background: var(--docs-hull);
+    border-right: 1px solid var(--docs-hairline);
+    box-shadow: 16px 0 48px -12px #000c;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.28s cubic-bezier(0.16, 0.84, 0.44, 1), visibility 0.28s;
+  }
+
+  html[data-docs-nav="open"] nav.ladle-aside {
+    transform: none;
+    visibility: visible;
+  }
+
+  /* The whole drawer scrolls as one, brand block and all. The desktop rule
+     scrolls only the tree beneath the brand, which on a phone left a list
+     under half the screen tall. contain keeps a scroll that reaches the end
+     of the list from moving the page behind. */
+  nav.ladle-aside > ul[role="tree"] {
+    flex: none;
+    overflow: visible;
+  }
+
+  nav.ladle-aside {
+    overscroll-behavior: contain;
+  }
+
+  .docs-mobilebar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 56px;
+    padding: 0 16px;
+    background: color-mix(in srgb, var(--docs-hull) 88%, transparent);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--docs-hairline);
+  }
+
+  .docs-mobilebar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--docs-text);
+    text-decoration: none;
+    font-family: var(--docs-font-display);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .docs-mobilebar__brand img {
+    border-radius: 6px;
+  }
+
+  .docs-mobilebar__menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--docs-hairline);
+    border-radius: 999px;
+    background: var(--docs-raised);
+    color: var(--docs-text);
+    font: 600 13px var(--docs-font-display);
+    cursor: pointer;
+  }
+
+  .docs-mobilebar__menu:focus-visible {
+    outline: 2px solid var(--docs-terminator);
+    outline-offset: 2px;
+  }
+
+  .docs-mobilebar__scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: block;
+    background: #000a;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+
+  html[data-docs-nav="open"] .docs-mobilebar__scrim {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .docs-hero__grid {
@@ -2033,6 +2296,31 @@ nav.ladle-aside a:focus-visible {
   color: var(--docs-text);
 }
 
+/* On a phone the 56px gutter beside the number starves the code of width.
+   The number and heading stay side by side; everything after the heading
+   drops beneath both and runs the full width. */
+@media (max-width: 767px) {
+  .docs-install__step {
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 12px;
+    align-items: center;
+  }
+
+  .docs-install__body {
+    display: contents;
+  }
+
+  .docs-install__head {
+    margin: 0;
+  }
+
+  .docs-install__body > :not(.docs-install__head) {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+}
+
 /* ---------- Token tiers ---------- */
 .docs-tiers {
   display: grid;
@@ -2178,6 +2466,36 @@ nav.ladle-aside a:focus-visible {
 
 .docs-card--wide {
   --sp-card-image-ratio: 3 / 1;
+}
+
+/* The uneven-heights story's opt-out: a card that keeps its own height
+   instead of stretching to the tallest slide. */
+.docs-card--natural {
+  align-self: start;
+}
+
+/* The Carousel story's breakpoint demo: the view count comes from here, not
+   from a prop, so it can change with the viewport. */
+.docs-carousel--responsive {
+  --sp-carousel-view-count: 1.2;
+}
+
+@media (min-width: 640px) {
+  .docs-carousel--responsive {
+    --sp-carousel-view-count: 2.5;
+  }
+}
+
+@media (min-width: 1080px) {
+  .docs-carousel--responsive {
+    --sp-carousel-view-count: 4;
+  }
+}
+
+/* The stickersheet carousel's cards: a shorter crop than the default, so a
+   full-width row of them stays a band rather than a wall. */
+.docs-sheet__slide {
+  --sp-card-image-ratio: 2 / 1;
 }
 
 /* The stickersheet's media card spans two columns, where the default 16/10

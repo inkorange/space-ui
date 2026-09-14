@@ -3,8 +3,8 @@
 <!-- badges:start -->
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
-![coverage](https://img.shields.io/badge/coverage-78%25-yellowgreen)
-![minzip](https://img.shields.io/badge/minzip-27.8%20kB-blue)
+![coverage](https://img.shields.io/badge/coverage-75%25-yellowgreen)
+![minzip](https://img.shields.io/badge/minzip-30.2%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
@@ -18,7 +18,7 @@ compose and nothing to opt into.
      resolve against the registry rather than the repository. This sheet is a
      screenshot of the real components, shot from the gallery — see
      `pnpm assets`. -->
-<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Loader, Tabs, icons, Text, TextArea, Card plain and with an image, an open Popover, Pagination and a Message banner on a dark ground"
+<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Loader, Tabs, icons, Text, TextArea, Card plain and with an image, an open Popover, Pagination, a Carousel and a Message banner on a dark ground"
      src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/components.jpg"
      width="100%">
 
@@ -134,6 +134,17 @@ exposes one, always named `--sp-[component]-[modifier]-[type]`:
 --sp-loader-moon-size: 10px;
 ```
 
+A component property can carry layout, not just looks.
+`--sp-carousel-view-count` sets how many slides a Carousel shows, and it
+overrides the `perView` prop. So the count responds to screen width in plain
+CSS, with no resize listeners and no re-render:
+
+```css
+@media (max-width: 639px) {
+  .featured { --sp-carousel-view-count: 1.2; }
+}
+```
+
 Every component page in the gallery lists its own in a **Custom properties**
 table, saying what each one changes.
 
@@ -162,7 +173,7 @@ it exposes.
 | | |
 | --- | --- |
 | **Typography** | [Text](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Link](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Heading](https://space-components.vercel.app/?story=components--typography--headings) · [Badge](https://space-components.vercel.app/?story=components--typography--badges) · [Separator](https://space-components.vercel.app/?story=components--typography--separator) |
-| **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Pagination](https://space-components.vercel.app/?story=components--layout--pagination) |
+| **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Carousel](https://space-components.vercel.app/?story=components--layout--carousel) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Pagination](https://space-components.vercel.app/?story=components--layout--pagination) |
 | **Forms** | [Autocomplete](https://space-components.vercel.app/?story=components--forms--autocomplete) · [TextField](https://space-components.vercel.app/?story=components--forms--text-field) · [TextArea](https://space-components.vercel.app/?story=components--forms--text-area) · [Select](https://space-components.vercel.app/?story=components--forms--select) · [Slider](https://space-components.vercel.app/?story=components--forms--slider) · [RadioGroup](https://space-components.vercel.app/?story=components--forms--radio-group) |
 | **Buttons** | [Button](https://space-components.vercel.app/?story=components--buttons--buttons) · [IconToggle](https://space-components.vercel.app/?story=components--buttons--icon-toggle) |
 | **Feedback** | [Loader](https://space-components.vercel.app/?story=components--feedback--loader) · [Progress](https://space-components.vercel.app/?story=components--feedback--progress) · [Message](https://space-components.vercel.app/?story=components--feedback--message) |

@@ -15,6 +15,7 @@ export { Grid, type GridProps } from "./components/Grid";
 export { Badge, type BadgeProps, type BadgeColor } from "./components/Badge";
 export { Separator, type SeparatorProps } from "./components/Separator";
 export { Card, type CardProps } from "./components/Card";
+export { Carousel, type CarouselProps } from "./components/Carousel";
 export {
   Pagination,
   pageCount,

@@ -1,7 +1,9 @@
 import { useState, type CSSProperties } from "react";
+import { PackageLinks } from "./docs-links";
 import {
   Badge,
   Card,
+  Carousel,
   Heading,
   Select,
   Separator,
@@ -26,60 +28,83 @@ export default {
 /**
  * A real composition rather than an invented device, built from the
  * components that carry most of the load in practice — Text, Button,
- * Heading, Badge, Card — plus a Select, with nothing composed on top. The lit
+ * Heading, Badge, Card — plus a Carousel, with nothing composed on top. The lit
  * glass is what the package gives you, so this is what a consumer would ship.
  */
-const PlanetCard = () => {
-  const [star, setStar] = useState("G");
+const PlanetCard = () => (
+  <Card style={{ padding: 20 }}>
+    <div className="docs-demo__head">
+      <Heading size="5">Kepler-442b</Heading>
+      <Badge color="success">Temperate</Badge>
+    </div>
 
-  return (
-    <Card style={{ padding: 20 }}>
-      <div className="docs-demo__head">
-        <Heading size="5">Kepler-442b</Heading>
-        <Badge color="success">Temperate</Badge>
+    <Text size="2" color="muted">
+      A super-earth in the habitable zone, 1,206 light years out.
+    </Text>
+
+    <Separator style={{ margin: "16px 0" }} />
+
+    <dl className="docs-demo__stats">
+      <div>
+        <dt>Mass</dt>
+        <dd>1.34 M⊕</dd>
       </div>
+      <div>
+        <dt>Radius</dt>
+        <dd>1.11 R⊕</dd>
+      </div>
+      <div>
+        <dt>Period</dt>
+        <dd>112.3 d</dd>
+      </div>
+    </dl>
 
-      <Text size="2" color="muted">
-        A super-earth in the habitable zone, 1,206 light years out.
+    <div className="docs-demo__field">
+      <Text size="1" color="muted">
+        Moons
       </Text>
+      {/* One and a half in view: the half at the edge is the cue to swipe. */}
+      <Carousel aria-label="Moons of Kepler-442b" perView={1.5} showPagination>
+        {MOONS.map(([name, hue, detail]) => (
+          <Card key={name} image={<MoonThumb hue={hue} />} className="docs-demo__moon">
+            <div className="docs-demo__moontext">
+              <Text size="2" weight="bold">{name}</Text>
+              <Text size="1" color="muted">{detail}</Text>
+            </div>
+          </Card>
+        ))}
+      </Carousel>
+    </div>
 
-      <Separator style={{ margin: "16px 0" }} />
+    <div className="docs-demo__actions">
+      <Button>Build planet</Button>
+      <Button size="sm">View system</Button>
+    </div>
+  </Card>
+);
 
-      <dl className="docs-demo__stats">
-        <div>
-          <dt>Mass</dt>
-          <dd>1.34 M⊕</dd>
-        </div>
-        <div>
-          <dt>Radius</dt>
-          <dd>1.11 R⊕</dd>
-        </div>
-        <div>
-          <dt>Period</dt>
-          <dd>112.3 d</dd>
-        </div>
-      </dl>
+/** Invented moons for the demo; each gets its own hue so the row reads as a set. */
+const MOONS: Array<[string, number, string]> = [
+  ["Ossia", 200, "Icy, 0.02 M⊕"],
+  ["Veyra", 25, "Volcanic, 0.05 M⊕"],
+  ["Tamsin", 150, "Rocky, 0.01 M⊕"],
+  ["Hollis", 280, "Captured, 0.004 M⊕"],
+];
 
-      <div className="docs-demo__field">
-        <Text size="1" color="muted">
-          Host star
-        </Text>
-        <Select value={star} onValueChange={setStar}>
-          {STAR_TYPES.map((t) => (
-            <Select.Item key={t} value={t}>
-              {t}-type star
-            </Select.Item>
-          ))}
-        </Select>
-      </div>
+const STAR_TYPES = ["O", "B", "A", "F", "G", "K", "M"];
 
-      <div className="docs-demo__actions">
-        <Button>Build planet</Button>
-        <Button size="sm">View system</Button>
-      </div>
-    </Card>
-  );
-};
+const MoonThumb = ({ hue }: { hue: number }) => (
+  <svg viewBox="0 0 320 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id={`heroMoon${hue}`} cx="32%" cy="28%">
+        <stop offset="0%" stopColor={`hsl(${hue} 70% 70%)`} />
+        <stop offset="100%" stopColor={`hsl(${hue + 20} 50% 14%)`} />
+      </radialGradient>
+    </defs>
+    <rect width="320" height="160" fill={`hsl(${hue + 20} 45% 7%)`} />
+    <circle cx="160" cy="84" r="52" fill={`url(#heroMoon${hue})`} />
+  </svg>
+);
 
 /**
  * The rendered panel and the CSS listing below it are generated from ONE
@@ -135,8 +160,6 @@ const TokenExample = () => (
     />
   </div>
 );
-
-const STAR_TYPES = ["O", "B", "A", "F", "G", "K", "M"];
 
 /**
  * The same two components, motion running and motion stilled. The skin is
@@ -206,6 +229,7 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
   ]],
   ["Layout", [
     ["Card", "components--layout--card"],
+    ["Carousel", "components--layout--carousel"],
     ["Flex", "components--layout--flex-and-grid"],
     ["Grid", "components--layout--flex-and-grid"],
     ["Box", "components--layout--flex-and-grid"],
@@ -289,6 +313,8 @@ export const Introduction = () => (
 
       <div className="docs-hero__grid">
         <div className="docs-hero__copy">
+          <PackageLinks className="docs-links--hero docs-rise" />
+
           <div
             className="docs-hero__eyebrow docs-rise"
             style={{ animationDelay: "40ms" }}
@@ -337,7 +363,7 @@ export const Introduction = () => (
           {/* Name what the demo is and what it is made of, so nobody has to
               guess whether it is a screenshot, a mock, or the real thing. */}
           <p className="docs-hero__caption">
-            Live components — Card, Heading, Text, Badge, Separator, Select
+            Live components — Card, Heading, Text, Badge, Separator, Carousel
             and Button. Nothing composed on: this is what you get from the
             package.
           </p>

@@ -8,6 +8,8 @@ import {
 } from "virtual:space-docs";
 import { storySource, stories } from "virtual:generated-list";
 import { Code } from "../src/docs-code";
+import { PackageLinks } from "../src/docs-links";
+import { howTo, type HowTo } from "../src/howto";
 import "@inkorange/space-ui/tokens.css";
 import "./space.css";
 import {
@@ -33,6 +35,7 @@ const useSidebarSlot = () => {
     // No sidebar in preview mode or inside a story iframe.
     if (!nav) return;
 
+    nav.id = "docs-nav";
     const el = document.createElement("div");
     el.className = "docs-brand";
     nav.append(el);
@@ -66,6 +69,8 @@ const Brand = () => (
       </span>
     </a>
 
+    <PackageLinks className="docs-links--sidebar" />
+
     <div className="docs-telemetry">
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">{componentCount}</div>
@@ -77,7 +82,7 @@ const Brand = () => (
       </div>
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">0</div>
-        <div className="docs-telemetry__label">Runtime deps</div>
+        <div className="docs-telemetry__label">Dependencies</div>
       </div>
       <div className="docs-telemetry__cell">
         <div className="docs-telemetry__value">19</div>
@@ -101,6 +106,126 @@ const Brand = () => (
       </div>
     </div>
   </>
+);
+
+/**
+ * Below 768px there is no room for the sidebar beside the story. Ladle's own
+ * answer is to stack it underneath, which on a phone puts the whole
+ * navigation after the longest page of source and API tables — effectively
+ * nowhere. So on a narrow screen the sidebar becomes a drawer: a bar pinned
+ * to the top opens it, and choosing a story, Escape, or a tap outside closes
+ * it. Closed, the nav is inert, so keyboard and screen-reader users do not
+ * wander into an off-screen list.
+ */
+const MOBILE = "(max-width: 767px)";
+
+const useMobileNav = (story: string) => {
+  const [open, setOpen] = useState(false);
+
+  // A new story means a link in the drawer was chosen.
+  useEffect(() => {
+    setOpen(false);
+  }, [story]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const nav = document.querySelector<HTMLElement>("nav.ladle-aside");
+    const media = window.matchMedia(MOBILE);
+
+    const apply = () => {
+      const mobile = media.matches;
+      if (open && mobile) root.dataset.docsNav = "open";
+      else delete root.dataset.docsNav;
+      if (nav) nav.inert = mobile && !open;
+    };
+    apply();
+    media.addEventListener("change", apply);
+
+    if (open) {
+      nav?.querySelector<HTMLElement>("input, a")?.focus({ preventScroll: true });
+    }
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        document.querySelector<HTMLElement>(".docs-mobilebar__menu")?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+
+    return () => {
+      media.removeEventListener("change", apply);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return [open, setOpen] as const;
+};
+
+const MobileBar = ({ open, onToggle }: { open: boolean; onToggle: () => void }) => (
+  <>
+    <div className="docs-mobilebar">
+      <a className="docs-mobilebar__brand" href="?story=overview--introduction">
+        <img src="/logo-64.png" width={24} height={24} alt="" aria-hidden="true" />
+        <span>SpaceUI</span>
+      </a>
+      <button
+        type="button"
+        className="docs-mobilebar__menu"
+        aria-expanded={open}
+        aria-controls="docs-nav"
+        onClick={onToggle}
+      >
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+          {open ? (
+            <path d="M3.5 3.5l9 9m0-9l-9 9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          ) : (
+            <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          )}
+        </svg>
+        {open ? "Close" : "Components"}
+      </button>
+    </div>
+    {/* The scrim is for pointers; keyboard users close with Escape. */}
+    <div className="docs-mobilebar__scrim" aria-hidden="true" onClick={onToggle} />
+  </>
+);
+
+
+/** Inline `code` in guide prose, without pulling in a markdown parser. */
+const Prose = ({ text }: { text: string }) => (
+  <>
+    {text.split(/(`[^`]+`)/).map((part, i) =>
+      part.startsWith("`") && part.endsWith("`") ? (
+        // eslint-disable-next-line react/no-array-index-key
+        <code key={i}>{part.slice(1, -1)}</code>
+      ) : (
+        part
+      ),
+    )}
+  </>
+);
+
+const HowToGuide = ({ guide }: { guide: HowTo }) => (
+  <article className="docs-howto__guide">
+    <h3 className="docs-howto__question">{guide.title}</h3>
+    {guide.intro && (
+      <p className="docs-howto__intro">
+        <Prose text={guide.intro} />
+      </p>
+    )}
+    <ol className="docs-howto__steps">
+      {guide.steps.map((step, i) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <li key={i} className="docs-howto__step">
+          <p className="docs-howto__text">
+            <Prose text={step.text} />
+          </p>
+          {step.code && <Code code={step.code} language={step.language ?? "tsx"} label={step.label} />}
+        </li>
+      ))}
+    </ol>
+  </article>
 );
 
 /** `components--buttons--loader` → levels ["Components", "Buttons"], name "Loader". */
@@ -359,6 +484,7 @@ export const Provider: GlobalProvider = ({
   storyMeta,
 }) => {
   const slot = useSidebarSlot();
+  const [navOpen, setNavOpen] = useMobileNav(globalState.story);
   const { name, levels } = parseStoryId(globalState.story);
 
   const meta = storyMeta as
@@ -427,6 +553,7 @@ export const Provider: GlobalProvider = ({
   return (
     <>
       {slot && createPortal(<Brand />, slot)}
+      <MobileBar open={navOpen} onToggle={() => setNavOpen((v) => !v)} />
 
       <div className="docs-shell">
         {fullBleed ? (
@@ -463,6 +590,15 @@ export const Provider: GlobalProvider = ({
                   label={stories[globalState.story]?.entry ?? "Source"}
                   maxHeight={460}
                 />
+              </section>
+            )}
+
+            {howTo[globalState.story] && (
+              <section className="docs-howto">
+                <h2 className="docs-apis__title">How to</h2>
+                {howTo[globalState.story].map((guide) => (
+                  <HowToGuide key={guide.title} guide={guide} />
+                ))}
               </section>
             )}
 

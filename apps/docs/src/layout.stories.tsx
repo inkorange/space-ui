@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Card, Flex, Grid, Heading, Pagination, Text } from "@inkorange/space-ui";
+import { Box, Card, Carousel, Flex, Grid, Heading, Pagination, Text } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Layout",
@@ -110,3 +110,84 @@ PaginationStory.meta = {
   description:
     "Page-by-page navigation for a long list. Give it the pagination object your API returns — page, page size and total items — and it reports which page was clicked through onPageClick; it holds no state of its own. The window stays the same width at every page, so the next click never lands on a different number than the last one did, and Previous and Next stay in place when they cannot be used. With one page or fewer it renders nothing.",
 };
+
+const PLANETS = [
+  ["Kepler-442b", 210], ["TRAPPIST-1e", 280], ["Proxima b", 20], ["Gliese 667 Cc", 160],
+  ["Kepler-186f", 120], ["LHS 1140 b", 330], ["Teegarden b", 45], ["K2-18b", 190],
+] as const;
+
+const planetCards = PLANETS.map(([name, hue]) => (
+  <Card key={name} image={<Thumb hue={hue} />}>
+    <Heading size="4">{name}</Heading>
+    <Text color="muted" size="2">Habitable-zone candidate</Text>
+  </Card>
+));
+
+const BLURBS = [
+  "A temperate super-earth.",
+  "The fourth planet out from an ultra-cool dwarf, rocky and close to Earth in size and density, and among the best candidates for liquid water yet found.",
+  "Nearest known exoplanet.",
+  "Orbits the third star of a triple system. Its sky would hold two more suns, one of them bright enough to read by at night.",
+  "Tidally locked, probably.",
+  "A dense rocky world whose long, slow orbit gives an atmosphere time to survive its star's early flares.",
+];
+
+export const CarouselStory = () => (
+  <div style={{ display: "grid", gap: 48 }}>
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">2.5 in view, arrows step one slide, with dots</Text>
+      <Carousel aria-label="Habitable-zone planets" perView={2.5} showPagination>
+        {planetCards}
+      </Carousel>
+    </div>
+
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">3 in view, arrows step a page</Text>
+      <Carousel aria-label="Habitable-zone planets, paged" perView={3} step="page" showPagination>
+        {planetCards}
+      </Carousel>
+    </div>
+
+    {/* The view count set from a stylesheet at breakpoints — the class, not
+        the perView prop, decides here. Resize the window to see it change. */}
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">Responsive: 1.2 on a phone, 2.5 on a tablet, 4 on a desktop</Text>
+      <Carousel aria-label="Habitable-zone planets, responsive" className="docs-carousel--responsive">
+        {planetCards}
+      </Carousel>
+    </div>
+
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">By default every card stretches to the tallest, so the row ends in one line</Text>
+      <Carousel aria-label="Planets with uneven descriptions" perView={3.5} showPagination>
+        {BLURBS.map((blurb, i) => (
+          <Card key={PLANETS[i][0]}>
+            <Heading size="4">{PLANETS[i][0]}</Heading>
+            <Text color="muted" size="2">{blurb}</Text>
+          </Card>
+        ))}
+      </Carousel>
+    </div>
+
+    {/* Opting out is a rule on the slide content, not a carousel prop: here
+        a class setting align-self: start on each card. */}
+    <div style={{ display: "grid", gap: 12 }}>
+      <Text size="2" color="muted">Content that sets align-self: start keeps its own height</Text>
+      <Carousel aria-label="Planets at their natural height" perView={3.5} showPagination>
+        {BLURBS.map((blurb, i) => (
+          <Card key={PLANETS[i][0]} image={<Thumb hue={PLANETS[i][1]} />} className="docs-card--natural">
+            <Heading size="4">{PLANETS[i][0]}</Heading>
+            <Text color="muted" size="2">{blurb}</Text>
+          </Card>
+        ))}
+      </Carousel>
+    </div>
+  </div>
+);
+CarouselStory.storyName = "Carousel";
+CarouselStory.meta = {
+  components: ["Carousel"],
+  description:
+    "A row of slides on native CSS scroll snapping: flick it on a phone, drag it with a mouse. `perView` takes fractions — 2.5 leaves half a slide showing — and `step` sets whether the arrows move a slide or a page. Override `--sp-carousel-view-count` at a breakpoint to change how many fit. Slides share the tallest one's height; `align-self: start` opts out.",
+};
+
