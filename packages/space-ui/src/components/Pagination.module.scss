@@ -65,9 +65,9 @@
    back. That contrast holds with the orbit stilled, so it does not depend on
    motion to say where you are. */
 /* .item.current, not .current: the shared skin doubles its own class, so a
-   two-class selector here ties with it and loses on load order — the glow was
-   silently discarded while the marker, which the skin never touches, still
-   showed. Three classes out-rank it without !important. */
+   two-class selector here ties with it and loses on load order — the glow is
+   then silently discarded with nothing in the markup to say why. Three
+   classes out-rank it without !important. */
 .nav .item.current {
   color: var(--sp-on-solid);
   font-weight: 600;
