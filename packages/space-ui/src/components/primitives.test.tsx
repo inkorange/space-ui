@@ -737,6 +737,33 @@ describe("Autocomplete", () => {
     expect(out).not.toContain("TRAPPIST-1 b Lava World");
   });
 
+  it("offers nothing until something is typed", () => {
+    // Focusing an empty field must not drop the whole dataset open.
+    for (const value of ["", "   "]) {
+      const out = html(
+        <Autocomplete
+          value={value}
+          onValueChange={() => {}}
+          onSelect={() => {}}
+          options={options}
+          emptyMessage="Nothing matching."
+          loading={false}
+        />,
+      );
+      expect(out).not.toContain("TRAPPIST-1");
+      expect(out).not.toContain('role="option"');
+      // And no "nothing matching" for a search nobody has made.
+      expect(out).not.toContain("Nothing matching.");
+    }
+  });
+
+  it("offers nothing on an empty query even when preFiltered", () => {
+    const out = html(
+      <Autocomplete value="" onValueChange={() => {}} onSelect={() => {}} options={options} preFiltered />,
+    );
+    expect(out).not.toContain('role="option"');
+  });
+
   it("narrows case-insensitively by default", () => {
     // The whole point: typing lowercase finds an uppercase name.
     const out = html(

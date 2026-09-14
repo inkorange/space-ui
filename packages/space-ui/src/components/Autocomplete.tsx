@@ -47,9 +47,10 @@ export interface AutocompleteProps
   onValueChange: (value: string) => void;
   /** The candidate rows, in the order you want them shown. They are narrowed
    *  against what has been typed unless `preFiltered` is set; the order you
-   *  give is always preserved, so ranking stays yours. An empty array with no
-   *  `loading` and no `emptyMessage` shows nothing at all, which is how you
-   *  keep the panel shut until a query is worth answering. */
+   *  give is always preserved, so ranking stays yours. Nothing is offered
+   *  until something has been typed. Past that, an empty array with no
+   *  `loading` and no `emptyMessage` still shows no panel, which is how you
+   *  hold it shut below a minimum query length. */
   options: AutocompleteOption[];
   /** Called when a row is chosen by click or Enter. */
   onSelect: (value: string, option: AutocompleteOption) => void;
@@ -122,22 +123,29 @@ export function Autocomplete({
   const haystack = (o: AutocompleteOption) =>
     typeof o.label === "string" ? o.label : (o.search ?? o.value);
 
+  // Nothing typed, nothing offered. An empty query used to let every option
+  // through, so focusing the field dropped the whole dataset open before the
+  // reader had asked for anything. Whitespace counts as empty.
+  const hasQuery = value.trim() !== "";
+
   const shown = useMemo(() => {
+    if (!hasQuery) return [];
     if (preFiltered) return options;
     const needle = caseSensitive ? value : value.toLowerCase();
-    if (needle === "") return options;
     return options.filter((o) => {
       const text = caseSensitive ? haystack(o) : haystack(o).toLowerCase();
       return text.includes(needle);
     });
-  }, [options, value, caseSensitive, preFiltered]);
+  }, [options, value, caseSensitive, preFiltered, hasQuery]);
 
   const selectable = useMemo(() => shown.filter((o) => !o.disabled), [shown]);
 
-  // Nothing to say, no panel. This is what lets a consumer keep the popover
-  // shut below its minimum query length without managing open state: send no
-  // options, no loading and no message, and there is nothing to show.
-  const hasContent = shown.length > 0 || loading || emptyMessage != null;
+  // Nothing to say, no panel. With no query there is never anything to say —
+  // not the rows, not a loading line, and not an empty message that would
+  // report "nothing matching" for a search nobody has typed. Past that, a
+  // consumer can still keep the panel shut below a minimum length by sending
+  // no options, no loading and no message.
+  const hasContent = hasQuery && (shown.length > 0 || loading || emptyMessage != null);
   const showPanel = open && hasContent;
 
   // A changed result set invalidates the highlight — it pointed at a row that
@@ -267,9 +275,9 @@ export function Autocomplete({
         hidden={!showPanel}
         data-animated={animated ? undefined : "false"}
       >
-        {loading && <p className={styles.status}>{loadingMessage}</p>}
+        {hasQuery && loading && <p className={styles.status}>{loadingMessage}</p>}
 
-        {!loading && shown.length === 0 && emptyMessage != null && (
+        {hasQuery && !loading && shown.length === 0 && emptyMessage != null && (
           <p className={styles.status}>{emptyMessage}</p>
         )}
 
