@@ -129,21 +129,56 @@ export function Carousel({
   // on every scroll, and nothing needs to re-render when they are recomputed
   // unless their number changes.
   const stops = useRef<number[]>([0]);
+  // How far the row could scroll when those stops were worked out. Anything
+  // that changes the row's scrollable width without resizing the row itself —
+  // an image arriving, a web font swapping in, a slide's content growing —
+  // leaves the stops describing a row that no longer exists.
+  const measuredMax = useRef(0);
+  // The scroll offset the row rests at when it is showing its last slide —
+  // the last stop, and what "at the end" means. See measure().
+  const endStop = useRef(0);
+  // measure() needs sync(), and sync() needs to be able to re-measure. A ref
+  // breaks the cycle without either depending on the other.
+  const remeasure = useRef<() => void>(() => {});
 
   const sync = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
     const x = track.scrollLeft;
-    const max = track.scrollWidth - track.clientWidth;
+    const max = Math.max(0, track.scrollWidth - track.clientWidth);
+
+    // Stops from a different row: measure again and let that call back here.
+    // Without this the dots can sit a stop behind for good — a row measured
+    // while it was wider keeps a final stop nobody can scroll to, so arriving
+    // at the true end still reads as the stop before it.
+    if (Math.abs(max - measuredMax.current) > 1) {
+      remeasure.current();
+      return;
+    }
+
+    const atStartNow = x <= 1;
+    // Against the last reachable stop, not the raw scroll width: with a slide
+    // whose content overflows its column the two differ, and the row can never
+    // reach the latter.
+    const atEndNow = x >= endStop.current - 1;
+    // The ends are known exactly, so they are never left to a nearest-value
+    // comparison: at the end, the last stop is the one you are on.
     let nearest = 0;
-    stops.current.forEach((stop, i) => {
-      if (Math.abs(stop - x) < Math.abs(stops.current[nearest] - x)) nearest = i;
-    });
+    if (atEndNow) {
+      nearest = stops.current.length - 1;
+    } else if (!atStartNow) {
+      stops.current.forEach((stop, i) => {
+        // <= so that when two stops are equally close the later one wins,
+        // matching the direction the row was moving to get there.
+        if (Math.abs(stop - x) <= Math.abs(stops.current[nearest] - x)) nearest = i;
+      });
+    }
+
     // React skips the render when a value is unchanged, so scrolling within
     // one stop costs a comparison and nothing more.
     setActive(nearest);
-    setAtStart(x <= 1);
-    setAtEnd(x >= max - 1);
+    setAtStart(atStartNow);
+    setAtEnd(atEndNow);
   }, []);
 
   const measure = useCallback(() => {
@@ -160,23 +195,37 @@ export function Carousel({
     const inView = (track.clientWidth + gap) / (first.offsetWidth + gap);
     const size = step === "page" ? Math.max(1, Math.floor(inView + 0.01)) : 1;
 
+    // Where the row comes to rest at the end: the last slide's trailing edge
+    // against the viewport's, which is what its `scroll-snap-align: end` means.
+    // Not the raw scroll width — a slide whose content is wider than its
+    // column leaves scrollable room past that snap position, room mandatory
+    // snapping never lets the row rest in. Counting that as a stop gave a
+    // final dot nobody could reach, and left the dot before it lit at the end.
+    const last = items[items.length - 1];
+    const end = Math.round(
+      Math.max(0, Math.min(max, last.offsetLeft - first.offsetLeft + last.offsetWidth - track.clientWidth)),
+    );
+
     const next: number[] = [];
     items.forEach((item, i) => {
       if (i % size !== 0) return;
-      const stop = Math.round(Math.min(item.offsetLeft - first.offsetLeft, max));
+      const stop = Math.round(Math.min(item.offsetLeft - first.offsetLeft, end));
       if (next[next.length - 1] !== stop) next.push(stop);
     });
-    // The end of the row is always somewhere you can arrive, even when no
-    // slide or page starts exactly there.
-    if (max > 0 && next[next.length - 1] < Math.round(max) - 1) next.push(Math.round(max));
+    // The end is always somewhere you can arrive, even when no slide or page
+    // starts exactly there.
+    if (end > 0 && next[next.length - 1] < end - 1) next.push(end);
 
     stops.current = next;
+    measuredMax.current = Math.round(max);
+    endStop.current = end;
     setPageSize(size);
     setStopCount(next.length);
     sync();
   }, [step, sync]);
 
   useLayoutEffect(() => {
+    remeasure.current = measure;
     measure();
   }, [measure, count]);
 
