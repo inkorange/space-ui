@@ -723,7 +723,10 @@ describe("Autocomplete", () => {
     const out = field();
     expect(out).toContain('aria-expanded="false"');
     expect(out).toContain('role="listbox"');
-    expect(out).toMatch(/<div[^>]*class="[^"]*panel[^"]*"[^>]*hidden/);
+    // A popover element is not rendered until it is shown, and rides the
+    // browser's top layer so a Dialog cannot clip it — the same contract as
+    // Select's listbox.
+    expect(out).toMatch(/<div[^>]*popover="manual"[^>]*class="[^"]*panel[^"]*"/);
   });
 
   it("marks a disabled row unselectable rather than hiding it", () => {

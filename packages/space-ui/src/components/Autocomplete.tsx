@@ -12,9 +12,10 @@
 "use client";
 import type * as React from "react";
 import {
-  useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode,
+  useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode,
 } from "react";
 import { cx } from "./propShared";
+import { showMeasured } from "../internal/showMeasured";
 import { TextField } from "./TextField";
 import styles from "./Autocomplete.module.scss";
 import ctl from "../styles/spaceControls";
@@ -95,6 +96,11 @@ export interface AutocompleteProps
  * mid-keystroke and push the page down under the cursor are disorienting, and
  * whatever is being searched usually sits directly below the field.
  */
+/** Gap between field and panel, and the least room to leave at a viewport
+ *  edge — the same values Select and Popover place by. */
+const OFFSET = 8;
+const EDGE_PADDING = 8;
+
 export function Autocomplete({
   value,
   onValueChange,
@@ -115,8 +121,12 @@ export function Autocomplete({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const listId = useId();
+  // Viewport coordinates for the panel, which renders in the browser's top
+  // layer and so is placed against the viewport rather than the field.
+  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
 
   // What a row is matched on: its label when that is plain text, an explicit
   // `search` when the label is markup, and the value as a last resort.
@@ -159,6 +169,67 @@ export function Autocomplete({
     const el = listRef.current?.querySelector<HTMLElement>(`[data-index="${active}"]`);
     el?.scrollIntoView({ block: "nearest" });
   }, [active, showPanel]);
+
+  // Under the field, as wide as it, clamped to the viewport — and flipped
+  // above when there is not enough room below.
+  const place = useCallback(() => {
+    const wrap = wrapRef.current;
+    const panel = panelRef.current;
+    if (!wrap || !panel) return;
+    // The control itself, not the wrapper around it: the wrapper also holds
+    // the panel, so measuring it put the panel below its own height and gave
+    // it the wrong width.
+    const field = wrap.firstElementChild ?? wrap;
+    const rect = field.getBoundingClientRect();
+    const height = panel.offsetHeight;
+    const below = window.innerHeight - rect.bottom - EDGE_PADDING;
+    const flip = below < height && rect.top - EDGE_PADDING > below;
+    panel.dataset.side = flip ? "top" : "bottom";
+    const top = flip ? Math.max(EDGE_PADDING, rect.top - OFFSET - height) : rect.bottom + OFFSET;
+    setPos((prev) =>
+      prev && prev.top === top && prev.left === rect.left && prev.width === rect.width
+        ? prev
+        : { top, left: rect.left, width: rect.width },
+    );
+  }, []);
+
+  // Placed while laid out but invisible, then shown, so the reveal starts from
+  // the side it landed on. Layout effect: placed before the first paint.
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    if (!panel) return;
+    if (showPanel) {
+      showMeasured(panel, place);
+      place();
+    } else if (panel.matches(":popover-open")) {
+      panel.hidePopover();
+    }
+  }, [showPanel, place]);
+
+  // Follow the field while the panel is open. A top-layer element cannot ride
+  // along with an ancestor the way an absolutely positioned one does, so
+  // anything that moves the field — a scroll, a dialog resizing, the list
+  // growing as results arrive — has to be tracked. One layout read a frame.
+  useEffect(() => {
+    if (!showPanel) return;
+    let frame = 0;
+    let last = "";
+    const track = () => {
+      const field = wrapRef.current;
+      const panel = panelRef.current;
+      if (field && panel) {
+        const r = (field.firstElementChild ?? field).getBoundingClientRect();
+        const key = `${r.top}|${r.left}|${r.width}|${panel.offsetHeight}|${window.innerHeight}`;
+        if (key !== last) {
+          last = key;
+          place();
+        }
+      }
+      frame = requestAnimationFrame(track);
+    };
+    frame = requestAnimationFrame(track);
+    return () => cancelAnimationFrame(frame);
+  }, [showPanel, place]);
 
   // pointerdown, not click: a drag that starts inside the panel and ends
   // outside it is not an outside click, and the dismissal should land before
@@ -281,14 +352,20 @@ export function Autocomplete({
         {icon != null && <TextField.Slot>{icon}</TextField.Slot>}
       </TextField>
 
-      {/* Always mounted, hidden while shut. aria-controls above points at the
-          listbox by id, and an id that resolves to nothing is a promise the
-          markup does not keep — same reason Select keeps its listbox in the
-          tree. */}
+      {/* Always mounted. aria-controls above points at the listbox by id, and
+          an id that resolves to nothing is a promise the markup does not keep
+          — same reason Select keeps its listbox in the tree.
+
+          popover="manual", like Select: it renders in the browser's top layer
+          so a Dialog or any container that clips or contains it cannot trap
+          it, while the outside-press handling above stays ours. */}
       <div
+        ref={panelRef}
+        popover="manual"
+        data-side="bottom"
         className={cx(styles.panel, ctl.spacePanel)}
-        hidden={!showPanel}
         data-animated={animated ? undefined : "false"}
+        style={pos ? { top: pos.top, left: pos.left, width: pos.width } : undefined}
       >
         {hasQuery && loading && <p className={styles.status}>{loadingMessage}</p>}
 
