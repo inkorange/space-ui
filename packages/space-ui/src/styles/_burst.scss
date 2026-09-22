@@ -1,0 +1,40 @@
+// The flash of something igniting: a ring of light that leaves the control at
+// the moment it is chosen. Shared by RadioGroup's orb and Checkbox's tile so
+// the two cannot drift into slightly different flashes.
+//
+// The ring is always present at zero opacity and plays only when the state
+// changes, so nothing animates on mount or on a re-render. It is drawn on a
+// pseudo-element of the control itself, which keeps it out of layout and out
+// of the way of pointers.
+
+// The ring itself. Call on the ::after of the element it leaves.
+@mixin burst-ring($color, $radius: inherit) {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: $radius;
+  border: 1px solid $color;
+  opacity: 0;
+  pointer-events: none;
+}
+
+// Play it. Call under whatever selector means "just chosen".
+@mixin burst-play($duration: 0.52s) {
+  animation: sp-burst $duration cubic-bezier(0.16, 0.84, 0.44, 1);
+
+  // A reader who asked for less motion gets the lit state without the flash.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes sp-burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}

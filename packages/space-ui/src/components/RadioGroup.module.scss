@@ -1,3 +1,5 @@
+@use "../styles/burst" as *;
+
 /* @token --sp-radio-group-row-gap-size The space between options. Two grid
      units, so a wrapped two-line label still reads as one option rather than
      running into the next. */
@@ -22,6 +24,12 @@
   display: inline-flex;
   align-items: flex-start;
   gap: var(--sp-radio-group-label-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+  // The library's 14px type step — Text size 2, line and all — so a label
+  // sits at the same size as the text in every other control rather than
+  // inheriting whatever surrounds it. The 20px line is also what centres the
+  // indicator on the first line.
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
 }
 .selfLabeled { cursor: pointer; }
 
@@ -87,6 +95,24 @@
 
 .input:checked + .orb::after {
   transform: scale(1);
+}
+
+/* The flash of ignition: a ring of light leaving the orb as it lights, the
+   same one Checkbox gives. It sits inside the orb because the orb's own
+   ::before and ::after are already the glass and the star core. */
+.burst {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.burst::after {
+  @include burst-ring(var(--sp-radio-group-orb-glow-color), 50%);
+}
+
+.input:checked + .orb .burst::after {
+  @include burst-play;
 }
 
 .input:focus-visible + .orb::before {

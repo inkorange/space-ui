@@ -6,6 +6,8 @@ import {
   CheckIcon,
   Card,
   Carousel,
+  Checkbox,
+  CheckboxGroup,
   Heading,
   HeartIcon,
   IconToggle,
@@ -51,6 +53,7 @@ export const Stickersheet = () => {
   const [mass, setMass] = useState([62]);
   const [band, setBand] = useState("habitable");
   const [tab, setTab] = useState("mass");
+  const [types, setTypes] = useState<string[]>(["ocean"]);
 
   return (
     <div className="docs-sheet" data-stickersheet>
@@ -113,6 +116,14 @@ export const Stickersheet = () => {
               { value: "atmos", icon: <BookmarkIcon />, label: "Atmos" },
             ]}
           />
+        </Cell>
+
+        <Cell label="Checkbox">
+          <CheckboxGroup value={types} onValueChange={setTypes} aria-label="World types">
+            <CheckboxGroup.Item value="ocean">Ocean</CheckboxGroup.Item>
+            <CheckboxGroup.Item value="ice">Ice</CheckboxGroup.Item>
+          </CheckboxGroup>
+          <Checkbox checked indeterminate onCheckedChange={() => {}}>Mixed</Checkbox>
         </Cell>
 
         <Cell label="RadioGroup">

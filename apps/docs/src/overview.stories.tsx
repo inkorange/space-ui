@@ -237,6 +237,7 @@ const CATALOGUE: Array<[string, Array<[string, string]>]> = [
   ]],
   ["Forms", [
     ["Autocomplete", "components--forms--autocomplete"],
+    ["Checkbox", "components--forms--checkbox"],
     ["TextField", "components--forms--text-field"],
     ["TextArea", "components--forms--text-area"],
     ["Select", "components--forms--select"],

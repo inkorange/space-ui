@@ -1,0 +1,175 @@
+@use "../styles/burst" as *;
+
+/* @token --sp-checkbox-row-gap-size The space between options in a group.
+   @token --sp-checkbox-label-gap-size The space between a box and its label.
+   @token --sp-checkbox-box-size The tile's width and height.
+   @token --sp-checkbox-mark-color The tick and the dash.
+   @token --sp-checkbox-glow-color The lit rim of a checked tile.
+   @token --sp-checkbox-halo-color The bloom around a checked tile. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-checkbox-row-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+}
+
+// position: relative so the absolutely-positioned .input below resolves
+// against this element rather than whatever positioned ancestor happens to
+// be nearest — an arbitrary ancestor can cause focus-driven scroll jumps.
+//
+// Top-aligned, like RadioGroup: a label that wraps to two lines must not drag
+// the tile down to sit beside the gap between them.
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--sp-checkbox-label-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+  // The library's 14px type step — Text size 2, line and all — so a label
+  // sits at the same size as the text in every other control rather than
+  // inheriting whatever surrounds it. The 20px line is also what centres the
+  // indicator on the first line.
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
+}
+
+.selfLabeled {
+  cursor: pointer;
+}
+
+// Lets a long label wrap inside the row rather than widening it.
+.label {
+  min-width: 0;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Where the radio is a sphere that ignites, the checkbox is a panel that
+   lights: the same glass and limb rim, squared off and rounded to the
+   library's control radius, so the two read as siblings rather than as the
+   same control drawn twice. The mark is drawn in the same starlight.
+
+   The paint lives with the component, not in an opt-in theme class: a design
+   system control has to look right without a consumer remembering a class. */
+.box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--sp-checkbox-box-size, 16px);
+  height: var(--sp-checkbox-box-size, 16px);
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.92), rgb(var(--sp-glass-deep-rgb) / 0.96));
+  box-shadow: inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.35);
+  // Centred on the first line of the label rather than on its top edge: half
+  // the difference between a line of text and the tile. Falls back to the 2px
+  // that gives for the default 20px line, where the lh unit is unsupported.
+  margin-top: 2px;
+  transition: box-shadow 0.15s ease;
+
+  @supports (margin-top: 1lh) {
+    margin-top: calc((1lh - var(--sp-checkbox-box-size, 16px)) / 2);
+  }
+}
+
+/* The mark is starlight on glass. Checking does three things at once: the
+   tile lights along its rim, the tick DRAWS itself rather than appearing,
+   and a ring of light leaves the tile — the flash of something igniting.
+   Unchecking simply lets all of it go out. */
+.tick,
+.dash {
+  position: absolute;
+  color: var(--sp-checkbox-mark-color);
+  pointer-events: none;
+}
+
+.tick {
+  width: 100%;
+  height: 100%;
+  // The tick is drawn on, so the glow has to be on the stroke itself.
+  filter: drop-shadow(0 0 3px var(--sp-checkbox-halo-color));
+}
+
+/* Hidden by having no length drawn, not by display: that is what lets it be
+   drawn on. */
+.tickPath {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) 0.04s,
+    opacity 0.08s linear;
+}
+
+/* Partly chosen, not chosen: a dash, never a tick. Wipes open from the
+   middle, so it reads as a state of its own and not a half-drawn tick. */
+.dash {
+  width: 56%;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  box-shadow: 0 0 6px var(--sp-checkbox-halo-color);
+  transform: scaleX(0);
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* The ring that leaves the tile at the moment of checking — the same flash
+   the radio orb gives, from one mixin so the two cannot drift. */
+.box::after {
+  @include burst-ring(var(--sp-checkbox-glow-color));
+}
+
+.input:checked ~ .box,
+.input:indeterminate ~ .box {
+  background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.6), rgb(var(--sp-glass-deep-rgb) / 0.9));
+  box-shadow:
+    inset 0 0 0 1px var(--sp-checkbox-glow-color),
+    inset 0 0 10px -4px var(--sp-checkbox-halo-color),
+    0 0 12px var(--sp-checkbox-halo-color);
+}
+
+.input:checked:not(:indeterminate) ~ .box::after {
+  @include burst-play;
+}
+
+.input:checked:not(:indeterminate) ~ .box .tickPath {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+// :indeterminate wins: a partly chosen parent shows the dash even though the
+// input is also checked.
+.input:indeterminate ~ .box .dash {
+  transform: scaleX(1);
+}
+
+
+.input:focus-visible ~ .box {
+  outline: 2px solid var(--sp-focus-ring);
+  outline-offset: 2px;
+}
+
+.input:disabled ~ .box {
+  opacity: 0.55;
+}
+
+.input:disabled ~ .label {
+  opacity: 0.55;
+}
+
+// No drawing on, no ring leaving the tile: the mark is simply there.
+// No drawing on: the mark is simply there. The ring's own reduced-motion
+// rule lives in the burst mixin.
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .tickPath,
+  .dash {
+    transition: none;
+  }
+}

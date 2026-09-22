@@ -36,6 +36,9 @@ export {
   type AutocompleteOption,
 } from "./components/Autocomplete";
 export { Slider, type SliderProps } from "./components/Slider";
+export {
+  Checkbox, CheckboxGroup, type CheckboxProps, type CheckboxGroupProps, type CheckboxGroupItemProps,
+} from "./components/Checkbox";
 export { RadioGroup, type RadioGroupProps, type RadioGroupItemProps } from "./components/RadioGroup";
 export { Progress, type ProgressProps } from "./components/Progress";
 export { Message, type MessageProps, type MessageVariant } from "./components/Message";
