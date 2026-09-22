@@ -1,26 +1,41 @@
 import { useState } from "react";
-import { AlertDialog, Badge, Button, Dialog, DropdownMenu, Flex, Popover, Slider, Tabs, Text, Tooltip } from "@inkorange/space-ui";
+import { AlertDialog, Badge, Button, Dialog, DropdownMenu, Flex, Popover, Select, Slider, Tabs, Text, Tooltip } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Overlays",
 };
 
-export const DialogStory = () => (
-  <Dialog>
-    <Dialog.Trigger><Button>Open dialog</Button></Dialog.Trigger>
-    <Dialog.Content size="4" maxWidth="480px">
-      <Dialog.Title>Add to a star system</Dialog.Title>
-      <Dialog.Description>Pick a system for this planet to call home.</Dialog.Description>
-      <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "flex-end" }}>
-        <Dialog.Close><Button size="sm">Done</Button></Dialog.Close>
-      </div>
-    </Dialog.Content>
-  </Dialog>
-);
+export const DialogStory = () => {
+  const [system, setSystem] = useState("trappist");
+
+  return (
+    <Dialog>
+      <Dialog.Trigger><Button>Open dialog</Button></Dialog.Trigger>
+      <Dialog.Content size="4" maxWidth="480px">
+        <Dialog.Title>Add to a star system</Dialog.Title>
+        <Dialog.Description>Pick a system for this planet to call home.</Dialog.Description>
+        {/* A Select inside a modal: its panel renders in the browser's top
+            layer, so it opens over the dialog instead of being clipped by it
+            or scrolling inside it. */}
+        <div style={{ marginTop: 16 }}>
+          <Select value={system} onValueChange={setSystem} aria-label="Star system">
+            <Select.Item value="trappist">TRAPPIST-1</Select.Item>
+            <Select.Item value="kepler">Kepler-442</Select.Item>
+            <Select.Item value="proxima">Proxima Centauri</Select.Item>
+            <Select.Item value="gliese">Gliese 667</Select.Item>
+          </Select>
+        </div>
+        <div style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Dialog.Close><Button size="sm">Done</Button></Dialog.Close>
+        </div>
+      </Dialog.Content>
+    </Dialog>
+  );
+};
 DialogStory.storyName = "Dialog";
 DialogStory.meta = {
   description:
-    "A modal for focused, interruptible tasks. Dismissible by escape, overlay click, and an explicit close.",
+    "A modal for focused, interruptible tasks. Dismissible by escape, overlay click, and an explicit close. Floating surfaces opened inside it — a Select's panel, a DropdownMenu, a Popover — render in the browser's top layer, so they sit over the dialog rather than being clipped by it.",
 };
 
 export const AlertDialogStory = () => (

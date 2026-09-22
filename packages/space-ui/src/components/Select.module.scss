@@ -77,11 +77,19 @@
 .chevron { flex-shrink: 0; opacity: 0.7; }
 
 .listbox {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  // Above the builder's absolute overlays (max z-index 12 per inventory)
-  // and safe inside dialog stacking contexts.
+  /* The panel rides the browser's popover layer, so it is placed against the
+     viewport, not against the Select. The browser's own popover defaults —
+     centred, auto margins, a full inset — all have to be undone for that.
+
+     Being in the top layer is what frees it from an ancestor that clips or
+     contains it: a Dialog, a card with overflow hidden, a transformed panel.
+     No z-index can do that, which is why this used to be trapped. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  /* Kept for the rare browser with no popover support, where the element
+     stays in flow beneath its trigger. */
   z-index: 50;
   /* Width policy, in one place:
        min  — never narrower than the trigger, so the panel always covers the
@@ -106,9 +114,10 @@
   padding: 4px;
   outline: none;
 
-  /* The shared reveal, keyed to the hidden attribute this listbox is toggled
-     with. It always hangs below its trigger. */
-  @include reveal(":not([hidden])", "[hidden]");
+  /* The shared reveal, keyed to the popover state this listbox is toggled
+     with, travelling away from the trigger on whichever side it landed. */
+  @include reveal(":popover-open", ":not(:popover-open)");
+  @include reveal-sides;
 }
 
 .item {

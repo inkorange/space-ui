@@ -18,23 +18,26 @@
   width: 100%;
 }
 
-/* Absolute, so an appearing list never shoves the page down under the cursor —
-   whatever is being searched usually sits directly below the field. */
+/* The panel rides the browser's popover layer: out of flow, so an appearing
+   list never shoves the page down under the cursor, and out of any ancestor
+   that clips or contains it — a Dialog, an overflow-hidden card. Placed
+   against the viewport from the field's own box, which means undoing the
+   browser's popover defaults (centred, auto margins, a full inset). */
 .panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  /* Above the page's own layers, and safe inside a dialog's stacking context
-     because nothing here portals out of the tree. */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  /* For the rare browser with no popover support, where it stays in flow. */
   z-index: 50;
   padding: 6px;
   border-radius: 10px;
 
-  /* The shared reveal, keyed to the hidden attribute the panel is toggled
-     with. Only the panel itself: the list inside it also uses hidden, and
-     animating that too would restart the reveal on every keystroke. */
-  @include reveal(":not([hidden])", "[hidden]");
+  /* The shared reveal, keyed to the popover state the panel is toggled with.
+     Only the panel itself: the list inside it uses hidden, and animating that
+     too would restart the reveal on every keystroke. */
+  @include reveal(":popover-open", ":not(:popover-open)");
+  @include reveal-sides;
 }
 
 .status {
