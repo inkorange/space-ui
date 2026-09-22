@@ -24,6 +24,12 @@
   display: inline-flex;
   align-items: flex-start;
   gap: var(--sp-checkbox-label-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+  // The library's 14px type step — Text size 2, line and all — so a label
+  // sits at the same size as the text in every other control rather than
+  // inheriting whatever surrounds it. The 20px line is also what centres the
+  // indicator on the first line.
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
 }
 
 .selfLabeled {
