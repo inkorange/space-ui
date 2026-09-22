@@ -1440,6 +1440,15 @@ nav.ladle-aside > ul[role="tree"]::-webkit-scrollbar-thumb:hover {
   margin-top: 40px;
 }
 
+/* A caption naming what a specimen demonstrates, sitting directly above it.
+   One grid unit of air beneath, so the words do not touch the thing they
+   describe. Captions inside a gapped container get their space from the
+   container and do not need this. */
+.docs-caption {
+  display: block;
+  margin-bottom: 8px;
+}
+
 /* ---------- How to ----------
    Guides read as numbered steps, because they are: each builds on the one
    before. Prose width is capped for reading; code blocks run the full width. */

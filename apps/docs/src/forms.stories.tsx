@@ -139,7 +139,7 @@ export const RadioGroupStory = () => {
       {/* Deliberately narrow, so every label wraps: the orb holds its place
           against the first line rather than centring on the whole block. */}
       <div style={{ maxWidth: 260 }}>
-        <Text size="1" color="muted">Labels that wrap</Text>
+        <Text size="1" color="muted" className="docs-caption">Labels that wrap</Text>
         <RadioGroup value={scope} onValueChange={setScope}>
           <RadioGroup.Item value="system">
             Share the whole system, including every planet and moon in it
