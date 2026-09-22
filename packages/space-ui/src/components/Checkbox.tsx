@@ -2,7 +2,6 @@
 import type * as React from "react";
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
 import { cx } from "./propShared";
-import { CheckIcon } from "./icons";
 import styles from "./Checkbox.module.scss";
 
 interface GroupCtx {
@@ -49,8 +48,21 @@ function Control({
         onChange={(e) => onToggle(e.currentTarget.checked)}
       />
       <span className={styles.box} aria-hidden="true">
-        <CheckIcon className={cx(styles.mark, styles.tick)} />
-        <span className={cx(styles.mark, styles.dash)} />
+        {/* Drawn here rather than with CheckIcon: a stroked path with
+            pathLength 1 lets the tick draw itself on, which a filled icon
+            cannot do. */}
+        <svg className={styles.tick} viewBox="0 0 16 16" fill="none">
+          <path
+            className={styles.tickPath}
+            d="M3.5 8.4 6.6 11.5 12.5 4.8"
+            pathLength={1}
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className={styles.dash} />
       </span>
     </>
   );

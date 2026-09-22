@@ -1109,11 +1109,14 @@ describe("Checkbox", () => {
     expect(html(<Checkbox checked={false} onCheckedChange={() => {}}>Off</Checkbox>)).not.toContain('checked=""');
   });
 
-  it("renders both marks always, so the change can transition", () => {
+  it("renders both marks always, so each can animate in", () => {
     // Static markup: indeterminate is a DOM property with no attribute, so
-    // the dash cannot be rendered conditionally and still animate.
+    // neither mark can be rendered conditionally and still animate. The tick
+    // is a stroked path with pathLength 1 — that is what lets it draw on.
     const out = html(<Checkbox checked={false} onCheckedChange={() => {}}>Mixed</Checkbox>);
-    expect(out.match(/mark/g)?.length).toBeGreaterThanOrEqual(2);
+    expect(out).toContain('pathLength="1"');
+    expect(out).toContain("tickPath");
+    expect(out).toContain("dash");
   });
 });
 
