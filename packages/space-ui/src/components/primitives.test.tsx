@@ -211,7 +211,7 @@ describe("Select", () => {
     expect(out).toContain('data-sizer=""');
     expect(out).toContain("Pick one");
   });
-  it("renders a hidden listbox with options and aria-selected", () => {
+  it("renders a closed top-layer listbox with options and aria-selected", () => {
     const out = html(
       <Select value="G" onValueChange={() => {}} placeholder="p">
         <Select.Item value="G">G - Yellow</Select.Item>
@@ -221,7 +221,13 @@ describe("Select", () => {
     expect(out).toContain('role="option"');
     expect(out).toContain('aria-selected="true"');
     expect(out).toContain("spSelectItem");
-    expect(out).toContain("hidden");
+    // popover, not hidden: the panel renders in the browser's top layer so an
+    // ancestor that clips or contains it — a Dialog, say — cannot trap it.
+    // manual, so pressing the trigger to close does not light-dismiss first
+    // and let the click that follows reopen it.
+    expect(out).toContain('popover="manual"');
+    // Closed to begin with: a popover element is not rendered until shown.
+    expect(out).not.toContain(":popover-open");
     // Each option carries an id derived from the listbox id + its value, so
     // the listbox can point aria-activedescendant at it once something is
     // highlighted (highlight state itself isn't reachable from a static

@@ -10,9 +10,14 @@
 // ever wrapped Items. They are now built in, which is why `Select` is the
 // component itself rather than a namespace.
 //
-// Native engine: a <button> trigger plus an always-mounted hidden listbox,
-// absolutely positioned under it. No portal — that keeps a Select inside a
-// dialog within the dialog's stacking context.
+// Native engine: a <button> trigger plus an always-mounted listbox that rides
+// the browser's own popover layer. It stays where it is in the DOM — so the
+// component is still one subtree, and a click inside it is still a click
+// inside the Select — while rendering in the top layer, above every ancestor.
+// That is what lets a Select inside a Dialog, or any container that clips or
+// contains its children, drop its panel over the lot. No React portal: a
+// portal would move the node, and with it the event paths and the focus order
+// this relies on.
 "use client";
 import type * as React from "react";
 import {
@@ -20,6 +25,7 @@ import {
   useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode,
 } from "react";
 import { cx } from "./propShared";
+import { showMeasured } from "../internal/showMeasured";
 import styles from "./Select.module.scss";
 import ctl from "../styles/spaceControls";
 
@@ -53,6 +59,11 @@ const useSelect = () => {
 // Item's id. encodeURIComponent guards against values containing spaces or
 // other characters that aren't legal in an HTML id.
 const optionId = (listboxId: string, value: string) => `${listboxId}-${encodeURIComponent(value)}`;
+
+/** Gap between trigger and panel, and the least room to leave at a viewport
+ *  edge — the same values Popover places by. */
+const OFFSET = 4;
+const EDGE_PADDING = 8;
 
 /** Pure render-time walk of the children collecting Item values and labels —
  *  no effects, so the trigger label is correct on first paint, under SSR, and
@@ -126,6 +137,10 @@ function SelectRoot({
   const listRef = useRef<HTMLDivElement | null>(null);
   const [triggerWidth, setTriggerWidth] = useState<number | null>(null);
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
+  // Where the panel sits in the viewport. Fixed coordinates, because a
+  // top-layer element is positioned against the viewport rather than against
+  // any ancestor of its own.
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
 
   const items = useMemo(() => collectItems(children), [children]);
   const values = useMemo(() => items.filter((i) => !i.disabled).map((i) => i.value), [items]);
@@ -145,20 +160,73 @@ function SelectRoot({
     return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
-  // Measures the trigger's rendered width (and the space below it) to size the
-  // listbox. useLayoutEffect so it lands before the browser paints the first
-  // open frame — a plain useEffect flashes one frame with the width unset.
+  // Measures the trigger to size and place the panel: its width, the room
+  // below it, and the viewport coordinates to sit at. One layout read, and
+  // the panel writes the side it landed on for the reveal to travel away from.
+  const place = useCallback(() => {
+    const trigger = triggerRef.current;
+    const list = listRef.current;
+    if (!trigger || !list) return;
+    const rect = trigger.getBoundingClientRect();
+    setTriggerWidth(trigger.offsetWidth);
+
+    const below = window.innerHeight - rect.bottom - EDGE_PADDING;
+    const above = rect.top - EDGE_PADDING;
+    // Below unless there is markedly more room above: a menu that jumps sides
+    // for a few pixels' gain reads as a glitch.
+    const flip = below < Math.min(list.offsetHeight + OFFSET, 200) && above > below;
+    const room = Math.max(120, Math.min(380, flip ? above - OFFSET : below - OFFSET));
+    setMaxHeight(room);
+    list.dataset.side = flip ? "top" : "bottom";
+
+    const height = Math.min(list.offsetHeight, room);
+    const top = flip ? Math.max(EDGE_PADDING, rect.top - OFFSET - height) : rect.bottom + OFFSET;
+    // Kept on screen: a panel wider than its trigger near the right edge
+    // slides back in rather than running off.
+    const left = Math.min(
+      Math.max(rect.left, EDGE_PADDING),
+      Math.max(window.innerWidth - list.offsetWidth - EDGE_PADDING, EDGE_PADDING),
+    );
+    setPos((prev) => (prev && prev.top === top && prev.left === left ? prev : { top, left }));
+  }, []);
+
+  // Placed while laid out but invisible, then shown, so the reveal starts from
+  // the right side. Layout effect: the corrected position lands before paint.
   useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    if (open) {
+      showMeasured(list, place);
+      place();
+    } else if (list.matches(":popover-open")) {
+      list.hidePopover();
+    }
+  }, [open, place]);
+
+  // Follow the trigger while open. Scroll and resize listeners are not enough:
+  // anything that moves the trigger without scrolling — a dialog resizing, an
+  // image loading above it — would leave the panel behind, and a top-layer
+  // element cannot simply ride along with its ancestor the way an absolutely
+  // positioned one does. One layout read a frame, and only while open.
+  useEffect(() => {
     if (!open) return;
-    const el = triggerRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setTriggerWidth(el.offsetWidth);
-    // Clamp to the space between the trigger and the viewport bottom, so a
-    // long list does not force extra scroll inside a scrollable ancestor.
-    const available = window.innerHeight - rect.bottom - 16;
-    setMaxHeight(Math.min(380, Math.max(120, available)));
-  }, [open]);
+    let frame = 0;
+    let last = "";
+    const track = () => {
+      const trigger = triggerRef.current;
+      if (trigger) {
+        const r = trigger.getBoundingClientRect();
+        const key = `${r.top}|${r.left}|${r.width}|${window.innerWidth}|${window.innerHeight}`;
+        if (key !== last) {
+          last = key;
+          place();
+        }
+      }
+      frame = requestAnimationFrame(track);
+    };
+    frame = requestAnimationFrame(track);
+    return () => cancelAnimationFrame(frame);
+  }, [open, place]);
 
   // Focus the listbox on open so arrow keys work immediately.
   useEffect(() => {
@@ -224,24 +292,29 @@ function SelectRoot({
           </svg>
         </button>
 
-        {/* Always mounted but hidden while closed, so the trigger can read the
-            item labels for sizing before the panel has ever been opened. */}
+        {/* Always mounted, so the trigger can read the item labels for sizing
+            before the panel has ever been opened.
+
+            popover="manual", not "auto": auto would light-dismiss on the
+            pointerdown that presses the trigger, so the click that follows
+            would reopen a panel the reader meant to close. The outside-press
+            listener above already closes it, and Escape is handled below. */}
         <div
           ref={listRef}
           id={listboxId}
           role="listbox"
           tabIndex={-1}
-          hidden={!open}
+          popover="manual"
+          data-side="bottom"
           aria-activedescendant={highlighted ? optionId(listboxId, highlighted) : undefined}
           className={cx(styles.listbox, ctl.spacePanel)}
           data-animated={animated ? undefined : "false"}
           style={
-            triggerWidth != null || maxHeight != null
-              ? ({
-                  ...(triggerWidth != null ? { "--_select-trigger-width": `${triggerWidth}px` } : {}),
-                  ...(maxHeight != null ? { maxHeight: `${maxHeight}px` } : {}),
-                } as React.CSSProperties)
-              : undefined
+            {
+              ...(triggerWidth != null ? { "--_select-trigger-width": `${triggerWidth}px` } : {}),
+              ...(maxHeight != null ? { maxHeight: `${maxHeight}px` } : {}),
+              ...(pos ? { top: pos.top, left: pos.left } : {}),
+            } as React.CSSProperties
           }
           onKeyDown={(e) => {
             if (e.key === "Escape") {

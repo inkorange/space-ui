@@ -3,8 +3,8 @@
 <!-- badges:start -->
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
-![coverage](https://img.shields.io/badge/coverage-75%25-yellowgreen)
-![minzip](https://img.shields.io/badge/minzip-31.7%20kB-blue)
+![coverage](https://img.shields.io/badge/coverage-74%25-yellowgreen)
+![minzip](https://img.shields.io/badge/minzip-31.9%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
