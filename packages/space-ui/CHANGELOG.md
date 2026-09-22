@@ -1,5 +1,23 @@
 # @inkorange/space-ui
 
+## 1.7.0
+
+### Minor Changes
+
+- fa17a5a: Add `Checkbox` and `CheckboxGroup`.
+
+  `Checkbox` is a single yes/no choice. `CheckboxGroup` wraps `CheckboxGroup.Item`s and holds the chosen values as an array, so a set where any number can be picked costs one piece of state rather than one boolean per option. Ticking appends, so the array keeps the order things were chosen in.
+
+  `indeterminate` draws a dash instead of a tick and sets the DOM property, so a select-all row that is only partly chosen announces as mixed. Checking lights the tile along its rim, draws the tick on rather than popping it in, and sends a ring of light out from the tile; `animated` motion is skipped under reduced motion. Labels are part of the click target, and a label that wraps keeps its tile against its first line. Sizes and spacing come from `--sp-checkbox-box-size`, `--sp-checkbox-label-gap-size` and `--sp-checkbox-row-gap-size`; the mark and its glow from `--sp-checkbox-mark-color`, `--sp-checkbox-glow-color` and `--sp-checkbox-halo-color`.
+
+  `RadioGroup` gets the same ring of light when an option is chosen, from the same shared mixin, so the two controls flash alike. Its labels are also set to the library's 14px type step (14px on a 20px line, matching Text size 2) rather than inheriting the surrounding text size, so they match the text in every other control.
+
+- e1203d7: Add `--sp-grid-base-size`, the library's 8px spacing unit, and retune `RadioGroup` against it.
+
+  Spacing is now expressed as whole multiples of one token, so changing it retunes the rhythm: 4px for a denser application, 10px for a roomier one. Sizes that are not spacing — a control's height, the radio orb's diameter, an optical nudge onto a text baseline — stay independent of it.
+
+  `RadioGroup` gets more room in both directions: two grid units between an orb and its label (`--sp-radio-group-label-gap-size`, was 8px) and two between options (`--sp-radio-group-row-gap-size`, was 8px). An option now aligns to the top, so a label that wraps to two lines keeps its orb against the first line instead of dragging it down beside the gap between them.
+
 ## 1.6.1
 
 ### Patch Changes

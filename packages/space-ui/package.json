@@ -1,6 +1,6 @@
 {
   "name": "@inkorange/space-ui",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "SpaceUI — a space-themed React component library and design system",
   "license": "MIT",
   "publishConfig": {
