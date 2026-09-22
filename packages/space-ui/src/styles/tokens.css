@@ -7,6 +7,13 @@
    Spec: docs/superpowers/specs/2026-07-31-radix-removal-design.md
    ============================================================ */
 :root {
+  /* The spacing grid. Every gap, pad and inset in the library is a whole
+     multiple of this, so one value retunes the library's rhythm: set it to
+     4px for a denser application, 10px for a roomier one. Sizes that are not
+     spacing — a control's height, an orb's diameter, an optical nudge onto a
+     text baseline — are not bound to it. */
+  --sp-grid-base-size: 8px;
+
   /* Grays — role-based (seeded from Radix slate, dark) */
   --sp-gray-text: #edeef0;        /* headings, primary text        (was gray-12) */
   --sp-gray-text-dim: #b0b4ba;    /* secondary text, labels        (was gray-11) */
@@ -109,6 +116,8 @@
      Set --sp-carousel-view-count on a carousel or its ancestor instead. */
   --sp-carousel-gap-size: 16px;
 
+  --sp-radio-group-label-gap-size: calc(var(--sp-grid-base-size) * 2);
+  --sp-radio-group-row-gap-size: calc(var(--sp-grid-base-size) * 2);
   --sp-radio-group-orb-highlight-color: #cfe0ff;
   --sp-radio-group-orb-mid-color: #8fb4ff;
   --sp-radio-group-orb-rim-color: rgba(150, 195, 255, 0.9);

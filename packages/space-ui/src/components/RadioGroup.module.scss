@@ -1,9 +1,28 @@
-.root { display: flex; flex-direction: column; gap: 8px; }
+/* @token --sp-radio-group-row-gap-size The space between options. Two grid
+     units, so a wrapped two-line label still reads as one option rather than
+     running into the next. */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-radio-group-row-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+}
+
+/* @token --sp-radio-group-label-gap-size The space between an orb and its
+     label. Two grid units by default. */
 
 // position: relative so the absolutely-positioned .input below resolves
 // against this element rather than whatever positioned ancestor happens to
 // be nearest — an arbitrary ancestor can cause focus-driven scroll jumps.
-.item { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+//
+// Items align to the top, not the centre: a label that wraps to two lines
+// would otherwise drag the orb down to sit beside the gap between them. The
+// orb belongs against the first line, the way a bullet does.
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--sp-radio-group-label-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+}
 .selfLabeled { cursor: pointer; }
 
 .input {
@@ -28,6 +47,14 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  // Centred on the first line of the label rather than on its top edge: half
+  // the difference between a line of text and the orb. Falls back to the 2px
+  // that gives for the default 20px line, where the lh unit is unsupported.
+  margin-top: 2px;
+
+  @supports (margin-top: 1lh) {
+    margin-top: calc((1lh - 16px) / 2);
+  }
 
   &::before {
     content: "";

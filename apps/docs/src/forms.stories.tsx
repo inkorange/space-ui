@@ -126,18 +126,37 @@ SelectStory.meta = {
 
 export const RadioGroupStory = () => {
   const [v, setV] = useState("public");
+  const [scope, setScope] = useState("system");
+
   return (
-    <RadioGroup value={v} onValueChange={setV}>
-      <RadioGroup.Item value="public">Public</RadioGroup.Item>
-      <RadioGroup.Item value="unlisted">Unlisted</RadioGroup.Item>
-      <RadioGroup.Item value="private">Private</RadioGroup.Item>
-    </RadioGroup>
+    <div style={{ display: "grid", gap: 32 }}>
+      <RadioGroup value={v} onValueChange={setV}>
+        <RadioGroup.Item value="public">Public</RadioGroup.Item>
+        <RadioGroup.Item value="unlisted">Unlisted</RadioGroup.Item>
+        <RadioGroup.Item value="private">Private</RadioGroup.Item>
+      </RadioGroup>
+
+      {/* Deliberately narrow, so every label wraps: the orb holds its place
+          against the first line rather than centring on the whole block. */}
+      <div style={{ maxWidth: 260 }}>
+        <Text size="1" color="muted" className="docs-caption">Labels that wrap</Text>
+        <RadioGroup value={scope} onValueChange={setScope}>
+          <RadioGroup.Item value="system">
+            Share the whole system, including every planet and moon in it
+          </RadioGroup.Item>
+          <RadioGroup.Item value="planet">
+            Share this planet only, and keep its moons private
+          </RadioGroup.Item>
+          <RadioGroup.Item value="none">Share nothing</RadioGroup.Item>
+        </RadioGroup>
+      </div>
+    </div>
   );
 };
 RadioGroupStory.storyName = "RadioGroup";
 RadioGroupStory.meta = {
   description:
-    "A single-choice control for short lists where seeing every option at once matters more than saving space.",
+    "A single-choice control for short lists where seeing every option at once matters more than saving space. A label is part of the click target, not merely beside it, and a label that wraps keeps the orb against its first line. `--sp-radio-group-label-gap-size` sets the space between the two.",
 };
 
 /** A small stand-in catalogue. The component narrows this against what is
