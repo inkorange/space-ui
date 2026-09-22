@@ -34,6 +34,7 @@ import { Autocomplete } from "./Autocomplete";
 import { Pagination, pageCount, pageWindow } from "./Pagination";
 import { Popover } from "./Popover";
 import { Carousel } from "./Carousel";
+import { Checkbox, CheckboxGroup } from "./Checkbox";
 import { IconToggle } from "./IconToggle";
 import { Tooltip } from "./Tooltip";
 import * as Icons from "./icons";
@@ -1088,5 +1089,94 @@ describe("Carousel", () => {
     const out = render({ perView: 3, showPagination: true }, 3);
     expect(out).not.toContain("data-scrollable");
     expect(out).not.toContain('aria-label="Position');
+  });
+});
+
+describe("Checkbox", () => {
+  it("labels itself: the text is inside the label, so it is part of the target", () => {
+    const out = html(<Checkbox checked={false} onCheckedChange={() => {}}>Include moons</Checkbox>);
+    expect(out).toMatch(/<label[^>]*>[\s\S]*type="checkbox"[\s\S]*Include moons[\s\S]*<\/label>/);
+  });
+
+  it("without children emits no label, so an outer label can own the association", () => {
+    const out = html(<Checkbox checked={false} onCheckedChange={() => {}} aria-label="Include moons" />);
+    expect(out).not.toContain("<label");
+    expect(out).toContain('aria-label="Include moons"');
+  });
+
+  it("reflects checked", () => {
+    expect(html(<Checkbox checked onCheckedChange={() => {}}>On</Checkbox>)).toContain("checked");
+    expect(html(<Checkbox checked={false} onCheckedChange={() => {}}>Off</Checkbox>)).not.toContain('checked=""');
+  });
+
+  it("renders both marks always, so the change can transition", () => {
+    // Static markup: indeterminate is a DOM property with no attribute, so
+    // the dash cannot be rendered conditionally and still animate.
+    const out = html(<Checkbox checked={false} onCheckedChange={() => {}}>Mixed</Checkbox>);
+    expect(out.match(/mark/g)?.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("CheckboxGroup", () => {
+  const group = (value: string[]) =>
+    html(
+      <CheckboxGroup value={value} onValueChange={() => {}} aria-label="Planet types">
+        <CheckboxGroup.Item value="lava">Lava world</CheckboxGroup.Item>
+        <CheckboxGroup.Item value="ocean">Ocean world</CheckboxGroup.Item>
+        <CheckboxGroup.Item value="ice">Ice world</CheckboxGroup.Item>
+      </CheckboxGroup>,
+    );
+
+  it("is a labelled group of independent options, not a radiogroup", () => {
+    const out = group([]);
+    expect(out).toContain('role="group"');
+    expect(out).toContain('aria-label="Planet types"');
+    expect(out).not.toContain('role="radiogroup"');
+    expect(out.match(/type="checkbox"/g)).toHaveLength(3);
+  });
+
+  it("checks every value in the array, and only those", () => {
+    const out = group(["lava", "ice"]);
+    expect(out.match(/checked=""/g)).toHaveLength(2);
+    // React writes checked before value on the same input.
+    expect(out).toMatch(/checked=""\s+value="lava"/);
+    expect(out).toMatch(/checked=""\s+value="ice"/);
+    expect(out).toMatch(/class="input"\s+value="ocean"/);
+  });
+
+  it("checks nothing when the array is empty", () => {
+    expect(group([])).not.toContain('checked=""');
+  });
+
+  it("disables every item from the group", () => {
+    const out = html(
+      <CheckboxGroup value={[]} onValueChange={() => {}} disabled>
+        <CheckboxGroup.Item value="a">A</CheckboxGroup.Item>
+        <CheckboxGroup.Item value="b">B</CheckboxGroup.Item>
+      </CheckboxGroup>,
+    );
+    expect(out.match(/disabled=""/g)).toHaveLength(2);
+  });
+
+  it("disables one item without touching the rest", () => {
+    const out = html(
+      <CheckboxGroup value={[]} onValueChange={() => {}}>
+        <CheckboxGroup.Item value="a" disabled>A</CheckboxGroup.Item>
+        <CheckboxGroup.Item value="b">B</CheckboxGroup.Item>
+      </CheckboxGroup>,
+    );
+    expect(out.match(/disabled=""/g)).toHaveLength(1);
+  });
+
+  it("refuses an item outside a group, rather than rendering a dead control", () => {
+    expect(() => html(<CheckboxGroup.Item value="a">A</CheckboxGroup.Item>)).toThrow(
+      /must be inside a CheckboxGroup/,
+    );
+  });
+
+  it("owns its indicator styles: the tile and its marks need no opt-in class", () => {
+    const scss = readFileSync(path.join(__dirname, "Checkbox.module.scss"), "utf8");
+    expect(scss).toMatch(/\.input:checked[\s\S]*~ \.box/);
+    expect(scss).toMatch(/\.input:indeterminate[\s\S]*~ \.box/);
   });
 });

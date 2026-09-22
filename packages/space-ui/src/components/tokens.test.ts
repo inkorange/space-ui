@@ -36,6 +36,8 @@ export const EXPECTED_TOKENS = [
   "--sp-tabs-hover-from-color", "--sp-tabs-hover-to-color",
   "--sp-tabs-active-from-color", "--sp-tabs-active-edge-color",
   "--sp-grid-base-size",
+  "--sp-checkbox-row-gap-size", "--sp-checkbox-label-gap-size", "--sp-checkbox-box-size",
+  "--sp-checkbox-mark-color", "--sp-checkbox-glow-color", "--sp-checkbox-halo-color",
   "--sp-radio-group-label-gap-size",
   "--sp-radio-group-row-gap-size",
   "--sp-radio-group-orb-highlight-color", "--sp-radio-group-orb-mid-color",

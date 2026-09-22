@@ -116,6 +116,12 @@
      Set --sp-carousel-view-count on a carousel or its ancestor instead. */
   --sp-carousel-gap-size: 16px;
 
+  --sp-checkbox-row-gap-size: calc(var(--sp-grid-base-size) * 2);
+  --sp-checkbox-label-gap-size: calc(var(--sp-grid-base-size) * 2);
+  --sp-checkbox-box-size: 16px;
+  --sp-checkbox-mark-color: #eaf2ff;
+  --sp-checkbox-glow-color: rgba(190, 215, 255, 0.85);
+  --sp-checkbox-halo-color: rgba(120, 170, 255, 0.55);
   --sp-radio-group-label-gap-size: calc(var(--sp-grid-base-size) * 2);
   --sp-radio-group-row-gap-size: calc(var(--sp-grid-base-size) * 2);
   --sp-radio-group-orb-highlight-color: #cfe0ff;

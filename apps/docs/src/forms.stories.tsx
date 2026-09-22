@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Autocomplete, MagnifyingGlassIcon, RadioGroup, Select, Slider, Text, TextArea, TextField } from "@inkorange/space-ui";
+import { Autocomplete, Checkbox, CheckboxGroup, MagnifyingGlassIcon, RadioGroup, Select, Slider, Text, TextArea, TextField } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Forms",
@@ -122,6 +122,74 @@ SelectStory.storyName = "Select";
 SelectStory.meta = {
   description:
     "A single-choice menu for lists too long to show inline. The trigger sizes itself to its widest option, so it never changes width as you select — the cap is what stops a long label producing an absurd control. Past the cap the trigger ellipsizes while the panel wraps, so you can always read an option in full before choosing it.",
+};
+
+const WORLD_TYPES = [
+  ["lava", "Lava world"],
+  ["ocean", "Ocean world"],
+  ["ice", "Ice world"],
+  ["gas", "Gas giant"],
+] as const;
+
+export const CheckboxStory = () => {
+  const [moons, setMoons] = useState(true);
+  const [types, setTypes] = useState<string[]>(["ocean"]);
+  const [scope, setScope] = useState<string[]>(["system"]);
+
+  const all = WORLD_TYPES.map(([value]) => value);
+  const every = types.length === all.length;
+
+  return (
+    <div style={{ display: "grid", gap: 32 }}>
+      <div>
+        <Text size="1" color="muted" className="docs-caption">On its own</Text>
+        <Checkbox checked={moons} onCheckedChange={setMoons}>
+          Include moons in the survey
+        </Checkbox>
+      </div>
+
+      <div>
+        <Text size="1" color="muted" className="docs-caption">Any number of a set</Text>
+        {/* The select-all row is a plain Checkbox above the group: partly
+            chosen shows a dash, and pressing it either takes all or none. */}
+        <Checkbox
+          checked={types.length > 0}
+          indeterminate={types.length > 0 && !every}
+          onCheckedChange={() => setTypes(every ? [] : [...all])}
+        >
+          All world types
+        </Checkbox>
+        <div style={{ marginTop: 16, marginLeft: 32 }}>
+          <CheckboxGroup value={types} onValueChange={setTypes} aria-label="World types">
+            {WORLD_TYPES.map(([value, label]) => (
+              <CheckboxGroup.Item key={value} value={value}>{label}</CheckboxGroup.Item>
+            ))}
+          </CheckboxGroup>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 260 }}>
+        <Text size="1" color="muted" className="docs-caption">Labels that wrap</Text>
+        <CheckboxGroup value={scope} onValueChange={setScope} aria-label="What to share">
+          <CheckboxGroup.Item value="system">
+            Share the whole system, including every planet and moon in it
+          </CheckboxGroup.Item>
+          <CheckboxGroup.Item value="notes">
+            Share my notes, which anyone with the link can then read
+          </CheckboxGroup.Item>
+          <CheckboxGroup.Item value="disabled" disabled>
+            Share revision history (not yet available)
+          </CheckboxGroup.Item>
+        </CheckboxGroup>
+      </div>
+    </div>
+  );
+};
+CheckboxStory.storyName = "Checkbox";
+CheckboxStory.meta = {
+  components: ["Checkbox", "CheckboxGroup"],
+  description:
+    "A yes/no choice. On its own it holds one boolean; wrapped in a CheckboxGroup the group holds an array, so choosing several costs one piece of state rather than one per option. `indeterminate` draws a dash for a select-all row that is only partly chosen, and announces as mixed. A label is part of the click target, and a label that wraps keeps its tile against the first line.",
 };
 
 export const RadioGroupStory = () => {
