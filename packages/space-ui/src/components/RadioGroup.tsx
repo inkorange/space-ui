@@ -72,7 +72,11 @@ function Item({ value, disabled, children }: RadioGroupItemProps) {
         disabled={isDisabled}
         onChange={() => g.onValueChange(value)}
       />
-      <span className={cx(styles.orb, "spRadioOrb")} aria-hidden="true" />
+      <span className={cx(styles.orb, "spRadioOrb")} aria-hidden="true">
+        {/* The orb's own ::before and ::after are the glass and the star
+            core, so the ignition ring needs an element of its own. */}
+        <span className={styles.burst} />
+      </span>
     </>
   );
   if (children === undefined || children === null) {

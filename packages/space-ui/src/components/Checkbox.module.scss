@@ -1,3 +1,5 @@
+@use "../styles/burst" as *;
+
 /* @token --sp-checkbox-row-gap-size The space between options in a group.
    @token --sp-checkbox-label-gap-size The space between a box and its label.
    @token --sp-checkbox-box-size The tile's width and height.
@@ -111,16 +113,10 @@
   transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* The ring that leaves the tile at the moment of checking. Always present,
-   at zero opacity; the keyframes run only when the state changes. */
+/* The ring that leaves the tile at the moment of checking — the same flash
+   the radio orb gives, from one mixin so the two cannot drift. */
 .box::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid var(--sp-checkbox-glow-color);
-  opacity: 0;
-  pointer-events: none;
+  @include burst-ring(var(--sp-checkbox-glow-color));
 }
 
 .input:checked ~ .box,
@@ -133,7 +129,7 @@
 }
 
 .input:checked:not(:indeterminate) ~ .box::after {
-  animation: sp-checkbox-burst 0.52s cubic-bezier(0.16, 0.84, 0.44, 1);
+  @include burst-play;
 }
 
 .input:checked:not(:indeterminate) ~ .box .tickPath {
@@ -147,16 +143,6 @@
   transform: scaleX(1);
 }
 
-@keyframes sp-checkbox-burst {
-  0% {
-    opacity: 0.9;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(2.1);
-  }
-}
 
 .input:focus-visible ~ .box {
   outline: 2px solid var(--sp-focus-ring);
@@ -172,14 +158,12 @@
 }
 
 // No drawing on, no ring leaving the tile: the mark is simply there.
+// No drawing on: the mark is simply there. The ring's own reduced-motion
+// rule lives in the burst mixin.
 @media (prefers-reduced-motion: reduce) {
   .box,
   .tickPath,
   .dash {
     transition: none;
-  }
-
-  .input:checked ~ .box::after {
-    animation: none;
   }
 }
