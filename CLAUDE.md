@@ -51,6 +51,24 @@ enforce all of it, so breaking a rule here fails CI rather than review.
 - Visual changes await Chris's sign-off in the gallery before committing.
 - Chris QAs himself by default; don't run verification loops unasked.
 
+## Releasing
+
+A merged changeset opens a "Version Packages" PR; merging that publishes.
+
+Publishing goes through **npm**, not pnpm: `changeset publish` shells out to
+`pnpm publish` in a workspace, and pnpm has no OIDC exchange, so it cannot do
+npm's trusted publishing. The release workflow therefore uses changesets for
+versioning only and publishes with `npm publish` itself.
+
+There is **no npm token**. The workflow proves who it is with its GitHub OIDC
+identity, which npm accepts because the package names that workflow as its
+trusted publisher (npmjs.com → the package → Settings → Trusted publisher:
+repository `inkorange/space-ui`, workflow `release.yml`). Two consequences:
+- Renaming `.github/workflows/release.yml`, or moving the repo, breaks
+  publishing until the trusted publisher entry is updated to match.
+- Publishing cannot be done from a laptop with a token any more, which is the
+  point: a credential that does not exist cannot leak.
+
 ## Commands
 pnpm docs  → gallery at localhost:61000 · pnpm test · pnpm build ·
 pnpm changeset
