@@ -16,3 +16,6 @@ coverage/
 # overwrites this wholesale, so the committed copy was never read — it only
 # churned a dozen hashed files into every diff that touched the gallery.
 apps/docs/build/
+
+# Browser-mode failure screenshots — an artifact of a run, not a record.
+.vitest/

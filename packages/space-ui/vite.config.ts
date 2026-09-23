@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { playwright } from "@vitest/browser-playwright";
 import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 
@@ -30,9 +31,42 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "happy-dom",
     css: { modules: { classNameStrategy: "non-scoped" } },
-    setupFiles: ["src/test/setup.ts"],
+    // Two suites, because the components answer to two different things.
+    //
+    // `unit` is the bulk: markup contracts and behaviour that needs no
+    // layout, run in happy-dom because it starts in milliseconds.
+    //
+    // `browser` is the rest: everything that measures — the Carousel's
+    // stopping points and drag, where a panel lands and which way it flips,
+    // showMeasured. happy-dom reports every rectangle as zero, so those
+    // paths cannot be tested there at all, only in a browser that does
+    // layout. The two share one coverage report.
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "happy-dom",
+          setupFiles: ["src/test/setup.ts"],
+          include: ["src/**/*.test.{ts,tsx}"],
+          exclude: ["src/**/*.browser.test.{ts,tsx}"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "browser",
+          include: ["src/**/*.browser.test.{ts,tsx}"],
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            headless: true,
+            instances: [{ browser: "chromium" }],
+          },
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
       // Only the shipped source counts. Tests, the type-only barrel, and the

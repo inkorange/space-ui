@@ -1,7 +1,7 @@
 {
   "name": "@inkorange/space-ui",
   "version": "1.7.1",
-  "description": "SpaceUI — a space-themed React component library and design system",
+  "description": "SpaceUI \u2014 a space-themed React component library and design system",
   "license": "MIT",
   "publishConfig": {
     "access": "public",
@@ -46,6 +46,8 @@
     "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css",
     "prepack": "cp ../../README.md ../../LICENSE .",
     "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:browser": "vitest run --project browser",
     "typecheck": "tsc --noEmit",
     "check:exports": "node scripts/check-exports.mjs",
     "test:coverage": "vitest run --coverage",
@@ -64,13 +66,17 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.6.0",
+    "@vitest/browser": "^5.0.1",
+    "@vitest/browser-playwright": "^5.0.1",
     "@vitest/coverage-v8": "^5.0.1",
     "happy-dom": "^20.14.5",
+    "playwright": "^1.63.0",
     "react": "^19",
     "react-dom": "^19",
     "sass": "^1.89.0",
     "typescript": "^5.8.0",
     "vite": "^6.4.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "vitest-browser-react": "^2.3.0"
   }
 }
