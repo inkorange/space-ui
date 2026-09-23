@@ -37,7 +37,13 @@
   border: 0;
   border-radius: 8px;
   background: none;
-  font: inherit;
+  /* The family and weight, but NOT the size: `font: inherit` is a shorthand,
+     and it was resetting the size to whatever the page uses — so a row with a
+     click handler came out a different size from one without, which is the
+     opposite of what inheriting is for. The row's own step is set above. */
+  font-family: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
   color: inherit;
   cursor: pointer;
 

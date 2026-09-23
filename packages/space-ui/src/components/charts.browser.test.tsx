@@ -175,6 +175,26 @@ describe("BarList", () => {
     expect(fills[1] / fills[0]).toBeCloseTo(0.5, 1);
   });
 
+  it("sets a pressable row exactly like a plain one", async () => {
+    // The regression this guards: the button used `font: inherit`, and that
+    // shorthand reset the size to the page's own, so giving a list a click
+    // handler silently changed its type size.
+    render(
+      <div style={{ width: 400, fontSize: 16 }}>
+        <BarList items={[{ label: "Idea", value: 44 }]} aria-label="Plain" />
+        <BarList items={[{ label: "Idea", value: 44 }]} onItemClick={() => {}} aria-label="Pressable" />
+      </div>,
+    );
+    await drawn();
+    const [plain, pressable] = [...document.querySelectorAll("[class*='line']")];
+    expect(pressable.tagName).toBe("BUTTON");
+    expect(getComputedStyle(pressable).fontSize).toBe(getComputedStyle(plain).fontSize);
+    const part = (row: Element, name: string) =>
+      getComputedStyle(row.querySelector(`[class*='${name}']`)!).fontSize;
+    expect(part(pressable, "label")).toBe(part(plain, "label"));
+    expect(part(pressable, "value")).toBe(part(plain, "value"));
+  });
+
   it("lines every bar up at the same left edge, whatever the label", async () => {
     render(
       <div style={{ width: 400 }}>
