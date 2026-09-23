@@ -3,8 +3,8 @@
 <!-- badges:start -->
 
 [![npm](https://img.shields.io/npm/v/@inkorange/space-ui)](https://www.npmjs.com/package/@inkorange/space-ui)
-![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
-![minzip](https://img.shields.io/badge/minzip-32.3%20kB-blue)
+![coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)
+![minzip](https://img.shields.io/badge/minzip-39.4%20kB-blue)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
 [![docs](https://img.shields.io/badge/docs-live%20gallery-0b7dd6)](https://space-components.vercel.app)
 
@@ -18,7 +18,7 @@ compose and nothing to opt into.
      resolve against the registry rather than the repository. This sheet is a
      screenshot of the real components, shot from the gallery — see
      `pnpm assets`. -->
-<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Checkbox, Loader, Tabs, icons, Text, TextArea, Card plain and with an image, an open Popover, Pagination, a Carousel and a Message banner on a dark ground"
+<img alt="Stickersheet: Button, Badge, Select, TextField, Slider, Progress, IconToggle, RadioGroup, Checkbox, a bar chart, Loader, Tabs, icons, Text, TextArea, Card plain and with an image, an open Popover, Pagination, a Carousel and a Message banner on a dark ground"
      src="https://raw.githubusercontent.com/inkorange/space-ui/main/.github/assets/components.jpg"
      width="100%">
 
@@ -173,6 +173,7 @@ it exposes.
 | | |
 | --- | --- |
 | **Typography** | [Text](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Link](https://space-components.vercel.app/?story=components--typography--text-sizes) · [Heading](https://space-components.vercel.app/?story=components--typography--headings) · [Badge](https://space-components.vercel.app/?story=components--typography--badges) · [Separator](https://space-components.vercel.app/?story=components--typography--separator) |
+| **Charts** | [Chart](https://space-components.vercel.app/?story=components--charts--bar-chart) · [BarList](https://space-components.vercel.app/?story=components--charts--bar-list) · [PieChart](https://space-components.vercel.app/?story=components--charts--pie-chart) |
 | **Layout** | [Card](https://space-components.vercel.app/?story=components--layout--card) · [Carousel](https://space-components.vercel.app/?story=components--layout--carousel) · [Flex](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Grid](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Box](https://space-components.vercel.app/?story=components--layout--flex-and-grid) · [Pagination](https://space-components.vercel.app/?story=components--layout--pagination) |
 | **Forms** | [Autocomplete](https://space-components.vercel.app/?story=components--forms--autocomplete) · [Checkbox](https://space-components.vercel.app/?story=components--forms--checkbox) · [TextField](https://space-components.vercel.app/?story=components--forms--text-field) · [TextArea](https://space-components.vercel.app/?story=components--forms--text-area) · [Select](https://space-components.vercel.app/?story=components--forms--select) · [Slider](https://space-components.vercel.app/?story=components--forms--slider) · [RadioGroup](https://space-components.vercel.app/?story=components--forms--radio-group) |
 | **Buttons** | [Button](https://space-components.vercel.app/?story=components--buttons--buttons) · [IconToggle](https://space-components.vercel.app/?story=components--buttons--icon-toggle) |

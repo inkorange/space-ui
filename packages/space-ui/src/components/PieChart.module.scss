@@ -1,0 +1,99 @@
+/* Parts of a whole. The slices carry the series palette; the legend carries
+   the names and the figures, so identity is never colour alone.
+
+   @token --sp-pie-chart-gap-size The hairline of surface between slices. */
+
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 3);
+  min-width: 0;
+  color: var(--sp-chart-label-color);
+}
+
+.svg {
+  display: block;
+  flex: none;
+}
+
+/* The surface showing between slices, rather than a stroke of some other
+   colour: it reads as a gap at any size and against any ground. */
+.slice {
+  stroke: var(--sp-gray-panel);
+  stroke-width: var(--sp-pie-chart-gap-size, 2px);
+  transition: opacity 0.15s ease;
+
+  &[data-dim] {
+    opacity: 0.4;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.total {
+  fill: var(--sp-glass-text);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.totalLabel {
+  fill: var(--sp-chart-label-color);
+  font-size: 11px;
+}
+
+.legend {
+  display: grid;
+  gap: var(--sp-grid-base-size, 8px);
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
+  transition: opacity 0.15s ease;
+
+  &[data-dim] {
+    opacity: 0.5;
+  }
+}
+
+.legendName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sp-glass-text);
+}
+
+.legendValue {
+  font-variant-numeric: tabular-nums;
+  color: var(--sp-glass-text);
+}
+
+.legendPercent {
+  margin-inline-start: var(--sp-grid-base-size, 8px);
+  color: var(--sp-chart-label-color);
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slice,
+  .legendItem {
+    transition: none;
+  }
+}

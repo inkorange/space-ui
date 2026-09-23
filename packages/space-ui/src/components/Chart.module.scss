@@ -1,0 +1,190 @@
+/* A chart is drawn from tokens like everything else here: the series colours,
+   the recessive grid, the mark radius and the line width all come from
+   tokens.css, so a chart re-themes with the rest of the page.
+
+   Spacing is whole grid units. See --sp-grid-base-size.
+
+   @token --sp-chart-series-1-color … --sp-chart-series-8-color The series
+     palette, in order. Slot 1 is always the first series.
+   @token --sp-chart-grid-color The horizontal grid lines.
+   @token --sp-chart-axis-color The zero line, and the crosshair.
+   @token --sp-chart-label-color Axis labels and legend text.
+   @token --sp-chart-mark-radius-size The rounded end of a bar or a track.
+   @token --sp-chart-line-width How thick a plotted line is. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-grid-base-size, 8px);
+  min-width: 0;
+  color: var(--sp-chart-label-color);
+  font-size: var(--sp-font-xs);
+}
+
+.plot {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+}
+
+.grid {
+  stroke: var(--sp-chart-grid-color);
+  stroke-width: 1;
+}
+
+/* Where zero sits, when some values fall below it: the line the reader
+   measures against, so it is the one line that is not recessive. */
+.zeroLine {
+  stroke: var(--sp-chart-axis-color);
+}
+
+.axisLabel {
+  fill: var(--sp-chart-label-color);
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.bar {
+  transition: opacity 0.15s ease;
+
+  /* Dimmed, not hidden: the bars away from the pointer stay legible, while
+     the one being read comes forward. */
+  &[data-dim] {
+    opacity: 0.45;
+  }
+}
+
+/* The stripes of an unfinished bar. Thick enough to read at a glance, open
+   enough that the ground shows through — the bar is visibly not solid yet. */
+.hatch {
+  stroke-width: 3;
+}
+
+.partialNote {
+  margin-inline-start: calc(var(--sp-grid-base-size, 8px) / 2);
+  color: var(--sp-chart-label-color);
+}
+
+.line {
+  stroke-width: var(--sp-chart-line-width);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Low enough that two overlapping areas both stay readable, and that the grid
+   behind still shows through. */
+.area {
+  opacity: 0.18;
+}
+
+/* A marker for every reading, but shown only where the reader is looking —
+   a dot on every point of a long series is noise. */
+.dot {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  &[data-on] {
+    opacity: 1;
+  }
+}
+
+.crosshair {
+  stroke: var(--sp-chart-axis-color);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  pointer-events: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* The reading under the pointer. Inside the plot rather than in the top
+   layer: it belongs to the chart, follows it when the page moves, and never
+   needs to escape its box. */
+.tooltip {
+  position: absolute;
+  top: var(--sp-grid-base-size, 8px);
+  z-index: 1;
+  min-width: 120px;
+  padding: var(--sp-grid-base-size, 8px);
+  border: 1px solid var(--sp-gray-border);
+  border-radius: 8px;
+  background: var(--sp-select-panel-color);
+  color: var(--sp-glass-text);
+  pointer-events: none;
+  box-shadow: 0 8px 24px -12px rgb(var(--sp-shadow-rgb) / 0.8);
+}
+
+.tooltipHead {
+  margin: 0 0 var(--sp-grid-base-size, 8px);
+  font-size: var(--sp-font-xs);
+  font-weight: 600;
+}
+
+.tooltipList {
+  display: grid;
+  gap: calc(var(--sp-grid-base-size, 8px) / 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tooltipRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--sp-grid-base-size, 8px);
+  font-size: var(--sp-font-xs);
+}
+
+.tooltipName {
+  color: var(--sp-chart-label-color);
+}
+
+.tooltipValue {
+  font-variant-numeric: tabular-nums;
+  color: var(--sp-glass-text);
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-grid-base-size, 8px);
+  font-size: var(--sp-font-xs);
+}
+
+/* The figures, for assistive tech only. Not display:none, which would take it
+   out of the accessibility tree along with everything else. */
+.data {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,87 @@
+/* Rows of label, track, bar and figure. Spacing is whole grid units; the
+   track and its fill share the mark radius with every other bar here.
+
+   @token --sp-bar-list-label-width The label column. Set it to line a list up
+     with another, or to give long names more room.
+   @token --sp-bar-list-track-height How thick a row's bar is. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-grid-base-size, 8px);
+  min-width: 0;
+}
+
+.row {
+  min-width: 0;
+}
+
+/* One grid: the label column is fixed so every bar starts at the same place,
+   the track takes what is left, and the figure is as wide as it needs. */
+.line {
+  display: grid;
+  grid-template-columns: var(--sp-bar-list-label-width, 96px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  width: 100%;
+  padding: calc(var(--sp-grid-base-size, 8px) / 2) 0;
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
+  color: var(--sp-glass-text);
+  text-align: start;
+}
+
+.pressable {
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover .fill {
+    filter: brightness(1.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  height: var(--sp-bar-list-track-height, 8px);
+  border-radius: var(--sp-chart-mark-radius-size);
+  background: var(--sp-chart-track-color);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.4s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.value {
+  font-variant-numeric: tabular-nums;
+  color: var(--sp-glass-text);
+}
+
+.percent {
+  margin-inline-start: var(--sp-grid-base-size, 8px);
+  color: var(--sp-chart-label-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}
