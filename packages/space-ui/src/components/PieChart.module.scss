@@ -1,0 +1,151 @@
+/* Parts of a whole. The slices carry the series palette; the legend carries
+   the names and the figures, so identity is never colour alone.
+
+   @token --sp-pie-chart-gap-size The hairline of surface between slices. */
+
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 3);
+  min-width: 0;
+  color: var(--sp-chart-label-color);
+}
+
+.svg {
+  display: block;
+  flex: none;
+  /* The disc sits on the panel rather than being printed on it. */
+  filter: drop-shadow(0 6px 14px rgb(var(--sp-shadow-rgb) / 0.55));
+}
+
+/* The lighting and the darkened edge. Painted over the slices, so it shades
+   the disc as one object; it must never eat a pointer meant for a slice. */
+.face,
+.hole {
+  pointer-events: none;
+}
+
+/* The surface showing between slices, rather than a stroke of some other
+   colour: it reads as a gap at any size and against any ground. */
+/* The surface showing between slices, rather than a stroke of some other
+   colour: it reads as a gap at any size and against any ground. No bloom:
+   slices meet each other edge to edge, and a glow on each one fogs the
+   boundaries that carry the comparison. */
+.slice {
+  stroke: var(--sp-gray-panel);
+  stroke-width: var(--sp-pie-chart-gap-size, 2px);
+  transition: opacity 0.15s ease;
+
+  &[data-dim] {
+    opacity: 0.4;
+  }
+}
+
+/* The ring draws itself round, clockwise from the top, the way a dial fills —
+   so the slices arrive in the order they are listed rather than the picture
+   wiping in from one side.
+
+   A conic mask does it: the angle is an animatable custom property, and the
+   gradient reveals everything up to that angle. Where @property is not
+   supported the variable resolves to nothing, the mask-image is invalid, and
+   the ring simply appears whole — which is the right way for this to fail. */
+@property --_pie-sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 360deg;
+}
+
+.root[data-animated] .sweep {
+  animation: sp-pie-sweep 0.72s cubic-bezier(0.22, 0.68, 0.32, 1) both;
+  mask-image: conic-gradient(from 0deg, #000 var(--_pie-sweep), transparent 0);
+}
+
+@keyframes sp-pie-sweep {
+  from {
+    --_pie-sweep: 0deg;
+  }
+  to {
+    --_pie-sweep: 360deg;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* The figure in the middle is the brightest thing in the component: it is
+   what the ring is there to say. */
+.total {
+  fill: var(--sp-glint-rgb, var(--sp-on-solid));
+  fill: rgb(var(--sp-glint-rgb));
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.totalLabel {
+  fill: var(--sp-chart-label-color);
+  font-size: 11px;
+}
+
+.legend {
+  display: grid;
+  gap: var(--sp-grid-base-size, 8px);
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  list-style: none;
+}
+
+.legendItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  /* The same 12/16 step BarList's rows take: a legend is a list of results
+     too, and the ring should stay the loudest thing here. */
+  font-size: var(--sp-font-xs);
+  line-height: 16px;
+  transition: opacity 0.15s ease;
+
+  &[data-dim] {
+    opacity: 0.5;
+  }
+}
+
+.legendName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sp-glass-text);
+}
+
+/* The same step as the name beside it. */
+.legendValue {
+  font-variant-numeric: tabular-nums;
+  color: var(--sp-glass-text);
+}
+
+.legendPercent {
+  margin-inline-start: var(--sp-grid-base-size, 8px);
+  color: var(--sp-chart-label-color);
+}
+
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slice,
+  .legendItem {
+    transition: none;
+  }
+
+  .root[data-animated] .sweep {
+    animation: none;
+    mask-image: none;
+  }
+}

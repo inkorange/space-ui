@@ -36,6 +36,9 @@ export {
   type AutocompleteOption,
 } from "./components/Autocomplete";
 export { Slider, type SliderProps } from "./components/Slider";
+export { Chart, type ChartProps, type ChartSeries, type ChartPoint } from "./components/Chart";
+export { BarList, type BarListProps, type BarListItem } from "./components/BarList";
+export { PieChart, type PieChartProps, type PieSlice } from "./components/PieChart";
 export {
   Checkbox, CheckboxGroup, type CheckboxProps, type CheckboxGroupProps, type CheckboxGroupItemProps,
 } from "./components/Checkbox";

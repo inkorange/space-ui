@@ -4,8 +4,10 @@ import {
   BookmarkIcon,
   Button,
   CheckIcon,
+  BarList,
   Card,
   Carousel,
+  Chart,
   Checkbox,
   CheckboxGroup,
   Heading,
@@ -219,6 +221,28 @@ export const Stickersheet = () => {
 
         <Cell label="Pagination" wide fill>
           <Pagination pagination={{ page: 5, pageSize: 10, totalItems: 180 }} onPageClick={() => {}} />
+        </Cell>
+
+        <Cell label="Chart" wide fill>
+          <Chart
+            type="bar"
+            height={168}
+            categories={["Mon", "Tue", "Wed", "Thu"]}
+            series={[{ name: "Worlds", data: [142, 168, 183, 96] }]}
+            partialFrom={3}
+            aria-label="Worlds built per day"
+          />
+        </Cell>
+
+        <Cell label="BarList" wide fill>
+          <BarList
+            aria-label="Poll results"
+            items={[
+              { label: "Idea", value: 44 },
+              { label: "Bug", value: 7 },
+              { label: "Other", value: 7 },
+            ]}
+          />
         </Cell>
 
         <Cell label="Message" full>

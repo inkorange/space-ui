@@ -1,0 +1,139 @@
+/* Rows of label, track, bar and figure. Spacing is whole grid units; the
+   track and its fill share the mark radius with every other bar here.
+
+   @token --sp-bar-list-label-width The label column. Set it to line a list up
+     with another, or to give long names more room.
+   @token --sp-bar-list-track-height How thick a row's bar is. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-grid-base-size, 8px);
+  min-width: 0;
+}
+
+.row {
+  min-width: 0;
+}
+
+/* One grid: the label column is fixed so every bar starts at the same place,
+   the track takes what is left, and the figure is as wide as it needs. */
+.line {
+  display: grid;
+  grid-template-columns: var(--sp-bar-list-label-width, 96px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  width: 100%;
+  padding: calc(var(--sp-grid-base-size, 8px) / 2) 0;
+  /* The library's 14/20 step, label and figure alike — the same size the
+     text in every other control is set at. */
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
+  color: var(--sp-glass-text);
+  text-align: start;
+}
+
+.pressable {
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  /* The family and weight, but NOT the size: `font: inherit` is a shorthand,
+     and it was resetting the size to whatever the page uses — so a row with a
+     click handler came out a different size from one without, which is the
+     opposite of what inheriting is for. The row's own step is set above. */
+  font-family: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover .fill {
+    filter: brightness(1.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sp-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The same glass tube Progress and Slider use — a row of poll results and a
+   meter are the same object, one counted and one measured. */
+.track {
+  position: relative;
+  height: var(--sp-bar-list-track-height, 8px);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--sp-glass-rgb) / 0.92),
+    rgb(var(--sp-glass-deep-rgb) / 0.96)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.25),
+    inset 0 1px 3px rgb(var(--sp-shadow-rgb) / 0.65);
+  overflow: hidden;
+}
+
+/* A starlight trail in the row's own colour: specks along it, a lit leading
+   edge, and the bloom that every filled thing here carries. */
+.fill {
+  position: relative;
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.35);
+  transition: width 0.4s cubic-bezier(0.16, 0.84, 0.44, 1);
+
+  /* Grown from nothing on first render. The keyframes name only the start,
+     so each bar animates to its own width without the stylesheet knowing
+     it — and the rounded cap and the specks stay the right shape, which
+     scaling the bar would not. */
+  .root[data-animated] & {
+    animation: sp-bar-list-fill 0.52s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(1.2px 1.2px at 22% 35%, rgb(var(--sp-star-rgb) / 0.85), transparent 70%),
+      radial-gradient(1px 1px at 58% 65%, rgb(var(--sp-star-rgb) / 0.6), transparent 70%),
+      radial-gradient(1px 1px at 84% 40%, rgb(var(--sp-star-rgb) / 0.5), transparent 70%),
+      linear-gradient(90deg, transparent 40%, rgb(var(--sp-rim-rgb) / 0.35));
+  }
+}
+
+/* The same step as the label beside it. */
+.value {
+  font-variant-numeric: tabular-nums;
+  color: var(--sp-glass-text);
+}
+
+.percent {
+  margin-inline-start: var(--sp-grid-base-size, 8px);
+  color: var(--sp-chart-label-color);
+}
+
+@keyframes sp-bar-list-fill {
+  from {
+    width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+
+  .root[data-animated] .fill {
+    animation: none;
+  }
+}
