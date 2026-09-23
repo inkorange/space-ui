@@ -1,0 +1,27 @@
+// Type sizes in rem, written in px.
+//
+// A size in px ignores the reader: someone who has set their browser's text
+// larger — because they cannot comfortably read 16px — gets the same 14px
+// label either way. A size in rem scales with that setting, so the library
+// answers to it.
+//
+// The awkward part of rem is arithmetic: 0.875rem says nothing, while 14px
+// says exactly what it is. So sizes are WRITTEN in px here and converted at
+// build time. `rem(14)` compiles to `0.875rem`.
+//
+// Spacing stays in px on purpose. The 8pt grid is a layout rhythm measured
+// against the viewport, not against the reader's text; a gap that grew with
+// the font size would pull layouts apart at the seams. Type scales, the grid
+// holds.
+
+@use "sass:math";
+
+/// The browser's own default text size, which 1rem is worth when the reader
+/// has changed nothing. Not a knob: changing it would silently rescale every
+/// size in the library.
+$type-base: 16;
+
+/// px in, rem out: `rem(14)` → `0.875rem`.
+@function rem($px) {
+  @return math.div($px, $type-base) * 1rem;
+}

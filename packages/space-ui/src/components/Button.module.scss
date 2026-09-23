@@ -1,3 +1,5 @@
+@use "../styles/type" as *;
+
 /* "Limb-lit glass" button — speaks the app's own rendering language:
    the rim glows like a planet's sunlit atmosphere limb (bright arc fading
    around the terminator), tiny stars twinkle inside the glass, and a glint
@@ -17,13 +19,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 32px;
+  gap: var(--spacing-sm);
+  /* Height from the ladder rather than from padding, so a button and the
+     Select beside it are the same height whatever their text. */
+  min-height: var(--sp-control-height);
+  padding: 0 var(--spacing-xl);
   border: none;
   border-radius: 999px;
   // Typeface comes from the system token, never a per-component hook:
   // one place decides the font for every component.
-  font: 600 15px/1 var(--sp-font-family);
+  /* Written out rather than as the `font` shorthand: the shorthand's slash
+     between size and line-height reads as division to Sass. */
+  font-family: var(--sp-font-family);
+  font-size: rem(15);
+  font-weight: 600;
+  line-height: 1;
   letter-spacing: 0.02em;
   color: var(--sp-glass-text);
   cursor: pointer;
@@ -114,21 +124,24 @@
 
 /* Circular icon-only variant (e.g. the share glyph) */
 .iconOnly {
-  padding: 12px;
-  width: 46px;
-  height: 46px;
+  padding: 0;
+  width: var(--sp-control-height);
+  height: var(--sp-control-height);
+  min-height: 0;
 }
 
 /* Hero CTA (splash / marketing pages) */
 .lg {
-  padding: 17px 40px;
-  font-size: 17px;
+  min-height: var(--sp-control-height-lg);
+  padding: 0 var(--spacing-2xl);
+  font-size: rem(17);
 }
 
 /* Compact dialogs and inline actions */
 .sm {
-  padding: 11px 26px;
-  font-size: 13.5px;
+  min-height: var(--sp-control-height-sm);
+  padding: 0 var(--spacing-lg);
+  font-size: rem(13.5);
 }
 
 /* Micro steppers (element +/-): keeps the glass + limb rim but drops the
@@ -140,8 +153,11 @@
    scene's frame rate. Static, they composite cheaply. Imperceptible at 28px. */
 .micro {
   padding: 0;
+  /* Also a half-step: a 24px stepper is a smaller target than a thumb wants,
+     and these sit in rows of thirty. */
   width: 28px;
   height: 28px;
+  min-height: 0;
   animation: none;
   backdrop-filter: none;
 
@@ -201,7 +217,7 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 /* Three stars twinkling out of phase inside the glass */

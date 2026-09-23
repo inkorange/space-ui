@@ -17,6 +17,32 @@ Co-Authored-By or AI-attribution trailers.
 - Stayed behind in planet-builder: SceneLoadingOverlay, ImageWithFallback
   (app/Next-coupled).
 
+## Styling a component (follow this, every time)
+
+Write a new `*.module.scss` this way, and change an old one to match when you
+touch it. The tests in `src/components/grid.test.ts` and `tokens.test.ts`
+enforce all of it, so breaking a rule here fails CI rather than review.
+
+1. **Spacing names a step — never a raw length.** `gap: var(--spacing-sm)`,
+   not `gap: 8px`. The steps are `--spacing-xs` (4px, the half-step, for the
+   inside of small dense parts), `sm` 8, `md` 16, `lg` 24, `xl` 32, `2xl` 40 —
+   each one a multiple of `--sp-grid-base-size`, so one token retunes the
+   library's rhythm. A value off the scale means the design is off the grid:
+   fix the design, do not write the px.
+2. **Type is `rem()`, written in px.** `font-size: rem(14)` with
+   `@use "../styles/type" as *;` at the top. A px size ignores a reader who
+   has enlarged their browser text. `line-height` too.
+3. **Control heights come from the ladder**, not from padding arithmetic:
+   `min-height: var(--sp-control-height)` (40) with `-sm` 36 and `-lg` 48.
+   A button and the Select beside it must be the same height.
+4. **Colour is a token.** No hex, `rgb()` or `hsl()` in a component
+   stylesheet; add a `--sp-[component]-[modifier]-[type]` token in
+   `tokens.css` and document it with `@token` in the SCSS.
+5. **The exceptions are hairlines and optical nudges** — a 1px mask inset, a
+   2px lift to centre an indicator on a line of text. They go in the
+   `EXCEPTIONS` map in `grid.test.ts`, keyed by file and value, with the
+   reason. Anything else is spacing and takes a step.
+
 ## Working rules (carried from planet-builder)
 - 8pt spacing grid; off-grid values round UP to the next step (12px→16px).
 - Minimal, consistent component props; no framework-specific APIs in the

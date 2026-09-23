@@ -21,7 +21,7 @@
   /* Bottom-aligned so the active tab's taller body rises above its neighbours
      — the file-folder effect — while every tab stays seated on the surface. */
   align-items: flex-end;
-  gap: 6px;
+  gap: var(--spacing-sm);
   width: 100%;
 }
 
@@ -32,7 +32,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 10px 11px;
+  /* The ladder's tall step: a tab is a control, and the one px of extra
+     bottom padding is the border it gives up when it becomes active. */
+  min-height: var(--sp-control-height-lg);
+  padding: 0 var(--spacing-sm) 1px;
   color: var(--sp-gray-text-dim);
   border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
   border-radius: 12px 12px 0 0;
@@ -66,8 +69,8 @@
     /* Taller than its siblings: with the list bottom-aligned, the extra top
        padding lifts this tab's rim above the rest. The bottom padding absorbs
        the height the removed border gave back. */
-    padding-top: 16px;
-    padding-bottom: 12px;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
     background: linear-gradient(
       180deg,
       var(--sp-tabs-active-from-color),

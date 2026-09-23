@@ -1,10 +1,15 @@
 @use "../styles/reveal" as *;
+@use "../styles/type" as *;
 
 .menu {
   position: fixed;
   margin: 0;
   min-width: 180px;
-  padding: 6px;
+  padding: var(--spacing-sm);
+  /* Rows set apart rather than stacked flush, the same as a Select's list:
+     a menu read at a glance needs the gaps to separate the actions. */
+  display: grid;
+  gap: var(--spacing-xs);
   background: var(--sp-gray-panel);
   color: var(--sp-gray-text);
   border: 1px solid var(--sp-gray-border);
@@ -17,8 +22,8 @@
 }
 
 .label {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: var(--spacing-sm);
+  font-size: rem(12);
   color: var(--sp-gray-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -30,12 +35,12 @@
   display: block;
   width: 100%;
   text-align: left;
-  padding: 7px 10px;
+  padding: var(--spacing-sm);
   border: none;
   background: none;
   color: var(--sp-gray-text);
   font: inherit;
-  font-size: 14px;
+  font-size: rem(14);
   border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
@@ -47,6 +52,7 @@
 
 .separator {
   height: 1px;
-  margin: 6px 4px;
+  /* The list's own 4px gap sits either side of this, making 8px in total. */
+  margin: 0 var(--spacing-xs);
   background: var(--sp-gray-border);
 }

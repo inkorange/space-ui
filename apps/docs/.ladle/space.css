@@ -2001,6 +2001,17 @@ html[data-docs-page="marketing"] .ladle-addons {
   border-radius: 3px;
 }
 
+/* The library's controls draw their own focus ring, on the element that
+   looks like the control — a textarea's ring belongs on the glass box around
+   it, not on the bare text area inside. Without this the gallery's blanket
+   rule above adds a second ring inside the component's own, which is a
+   gallery artifact rather than anything a consumer would ever see. */
+.spTextAreaInput:focus-visible,
+.spTextFieldInput:focus-visible,
+.spSelectTrigger:focus-visible input:focus-visible {
+  outline: none;
+}
+
 /* Outline the row, matching the enlarged hit area rather than the text. */
 nav.ladle-aside li.ladle-linkable > div:has(a:focus-visible),
 nav.ladle-aside li:focus-visible > div {

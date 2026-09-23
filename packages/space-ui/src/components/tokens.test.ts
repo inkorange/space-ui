@@ -19,7 +19,7 @@ export const EXPECTED_TOKENS = [
   "--sp-muted-soft", "--sp-danger-soft", "--sp-warning-soft", "--sp-accent-soft",
   "--sp-on-solid",
   // Component sizing
-  "--sp-control-height",
+  "--sp-control-height", "--sp-control-height-sm", "--sp-control-height-lg",
   "--sp-select-trigger-max-width", "--sp-select-panel-max-width",
   "--sp-card-image-ratio",
   "--sp-autocomplete-panel-max-height", "--sp-autocomplete-option-highlight-color",
@@ -68,7 +68,7 @@ export const EXPECTED_TOKENS = [
   "--sp-glass-text", "--sp-focus-ring",
   "--sp-ember-glass-rgb", "--sp-ember-glass-deep-rgb", "--sp-ember-sheen-rgb",
   "--sp-ember-rim-rgb", "--sp-ember-glow-rgb",
-  "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl",
+  "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--spacing-2xl",
   "--sp-font-xs", "--sp-font-sm", "--sp-font-md", "--sp-font-xl",
   "--sp-font-family",
 ];
@@ -88,10 +88,23 @@ describe("design tokens", () => {
     expect(new Set(defined)).toEqual(new Set(EXPECTED_TOKENS));
   });
 
-  it("keeps spacing on the 8pt grid (4px allowed as the half-step xs)", () => {
-    const spacing = [...css.matchAll(/--spacing-[a-z]+:\s*(\d+)px/g)].map((m) => Number(m[1]));
-    expect(spacing.length).toBe(5);
-    for (const px of spacing) expect(px === 4 || px % 8 === 0).toBe(true);
+  it("builds the spacing scale out of the grid unit, in whole or half steps", () => {
+    // Written as multiples rather than as px, so one token retunes the
+    // library's rhythm. xs is the half-step, for the inside of small parts.
+    const steps = [...css.matchAll(/--spacing-([a-z0-9]+):\s*([^;]+);/g)];
+    expect(steps.length).toBe(6);
+
+    for (const [, name, value] of steps) {
+      const multiple = /calc\(var\(--sp-grid-base-size\)\s*\*\s*([\d.]+)\)/.exec(value);
+      if (!multiple) {
+        // The unit itself, unmultiplied.
+        expect(value.trim(), `--spacing-${name}`).toBe("var(--sp-grid-base-size)");
+        continue;
+      }
+      const times = Number(multiple[1]);
+      expect(times % 0.5, `--spacing-${name} is ${times}×`).toBe(0);
+      expect(times >= 0.5, `--spacing-${name} is ${times}×`).toBe(true);
+    }
   });
 
   const SCSS_ROOT = path.join(__dirname, "..");
