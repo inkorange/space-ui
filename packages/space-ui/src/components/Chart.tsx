@@ -54,6 +54,11 @@ export interface ChartProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
   formatValue?: (value: number) => string;
   /** Roughly how many labelled ticks the y axis gets. Default 5. */
   tickCount?: number;
+  /** The lit finish this library gives everything else: marks that catch the
+   *  light, and a first draw where bars rise from the axis and a line draws
+   *  itself on. Default true; a reader who asked for less motion gets the
+   *  finish without the movement either way. */
+  animated?: boolean;
   /** The category index from which the data is still arriving — usually
    *  `categories.length - 1`, today's bar, which will keep growing until the
    *  day ends. Those bars are drawn hatched rather than solid, and the
@@ -107,6 +112,7 @@ export function Chart({
   grid = true,
   formatValue: format = formatValue,
   tickCount = 5,
+  animated = true,
   partialFrom,
   onPointClick,
   className,
@@ -260,6 +266,7 @@ export function Chart({
       {...rest}
       className={cx(styles.root, className)}
       data-type={type}
+      data-animated={animated ? "" : undefined}
       style={{ ...rest.style }}
     >
       <div
@@ -283,6 +290,25 @@ export function Chart({
           aria-labelledby={ariaLabel ? undefined : titleId}
           aria-label={ariaLabel}
         >
+          <defs>
+            {series.map((s2, si) => (
+              <linearGradient key={`grad-${si}`} id={`${titleId}-grad-${si}`} x1="0" y1="0" x2="0" y2="1">
+                {/* The limb again: brightest where the light lands, falling
+                    away into the ground it stands on. */}
+                <stop offset="0%" stopColor={colorOf(si)} stopOpacity="1" />
+                <stop offset="100%" stopColor={colorOf(si)} stopOpacity="0.55" />
+              </linearGradient>
+            ))}
+            {series.map((s2, si) => (
+              <linearGradient key={`area-${si}`} id={`${titleId}-area-${si}`} x1="0" y1="0" x2="0" y2="1">
+                {/* An atmosphere rather than a slab: dense at the line, thinning
+                    to nothing before the axis. */}
+                <stop offset="0%" stopColor={colorOf(si)} stopOpacity="0.45" />
+                <stop offset="100%" stopColor={colorOf(si)} stopOpacity="0.02" />
+              </linearGradient>
+            ))}
+          </defs>
+
           {/* Diagonal stripes in the series' own colour: a bar that is still
               filling reads as unfinished at a glance, and keeps its identity.
               One pattern per series, because a pattern carries its own paint. */}
@@ -357,7 +383,9 @@ export function Chart({
                     key={`bar-${category}-${ci}`}
                     className={cx(styles.bar, onPointClick && styles.clickable)}
                     d={barPath(left, Math.min(top, bottom), drawWidth, drawHeight, 4, value >= 0)}
-                    fill={stillCounting ? `url(#${titleId}-hatch-${si})` : colorOf(si)}
+                    fill={stillCounting ? `url(#${titleId}-hatch-${si})` : `url(#${titleId}-grad-${si})`}
+                    // currentColor is what the glow in the stylesheet burns.
+                    color={colorOf(si)}
                     data-dim={hover && hover.index !== ci ? "" : undefined}
                     onClick={() => report(si, ci)}
                   >
@@ -397,8 +425,17 @@ export function Chart({
                     : null;
                   return (
                     <g key={`run-${ri}`}>
-                      {area && <path className={styles.area} d={area} fill={colorOf(si)} />}
-                      <path className={styles.line} d={line} stroke={colorOf(si)} fill="none" />
+                      {area && (
+                        <path className={styles.area} d={area} fill={`url(#${titleId}-area-${si})`} />
+                      )}
+                      <path
+                        className={styles.line}
+                        d={line}
+                        stroke={colorOf(si)}
+                        color={colorOf(si)}
+                        fill="none"
+                        pathLength={1}
+                      />
                     </g>
                   );
                 })}
@@ -413,6 +450,7 @@ export function Chart({
                       cy={y(baseline[si][ci] + value)}
                       r={4}
                       fill={colorOf(si)}
+                      color={colorOf(si)}
                       data-on={hover?.index === ci ? "" : undefined}
                       onClick={() => report(si, ci)}
                     >

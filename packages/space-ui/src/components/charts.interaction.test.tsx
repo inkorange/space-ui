@@ -54,9 +54,18 @@ describe("Chart", () => {
 
   it("gives every series its own colour, in the palette's order", () => {
     const { container } = render(<Chart type="bar" categories={PLANETS} series={two} aria-label="Colours" />);
-    const fills = [...container.querySelectorAll("path[fill]")].map((p) => p.getAttribute("fill"));
-    expect(fills).toContain("var(--sp-chart-series-1-color)");
-    expect(fills).toContain("var(--sp-chart-series-2-color)");
+    // A bar is painted with a gradient of its series colour — lit at the top,
+    // deeper at the base — so the colour is in the gradient's stops.
+    const stops = [...container.querySelectorAll("linearGradient stop")].map((s2) =>
+      s2.getAttribute("stop-color"),
+    );
+    expect(stops).toContain("var(--sp-chart-series-1-color)");
+    expect(stops).toContain("var(--sp-chart-series-2-color)");
+    // And on the mark itself, which is what its glow burns.
+    const colors = [...container.querySelectorAll("path[color]")].map((p) => p.getAttribute("color"));
+    expect(new Set(colors)).toEqual(
+      new Set(["var(--sp-chart-series-1-color)", "var(--sp-chart-series-2-color)"]),
+    );
   });
 
   it("hatches the categories still being counted, and says so in the figures", () => {
@@ -69,9 +78,10 @@ describe("Chart", () => {
         aria-label="Builds"
       />,
     );
-    // The unfinished bar is painted with a pattern rather than the flat colour.
-    const fills = [...container.querySelectorAll("path[fill]")].map((p) => p.getAttribute("fill"));
-    expect(fills.filter((f) => f?.startsWith("url(#"))).toHaveLength(1);
+    // The unfinished bar is striped; the finished ones take the solid gradient.
+    const fills = [...container.querySelectorAll("path[fill]")].map((p) => p.getAttribute("fill") ?? "");
+    expect(fills.filter((f) => f.includes("-hatch-"))).toHaveLength(1);
+    expect(fills.filter((f) => f.includes("-grad-"))).toHaveLength(2);
     expect(container.querySelector("pattern")).not.toBeNull();
     expect(within(screen.getByRole("table")).getByText(/30 so far/)).toBeInTheDocument();
   });

@@ -27,6 +27,8 @@ export interface PieChartProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   size?: number;
   /** Show the legend. Default true: a pie without one is a colour quiz. */
   legend?: boolean;
+  /** The lit finish, and the sweep on its first draw. Default true. */
+  animated?: boolean;
   /** How a value is written, in the legend and the middle. */
   formatValue?: (value: number) => string;
   /** Called when a slice is chosen. */
@@ -62,6 +64,7 @@ export function PieChart({
   label,
   size = 180,
   legend = true,
+  animated = true,
   formatValue: format = formatValue,
   onSliceClick,
   className,
@@ -107,7 +110,7 @@ export function PieChart({
   const originalIndex = (slice: PieSlice) => slices.indexOf(slice);
 
   return (
-    <div {...rest} className={cx(styles.root, className)}>
+    <div {...rest} className={cx(styles.root, className)} data-animated={animated ? "" : undefined}>
       <svg
         className={styles.svg}
         width={size}

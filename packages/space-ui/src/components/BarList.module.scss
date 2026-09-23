@@ -55,19 +55,44 @@
   white-space: nowrap;
 }
 
+/* The same glass tube Progress and Slider use — a row of poll results and a
+   meter are the same object, one counted and one measured. */
 .track {
   position: relative;
   height: var(--sp-bar-list-track-height, 8px);
-  border-radius: var(--sp-chart-mark-radius-size);
-  background: var(--sp-chart-track-color);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--sp-glass-rgb) / 0.92),
+    rgb(var(--sp-glass-deep-rgb) / 0.96)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.25),
+    inset 0 1px 3px rgb(var(--sp-shadow-rgb) / 0.65);
   overflow: hidden;
 }
 
+/* A starlight trail in the row's own colour: specks along it, a lit leading
+   edge, and the bloom that every filled thing here carries. */
 .fill {
+  position: relative;
   display: block;
   height: 100%;
   border-radius: inherit;
+  box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.35);
   transition: width 0.4s cubic-bezier(0.16, 0.84, 0.44, 1);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(1.2px 1.2px at 22% 35%, rgb(var(--sp-star-rgb) / 0.85), transparent 70%),
+      radial-gradient(1px 1px at 58% 65%, rgb(var(--sp-star-rgb) / 0.6), transparent 70%),
+      radial-gradient(1px 1px at 84% 40%, rgb(var(--sp-star-rgb) / 0.5), transparent 70%),
+      linear-gradient(90deg, transparent 40%, rgb(var(--sp-rim-rgb) / 0.35));
+  }
 }
 
 .value {
