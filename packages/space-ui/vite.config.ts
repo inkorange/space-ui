@@ -32,12 +32,21 @@ export default defineConfig({
   test: {
     environment: "happy-dom",
     css: { modules: { classNameStrategy: "non-scoped" } },
+    setupFiles: ["src/test/setup.ts"],
     coverage: {
       provider: "v8",
-      // Only the shipped source counts. Tests and the type-only barrel would
-      // flatter the number without telling anyone anything.
+      // Only the shipped source counts. Tests, the type-only barrel, and the
+      // re-export modules that carry no logic would flatter the number
+      // without telling anyone anything.
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.test.*", "src/index.ts"],
+      exclude: [
+        "src/**/*.test.*",
+        "src/test/**",
+        "src/index.ts",
+        // A typed handle on the SCSS class map: declarations, no behaviour.
+        // Its names are checked against the stylesheet by a test of its own.
+        "src/styles/spaceControls.ts",
+      ],
       // json-summary is what scripts/badges.mjs reads.
       reporter: ["text-summary", "json-summary"],
     },
