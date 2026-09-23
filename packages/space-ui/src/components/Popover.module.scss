@@ -16,7 +16,7 @@
   margin: 0;
   box-sizing: border-box;
   max-width: min(var(--sp-popover-panel-max-width, 22rem), calc(100vw - 16px));
-  padding: 16px;
+  padding: var(--spacing-md);
   color: var(--sp-glass-text);
   /* Its shadow comes from the shared panel skin, which out-ranks a single
      class — declaring one here only looked like it did something. */

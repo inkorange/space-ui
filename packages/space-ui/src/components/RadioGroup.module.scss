@@ -1,4 +1,5 @@
 @use "../styles/burst" as *;
+@use "../styles/type" as *;
 
 /* @token --sp-radio-group-row-gap-size The space between options. Two grid
      units, so a wrapped two-line label still reads as one option rather than
@@ -6,7 +7,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-radio-group-row-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+  gap: var(--sp-radio-group-row-gap-size, calc(var(--sp-grid-base-size, var(--spacing-sm)) * 2));
 }
 
 /* @token --sp-radio-group-label-gap-size The space between an orb and its
@@ -23,13 +24,13 @@
   position: relative;
   display: inline-flex;
   align-items: flex-start;
-  gap: var(--sp-radio-group-label-gap-size, calc(var(--sp-grid-base-size, 8px) * 2));
+  gap: var(--sp-radio-group-label-gap-size, calc(var(--sp-grid-base-size, var(--spacing-sm)) * 2));
   // The library's 14px type step — Text size 2, line and all — so a label
   // sits at the same size as the text in every other control rather than
   // inheriting whatever surrounds it. The 20px line is also what centres the
   // indicator on the first line.
   font-size: var(--sp-font-sm);
-  line-height: 20px;
+  line-height: rem(20);
 }
 .selfLabeled { cursor: pointer; }
 
@@ -61,7 +62,7 @@
   margin-top: 2px;
 
   @supports (margin-top: 1lh) {
-    margin-top: calc((1lh - 16px) / 2);
+    margin-top: calc((1lh - var(--spacing-md)) / 2);
   }
 
   &::before {

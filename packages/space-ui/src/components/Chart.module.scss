@@ -1,3 +1,5 @@
+@use "../styles/type" as *;
+
 /* A chart is drawn from tokens like everything else here: the series colours,
    the recessive grid, the mark radius and the line width all come from
    tokens.css, so a chart re-themes with the rest of the page.
@@ -15,7 +17,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-grid-base-size, 8px);
+  gap: var(--sp-grid-base-size, var(--spacing-sm));
   min-width: 0;
   color: var(--sp-chart-label-color);
   font-size: var(--sp-font-xs);
@@ -45,7 +47,7 @@
 
 .axisLabel {
   fill: var(--sp-chart-label-color);
-  font-size: 11px;
+  font-size: rem(11);
   font-family: inherit;
 }
 
@@ -78,7 +80,7 @@
 }
 
 .partialNote {
-  margin-inline-start: calc(var(--sp-grid-base-size, 8px) / 2);
+  margin-inline-start: calc(var(--sp-grid-base-size, var(--spacing-sm)) / 2);
   color: var(--sp-chart-label-color);
 }
 
@@ -156,7 +158,7 @@
   top: var(--sp-grid-base-size, 8px);
   z-index: 1;
   min-width: 120px;
-  padding: var(--sp-grid-base-size, 8px);
+  padding: var(--sp-grid-base-size, var(--spacing-sm));
   border: 1px solid var(--sp-gray-border);
   border-radius: 8px;
   background: var(--sp-select-panel-color);
@@ -166,14 +168,14 @@
 }
 
 .tooltipHead {
-  margin: 0 0 var(--sp-grid-base-size, 8px);
+  margin: 0 0 var(--sp-grid-base-size, var(--spacing-sm));
   font-size: var(--sp-font-xs);
   font-weight: 600;
 }
 
 .tooltipList {
   display: grid;
-  gap: calc(var(--sp-grid-base-size, 8px) / 2);
+  gap: calc(var(--sp-grid-base-size, var(--spacing-sm)) / 2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -183,7 +185,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--sp-grid-base-size, 8px);
+  gap: var(--sp-grid-base-size, var(--spacing-sm));
   font-size: var(--sp-font-xs);
 }
 
@@ -206,7 +208,7 @@
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  gap: calc(var(--sp-grid-base-size, var(--spacing-sm)) * 2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -215,7 +217,7 @@
 .legendItem {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-grid-base-size, 8px);
+  gap: var(--sp-grid-base-size, var(--spacing-sm));
   font-size: var(--sp-font-xs);
 }
 

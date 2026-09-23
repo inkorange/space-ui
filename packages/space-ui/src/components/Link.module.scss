@@ -1,3 +1,5 @@
+@use "../styles/type" as *;
+
 .link {
   color: var(--sp-primary-text);
   text-decoration: none;
@@ -6,6 +8,6 @@
   &:hover { text-decoration: underline; }
 }
 
-.size1 { font-size: 12px; line-height: 16px; letter-spacing: 0.0025em; }
-.size2 { font-size: 14px; line-height: 20px; }
-.size3 { font-size: 16px; line-height: 24px; }
+.size1 { font-size: rem(12); line-height: rem(16); letter-spacing: 0.0025em; }
+.size2 { font-size: rem(14); line-height: rem(20); }
+.size3 { font-size: rem(16); line-height: rem(24); }

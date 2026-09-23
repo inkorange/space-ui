@@ -1,3 +1,5 @@
+@use "../styles/type" as *;
+
 /* Parts of a whole. The slices carry the series palette; the legend carries
    the names and the figures, so identity is never colour alone.
 
@@ -7,7 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: calc(var(--sp-grid-base-size, 8px) * 3);
+  gap: calc(var(--sp-grid-base-size, var(--spacing-sm)) * 3);
   min-width: 0;
   color: var(--sp-chart-label-color);
 }
@@ -79,19 +81,19 @@
 .total {
   fill: var(--sp-glint-rgb, var(--sp-on-solid));
   fill: rgb(var(--sp-glint-rgb));
-  font-size: 20px;
+  font-size: rem(20);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 .totalLabel {
   fill: var(--sp-chart-label-color);
-  font-size: 11px;
+  font-size: rem(11);
 }
 
 .legend {
   display: grid;
-  gap: var(--sp-grid-base-size, 8px);
+  gap: var(--sp-grid-base-size, var(--spacing-sm));
   margin: 0;
   padding: 0;
   min-width: 0;
@@ -102,11 +104,11 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: calc(var(--sp-grid-base-size, 8px) * 2);
+  gap: calc(var(--sp-grid-base-size, var(--spacing-sm)) * 2);
   /* The same 12/16 step BarList's rows take: a legend is a list of results
      too, and the ring should stay the loudest thing here. */
   font-size: var(--sp-font-xs);
-  line-height: 16px;
+  line-height: rem(16);
   transition: opacity 0.15s ease;
 
   &[data-dim] {
@@ -128,7 +130,7 @@
 }
 
 .legendPercent {
-  margin-inline-start: var(--sp-grid-base-size, 8px);
+  margin-inline-start: var(--sp-grid-base-size, var(--spacing-sm));
   color: var(--sp-chart-label-color);
 }
 

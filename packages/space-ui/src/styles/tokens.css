@@ -67,7 +67,14 @@
      button line up in a row. Shared as a token because two stylesheets used
      to state it separately with a "keep in sync" comment — and had already
      drifted, the field having no height at all. */
+  /* The control height ladder, all whole grid units. A button, a select
+     trigger and a pagination item set to the same step line up in a row,
+     which is the point of having a ladder at all. */
+  /* A half-step, not a whole one: at 32px a small button's label is pinched
+     against its own rim. The 4px sub-grid exists for exactly this. */
+  --sp-control-height-sm: 36px;
   --sp-control-height: 40px;
+  --sp-control-height-lg: 48px;
 
   --sp-select-trigger-max-width: 20rem;
 
@@ -105,7 +112,7 @@
 
   /* Pagination. One size for every control, so the row stays a single
      rhythm; page numbers grow wider than it only when their digits need to. */
-  --sp-pagination-item-size: 36px;
+  --sp-pagination-item-size: 40px;
 
   /* Popover. A cap on width, so a popover stays a small surface beside its
      trigger rather than turning into a second page. */
@@ -233,12 +240,18 @@
   --sp-ember-rim-rgb: 255 180 130;
   --sp-ember-glow-rgb: 255 150 100;
 
-  /* Spacing — 8pt grid, xs = 4px half-step */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  /* Spacing — every step a multiple of the grid unit above, so setting
+     --sp-grid-base-size to 4px or 10px retunes the whole library's rhythm
+     rather than one component's. Nothing in the library writes a raw px gap
+     or inset: it names a step here. xs is the half-step, for the inside of
+     small, dense parts (a chip, a menu row) where a whole unit would make
+     them bigger than they should be. */
+  --spacing-xs: calc(var(--sp-grid-base-size) * 0.5);  /* 4px */
+  --spacing-sm: var(--sp-grid-base-size);              /* 8px */
+  --spacing-md: calc(var(--sp-grid-base-size) * 2);    /* 16px */
+  --spacing-lg: calc(var(--sp-grid-base-size) * 3);    /* 24px */
+  --spacing-xl: calc(var(--sp-grid-base-size) * 4);    /* 32px */
+  --spacing-2xl: calc(var(--sp-grid-base-size) * 5);   /* 40px */
 
   /* Font family. The library does NOT set a family on any component —
      everything inherits the host app's font, and nothing portals out of
@@ -252,9 +265,13 @@
     "Helvetica Neue", "Open Sans (Custom)", system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji";
 
-  /* Type scale (seeded from Radix font-size steps in use) */
-  --sp-font-xs: 12px;
-  --sp-font-sm: 14px;
-  --sp-font-md: 16px;
-  --sp-font-xl: 24px;
+  /* Type scale (seeded from Radix font-size steps in use), in rem so it
+     follows the reader's own text size: someone who has set their browser
+     larger gets larger labels here too, which px would have ignored. The px
+     each one is worth at the default 16px root is in the comment; the source
+     writes px and converts, see styles/_type.scss. */
+  --sp-font-xs: 0.75rem;   /* 12px */
+  --sp-font-sm: 0.875rem;  /* 14px */
+  --sp-font-md: 1rem;      /* 16px */
+  --sp-font-xl: 1.5rem;    /* 24px */
 }

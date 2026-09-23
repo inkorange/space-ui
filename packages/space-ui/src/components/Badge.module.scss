@@ -1,3 +1,5 @@
+@use "../styles/type" as *;
+
 // Soft palette measured from Radix dark (<color>-a3 background, <color>-11
 // text). Component-local by design — Badge's palette, not global tokens.
 .badge {
@@ -15,12 +17,12 @@
 }
 
 .size1 {
-  font-size: 12px; line-height: 16px; letter-spacing: 0.0025em;
-  padding: 2px 6px; gap: 6px; border-radius: 3px;
+  font-size: rem(12); line-height: rem(16); letter-spacing: 0.0025em;
+  padding: var(--spacing-xs) var(--spacing-sm);
 }
 .size2 {
-  font-size: 12px; line-height: 16px; letter-spacing: 0.0025em;
-  padding: 4px 8px; gap: 6px; border-radius: 4px;
+  font-size: rem(12); line-height: rem(16); letter-spacing: 0.0025em;
+  padding: var(--spacing-xs) var(--spacing-sm);
 }
 
 .colorMuted   { background: var(--sp-muted-soft); color: var(--sp-gray-text-dim); }

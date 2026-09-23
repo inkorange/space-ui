@@ -1,4 +1,5 @@
 @use "../styles/reveal" as *;
+@use "../styles/type" as *;
 
 /* Small dark glass label, in the same family as ElementTooltip and
    spaceControls but pared down: this carries two or three words next to an
@@ -15,7 +16,7 @@
   /* The tooltip must never eat a click meant for the control underneath. */
   pointer-events: none;
 
-  padding: 6px 10px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
   border-radius: 8px;
   background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.96), rgb(var(--sp-glass-deep-rgb) / 0.97));
@@ -23,7 +24,7 @@
   box-shadow: 0 6px 20px rgb(var(--sp-shadow-rgb) / 0.55);
 
   color: var(--sp-glass-text);
-  font-size: 12px;
+  font-size: rem(12);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.01em;

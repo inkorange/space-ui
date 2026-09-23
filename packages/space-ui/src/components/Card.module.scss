@@ -8,7 +8,7 @@
   background: var(--sp-gray-surface);
   border: 1px solid var(--sp-gray-border);
   border-radius: 8px;
-  padding: 12px;
+  padding: var(--spacing-md);
 }
 
 /* The image is full-bleed: it cancels the card's own inset so it meets the
@@ -18,7 +18,7 @@
 .image {
   /* Negative margins rather than a padding-less card, so the body below keeps
      the card's normal inset without every consumer re-adding it. */
-  margin: -12px -12px 12px;
+  margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md);
   border-radius: 7px 7px 0 0; /* 8px radius less the 1px border */
   overflow: hidden;
 

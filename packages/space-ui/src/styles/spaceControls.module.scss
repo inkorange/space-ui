@@ -1,3 +1,5 @@
+@use "./type" as *;
+
 /* Limb-lit glass for form controls (selects, dropdown panels) — same visual
    language as SpaceButton, built entirely from stacked backgrounds so it works
    on elements whose children/pseudo-elements we don't control (native <select>,
@@ -37,14 +39,14 @@ $glass:
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 16px;
+  gap: var(--spacing-sm);
+  padding: 0 var(--spacing-md);
   /* Cancel Radix's ghost-variant negative inline margin, which otherwise pulls
      the trigger 8px wider than the sibling TextFields on each side. */
   margin-inline: 0;
   border: 1px solid transparent;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: rem(14);
   font-weight: 500;
   color: var(--sp-glass-text);
   cursor: pointer;
@@ -174,8 +176,8 @@ $glass:
     white-space: normal;
     height: auto;
     min-height: var(--sp-select-item-height, 24px);
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
     line-height: 1.3;
   }
 
@@ -216,15 +218,15 @@ $glass:
      from the edge — the same inset as a Select trigger, so a field and a
      select sitting side by side align. */
   &:global(.spTextFieldRoot) {
-    padding-block: 4px;
-    padding-inline: 8px;
+    padding-block: var(--spacing-xs);
+    padding-inline: var(--spacing-sm);
   }
 
   :global(.spTextFieldInput) {
     color: var(--sp-glass-text);
     /* 8pt grid: one grid unit of left/right text inset (Radix's default sits
        the text almost against the rounded edge). */
-    padding-inline: 8px;
+    padding-inline: var(--spacing-sm);
 
     &::placeholder {
       color: var(--sp-panel-item-highlight-color);
@@ -233,7 +235,7 @@ $glass:
 
   /* Multi-line textarea: a uniform 8px inset on every side (8pt grid). */
   :global(.spTextAreaInput) {
-    padding: 8px;
+    padding: var(--spacing-sm);
     color: var(--sp-glass-text);
 
     &::placeholder {
@@ -300,7 +302,7 @@ $glass:
 
   &:global(.spTextFieldRoot) {
     padding-block: 0;
-    padding-inline: 8px;
+    padding-inline: var(--spacing-sm);
   }
 
   textarea {

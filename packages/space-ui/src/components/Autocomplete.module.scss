@@ -30,7 +30,7 @@
   box-sizing: border-box;
   /* For the rare browser with no popover support, where it stays in flow. */
   z-index: 50;
-  padding: 6px;
+  padding: var(--spacing-sm);
   border-radius: 10px;
 
   /* The shared reveal, keyed to the popover state the panel is toggled with.
@@ -42,7 +42,7 @@
 
 .status {
   margin: 0;
-  padding: 10px;
+  padding: var(--spacing-sm);
   font-size: var(--sp-font-sm);
   line-height: 1.5;
   color: var(--sp-gray-text-dim);
@@ -53,7 +53,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-xs);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -67,8 +67,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 10px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
   border-radius: 6px;
   cursor: pointer;
   font-size: var(--sp-font-sm);
@@ -99,8 +99,8 @@
 }
 
 .footer {
-  padding: 8px 10px 4px;
-  margin-top: 6px;
+  padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-xs);
+  margin-top: var(--spacing-sm);
   border-top: 1px solid var(--sp-gray-border);
   font-size: var(--sp-font-xs);
   color: var(--sp-gray-text-dim);
