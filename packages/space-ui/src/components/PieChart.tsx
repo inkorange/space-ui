@@ -1,6 +1,6 @@
 "use client";
 import type * as React from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { cx } from "./propShared";
 import styles from "./PieChart.module.scss";
 import { formatValue, seriesColor } from "../internal/chartScale";
@@ -72,6 +72,9 @@ export function PieChart({
   ...rest
 }: PieChartProps) {
   const [hovered, setHovered] = useState<number | null>(null);
+  // Gradient ids have to be unique per instance: two pies on one page would
+  // otherwise both paint with whichever defs rendered last.
+  const uid = useId();
 
   const usable = slices.filter((s) => s.value > 0);
   const total = usable.reduce((sum, s) => sum + s.value, 0);
@@ -121,6 +124,21 @@ export function PieChart({
       >
         {/* The slices alone are swept in; the total in the middle is not part
             of the ring and should not be revealed by it. */}
+        <defs>
+          {/* The same light every planet in this library is lit by: a source
+              up and to the left, a limb that falls away from it, and an edge
+              that darkens where the disc turns away. */}
+          <radialGradient id={`${uid}-face`} cx="32%" cy="26%" r="78%">
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.22" />
+            <stop offset="55%" stopColor="#fff" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.28" />
+          </radialGradient>
+          <radialGradient id={`${uid}-edge`} cx="50%" cy="50%" r="50%">
+            <stop offset="88%" stopColor="#000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.45" />
+          </radialGradient>
+        </defs>
+
         <g className={styles.sweep}>
           {arcs.map(({ slice, index, d, fillRule }) => (
             <path
@@ -137,6 +155,29 @@ export function PieChart({
               <title>{`${slice.label}: ${format(slice.value)}`}</title>
             </path>
           ))}
+
+          {/* Laid over the slices, not under them: the light falls on the
+              whole disc rather than on each slice separately, which is what
+              makes it read as one solid object. Angles are untouched — the
+              circle stays a circle, so a quarter still looks like a quarter.
+              A tilted pie would foreshorten it and make the near slices look
+              bigger than equal ones at the back. */}
+          <circle className={styles.face} cx={centre} cy={centre} r={radius} fill={`url(#${uid}-face)`} />
+          <circle className={styles.face} cx={centre} cy={centre} r={radius} fill={`url(#${uid}-edge)`} />
+          {donut && (
+            // The wall of the hole, so the middle reads as cut through the
+            // disc rather than printed on it.
+            <circle
+              className={styles.hole}
+              cx={centre}
+              cy={centre}
+              r={hole}
+              fill="none"
+              stroke="#000"
+              strokeOpacity="0.45"
+              strokeWidth="3"
+            />
+          )}
         </g>
 
         {donut && (

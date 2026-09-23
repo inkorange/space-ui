@@ -15,6 +15,15 @@
 .svg {
   display: block;
   flex: none;
+  /* The disc sits on the panel rather than being printed on it. */
+  filter: drop-shadow(0 6px 14px rgb(var(--sp-shadow-rgb) / 0.55));
+}
+
+/* The lighting and the darkened edge. Painted over the slices, so it shades
+   the disc as one object; it must never eat a pointer meant for a slice. */
+.face,
+.hole {
+  pointer-events: none;
 }
 
 /* The surface showing between slices, rather than a stroke of some other
