@@ -124,6 +124,33 @@ describe("Autocomplete behaviour", () => {
     expect(onSelect).toHaveBeenCalled();
   });
 
+  it("jumps to the ends of the list with Home and End", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(<Field onSelect={onSelect} />);
+
+    await user.type(field(), "trappist");
+    await user.keyboard("{End}{Enter}");
+    expect(onSelect).toHaveBeenLastCalledWith("trappist-1f", expect.anything());
+
+    await user.clear(field());
+    await user.type(field(), "trappist");
+    await user.keyboard("{Home}{Enter}");
+    expect(onSelect).toHaveBeenLastCalledWith("trappist-1e", expect.anything());
+  });
+
+  it("reopens with ArrowDown after it was dismissed", async () => {
+    const user = userEvent.setup();
+    render(<Field />);
+
+    await user.type(field(), "trap");
+    await user.keyboard("{Escape}");
+    expect(field()).toHaveAttribute("aria-expanded", "false");
+
+    await user.keyboard("{ArrowDown}");
+    expect(field()).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("skips a disabled row, and refuses it when clicked", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();

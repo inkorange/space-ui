@@ -232,10 +232,15 @@ export function Carousel({
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    // Remeasure only when the row's size changes — a breakpoint, a container
-    // resize. Scrolling never triggers it.
+    // Remeasure when the row's size changes — a container resize — and when a
+    // SLIDE's size changes, which is what a breakpoint does: setting
+    // --sp-carousel-view-count re-divides the row without altering the row's
+    // own box at all, so watching only the row left the arrows and dots
+    // describing the old count. Scrolling never triggers either.
     const resize = new ResizeObserver(() => measure());
     resize.observe(track);
+    const first = track.firstElementChild;
+    if (first) resize.observe(first);
 
     let frame = 0;
     const onScroll = () => {
@@ -248,7 +253,8 @@ export function Carousel({
       cancelAnimationFrame(frame);
       track.removeEventListener("scroll", onScroll);
     };
-  }, [measure, sync]);
+    // count: a slide added or removed changes which element is the first one.
+  }, [measure, sync, count]);
 
   // Dragging with a mouse. Touch and pen already scroll the row natively, with
   // the platform's momentum; a mouse gets no such gesture, so it is added here

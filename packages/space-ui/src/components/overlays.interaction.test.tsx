@@ -163,6 +163,43 @@ describe("DropdownMenu behaviour", () => {
     expect(trigger()).toHaveAttribute("aria-expanded", "false");
   });
 
+  it("walks its items with the arrow keys, stopping at the ends", async () => {
+    const user = userEvent.setup();
+    render(<Menu />);
+    await user.click(trigger());
+
+    const [rename, remove] = screen.getAllByRole("menuitem");
+    await user.keyboard("{ArrowDown}");
+    expect(remove).toHaveFocus();
+
+    // The last item holds: a menu is a list, not a loop.
+    await user.keyboard("{ArrowDown}");
+    expect(remove).toHaveFocus();
+
+    await user.keyboard("{ArrowUp}{ArrowUp}");
+    expect(rename).toHaveFocus();
+  });
+
+  it("jumps to the ends with Home and End", async () => {
+    const user = userEvent.setup();
+    render(<Menu />);
+    await user.click(trigger());
+
+    const [rename, remove] = screen.getAllByRole("menuitem");
+    await user.keyboard("{End}");
+    expect(remove).toHaveFocus();
+    await user.keyboard("{Home}");
+    expect(rename).toHaveFocus();
+  });
+
+  it("hands focus back to the trigger when Escape closes it", async () => {
+    const user = userEvent.setup();
+    render(<Menu />);
+    await user.click(trigger());
+    await user.keyboard("{ArrowDown}{Escape}");
+    expect(trigger()).toHaveFocus();
+  });
+
   it("reopens after Escape, rather than swallowing the next press", async () => {
     // The shipped bug this guards: closing, then pressing the trigger again
     // within the old 300ms guard window, did nothing.

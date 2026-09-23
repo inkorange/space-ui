@@ -22,6 +22,11 @@ jobs:
       # so a story calling a prop that does not exist is a real API regression
       # and used to pass CI silently.
       - run: pnpm --filter docs typecheck
+      # Half the suite runs in a real browser: everything that measures —
+      # panel placement, the Carousel's stops and drag — cannot be tested in a
+      # DOM shim, which reports every rectangle as zero. Only Chromium is
+      # needed, and --with-deps installs the system libraries it wants.
+      - run: pnpm --filter @inkorange/space-ui exec playwright install --with-deps chromium
       # Coverage rather than a plain run: the README's coverage badge is a
       # static value, and the badge check below re-measures it.
       - run: pnpm --filter @inkorange/space-ui test:coverage
