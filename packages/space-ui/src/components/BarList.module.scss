@@ -25,11 +25,10 @@
   gap: calc(var(--sp-grid-base-size, 8px) * 2);
   width: 100%;
   padding: calc(var(--sp-grid-base-size, 8px) / 2) 0;
-  /* The whole row on the 12/16 step: a list of results is read as a set, and
-     the smaller step keeps the bars — the thing being compared — the loudest
-     part of it. */
-  font-size: var(--sp-font-xs);
-  line-height: 16px;
+  /* The library's 14/20 step, label and figure alike — the same size the
+     text in every other control is set at. */
+  font-size: var(--sp-font-sm);
+  line-height: 20px;
   color: var(--sp-glass-text);
   text-align: start;
 }
