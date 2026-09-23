@@ -20,33 +20,44 @@
 /* The surface showing between slices, rather than a stroke of some other
    colour: it reads as a gap at any size and against any ground. */
 /* The surface showing between slices, rather than a stroke of some other
-   colour: it reads as a gap at any size and against any ground. Each slice
-   carries the same bloom the other lit surfaces here do. */
+   colour: it reads as a gap at any size and against any ground. No bloom:
+   slices meet each other edge to edge, and a glow on each one fogs the
+   boundaries that carry the comparison. */
 .slice {
   stroke: var(--sp-gray-panel);
   stroke-width: var(--sp-pie-chart-gap-size, 2px);
-  filter: drop-shadow(0 0 6px currentColor);
-  transition: opacity 0.15s ease, filter 0.15s ease;
+  transition: opacity 0.15s ease;
 
   &[data-dim] {
     opacity: 0.4;
-    filter: none;
   }
 }
 
-/* The ring sweeps round on its first draw, the way a dial fills. */
-.root[data-animated] .svg {
-  animation: sp-pie-sweep 0.6s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+/* The ring draws itself round, clockwise from the top, the way a dial fills —
+   so the slices arrive in the order they are listed rather than the picture
+   wiping in from one side.
+
+   A conic mask does it: the angle is an animatable custom property, and the
+   gradient reveals everything up to that angle. Where @property is not
+   supported the variable resolves to nothing, the mask-image is invalid, and
+   the ring simply appears whole — which is the right way for this to fail. */
+@property --_pie-sweep {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 360deg;
+}
+
+.root[data-animated] .sweep {
+  animation: sp-pie-sweep 0.72s cubic-bezier(0.22, 0.68, 0.32, 1) both;
+  mask-image: conic-gradient(from 0deg, #000 var(--_pie-sweep), transparent 0);
 }
 
 @keyframes sp-pie-sweep {
   from {
-    clip-path: inset(0 0 0 50%);
-    opacity: 0;
+    --_pie-sweep: 0deg;
   }
   to {
-    clip-path: inset(0);
-    opacity: 1;
+    --_pie-sweep: 360deg;
   }
 }
 
@@ -124,7 +135,8 @@
     transition: none;
   }
 
-  .root[data-animated] .svg {
+  .root[data-animated] .sweep {
     animation: none;
+    mask-image: none;
   }
 }

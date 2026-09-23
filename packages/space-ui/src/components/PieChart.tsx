@@ -119,21 +119,25 @@ export function PieChart({
         role="img"
         aria-label={ariaLabel ?? "Pie chart"}
       >
-        {arcs.map(({ slice, index, d, fillRule }) => (
-          <path
-            key={`${slice.label}-${index}`}
-            className={cx(styles.slice, onSliceClick && styles.clickable)}
-            d={d}
-            fill={slice.color ?? seriesColor(originalIndex(slice))}
-            fillRule={fillRule}
-            data-dim={hovered !== null && hovered !== index ? "" : undefined}
-            onPointerEnter={() => setHovered(index)}
-            onPointerLeave={() => setHovered(null)}
-            onClick={() => onSliceClick?.(slice, originalIndex(slice))}
-          >
-            <title>{`${slice.label}: ${format(slice.value)}`}</title>
-          </path>
-        ))}
+        {/* The slices alone are swept in; the total in the middle is not part
+            of the ring and should not be revealed by it. */}
+        <g className={styles.sweep}>
+          {arcs.map(({ slice, index, d, fillRule }) => (
+            <path
+              key={`${slice.label}-${index}`}
+              className={cx(styles.slice, onSliceClick && styles.clickable)}
+              d={d}
+              fill={slice.color ?? seriesColor(originalIndex(slice))}
+              fillRule={fillRule}
+              data-dim={hovered !== null && hovered !== index ? "" : undefined}
+              onPointerEnter={() => setHovered(index)}
+              onPointerLeave={() => setHovered(null)}
+              onClick={() => onSliceClick?.(slice, originalIndex(slice))}
+            >
+              <title>{`${slice.label}: ${format(slice.value)}`}</title>
+            </path>
+          ))}
+        </g>
 
         {donut && (
           <>
