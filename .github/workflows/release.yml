@@ -6,36 +6,61 @@ concurrency: release-${{ github.ref }}
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      # secrets.* is not readable inside a step "if"; surfacing presence as
-      # an env flag is the supported pattern.
-      NPM_TOKEN_SET: ${{ secrets.NPM_TOKEN != '' }}
     permissions:
-      contents: write
-      pull-requests: write
-      id-token: write # npm provenance
+      contents: write # commits the version bump, pushes the tag
+      pull-requests: write # opens and updates the "Version Packages" PR
+      id-token: write # proves to npm that this workflow is who it says
     steps:
-      # Same reason as ci.yml: changesets reads git history to work out what
-      # to version and publish. A shallow clone would bite here on the first
-      # real publish rather than on a PR.
+      # changesets reads git history to work out what to version, and the tag
+      # check below needs the tags. A shallow clone has neither.
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      # With pending changesets: opens/updates the "Version Packages" PR.
-      # When that PR merges: builds and publishes to npm with provenance.
-      # GATED on NPM_TOKEN being configured: without the gate, a main push
-      # with zero pending changesets makes the action attempt a direct npm
-      # publish of whatever version sits in package.json (it tried 0.0.0 on
-      # the very first push). Until the token exists, this workflow is a
-      # deliberate no-op.
-      - if: env.NPM_TOKEN_SET == 'true'
-        uses: changesets/action@v1
+
+      # Versioning only. Publishing is the step below rather than changesets'
+      # own: in a pnpm workspace `changeset publish` shells out to `pnpm
+      # publish`, and pnpm cannot do npm's trusted publishing — it has no
+      # OIDC exchange at all. npm can, so npm is what publishes here.
+      - uses: changesets/action@v1
+        id: changesets
         with:
-          publish: pnpm release
+          version: pnpm version-packages
           title: "Version Packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # npm ships trusted publishing from 11.5.1; Node 22 carries npm 10.
+      - if: steps.changesets.outputs.hasChangesets == 'false'
+        run: npm install -g npm@latest
+
+      # Runs on every push to main with no changesets pending, which includes
+      # the merge of a "Version Packages" PR. Publishing an already-published
+      # version is a no-op rather than a failure, so an unrelated push does
+      # nothing and an interrupted run can simply be repeated.
+      - if: steps.changesets.outputs.hasChangesets == 'false'
+        name: Publish to npm, if this version is new
+        working-directory: packages/space-ui
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          name="$(node -p "require('./package.json').name")"
+
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version is already on npm — nothing to do."
+            exit 0
+          fi
+
+          echo "Publishing $name@$version"
+          # No NODE_AUTH_TOKEN: npm exchanges this job's OIDC identity for a
+          # short-lived credential, which is only granted to the workflow the
+          # package names as its trusted publisher. Provenance comes from the
+          # same identity, and is declared in the package's publishConfig.
+          pnpm build
+          npm publish --access public
+
+          cd "$GITHUB_WORKSPACE"
+          git tag "$name@$version"
+          git push origin "$name@$version"
