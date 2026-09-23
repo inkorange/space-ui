@@ -83,8 +83,10 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: calc(var(--sp-grid-base-size, 8px) * 2);
-  font-size: var(--sp-font-sm);
-  line-height: 20px;
+  /* The same 12/16 step BarList's rows take: a legend is a list of results
+     too, and the ring should stay the loudest thing here. */
+  font-size: var(--sp-font-xs);
+  line-height: 16px;
   transition: opacity 0.15s ease;
 
   &[data-dim] {
@@ -99,6 +101,7 @@
   color: var(--sp-glass-text);
 }
 
+/* The same step as the name beside it. */
 .legendValue {
   font-variant-numeric: tabular-nums;
   color: var(--sp-glass-text);

@@ -28,6 +28,10 @@ export interface BarListProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   /** Give every row its own colour from the series palette, rather than one
    *  colour for the set. */
   colorful?: boolean;
+  /** Fill the bars on first render, one row after the next, the way results
+   *  arrive. Default true; a reader who asked for less motion gets the bars
+   *  already filled either way. */
+  animated?: boolean;
   /** Called when a row is chosen. Rows become buttons when this is given, and
    *  stay plain text when it is not — nothing looks clickable unless it is. */
   onItemClick?: (item: BarListItem, index: number) => void;
@@ -53,6 +57,7 @@ export function BarList({
   showPercent = false,
   formatValue: format = formatValue,
   colorful = false,
+  animated = true,
   onItemClick,
   className,
   "aria-label": ariaLabel,
@@ -62,7 +67,13 @@ export function BarList({
   const total = items.reduce((sum, i) => sum + (i.value > 0 ? i.value : 0), 0);
 
   return (
-    <div {...rest} className={cx(styles.root, className)} role="list" aria-label={ariaLabel}>
+    <div
+      {...rest}
+      className={cx(styles.root, className)}
+      role="list"
+      aria-label={ariaLabel}
+      data-animated={animated ? "" : undefined}
+    >
       {items.map((item, index) => {
         // A zero-length bar still shows its rounded cap, so a row with no
         // votes reads as a row with no votes rather than as a missing row.
@@ -76,7 +87,15 @@ export function BarList({
             <span className={styles.track}>
               <span
                 className={styles.fill}
-                style={{ width: `${ratio * 100}%`, background: fill }}
+                style={{
+                  width: `${ratio * 100}%`,
+                  background: fill,
+                  // Each row starts a little after the one above, so a poll
+                  // reads as counting up rather than snapping into place.
+                  // Capped, or a long list would still be filling when the
+                  // reader has finished reading it.
+                  animationDelay: `${Math.min(index * 60, 360)}ms`,
+                }}
               />
             </span>
             <span className={styles.value}>

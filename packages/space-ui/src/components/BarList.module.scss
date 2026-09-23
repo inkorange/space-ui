@@ -25,8 +25,11 @@
   gap: calc(var(--sp-grid-base-size, 8px) * 2);
   width: 100%;
   padding: calc(var(--sp-grid-base-size, 8px) / 2) 0;
-  font-size: var(--sp-font-sm);
-  line-height: 20px;
+  /* The whole row on the 12/16 step: a list of results is read as a set, and
+     the smaller step keeps the bars — the thing being compared — the loudest
+     part of it. */
+  font-size: var(--sp-font-xs);
+  line-height: 16px;
   color: var(--sp-glass-text);
   text-align: start;
 }
@@ -82,6 +85,14 @@
   box-shadow: 0 0 10px rgb(var(--sp-glow-rgb) / 0.35);
   transition: width 0.4s cubic-bezier(0.16, 0.84, 0.44, 1);
 
+  /* Grown from nothing on first render. The keyframes name only the start,
+     so each bar animates to its own width without the stylesheet knowing
+     it — and the rounded cap and the specks stay the right shape, which
+     scaling the bar would not. */
+  .root[data-animated] & {
+    animation: sp-bar-list-fill 0.52s cubic-bezier(0.16, 0.84, 0.44, 1) both;
+  }
+
   &::after {
     content: "";
     position: absolute;
@@ -95,6 +106,7 @@
   }
 }
 
+/* The same step as the label beside it. */
 .value {
   font-variant-numeric: tabular-nums;
   color: var(--sp-glass-text);
@@ -105,8 +117,18 @@
   color: var(--sp-chart-label-color);
 }
 
+@keyframes sp-bar-list-fill {
+  from {
+    width: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fill {
     transition: none;
+  }
+
+  .root[data-animated] .fill {
+    animation: none;
   }
 }

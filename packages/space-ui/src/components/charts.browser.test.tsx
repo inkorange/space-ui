@@ -14,6 +14,16 @@ import { PieChart } from "./PieChart";
 
 const settle = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
+/** Waits out the mount animations, so a measurement is of the finished
+ *  drawing rather than a frame partway through it. */
+async function drawn() {
+  await settle();
+  await Promise.all(
+    document.getAnimations().map((animation) => animation.finished.catch(() => undefined)),
+  );
+  await settle();
+}
+
 async function mount(node: React.ReactElement, width = 640) {
   render(<div style={{ width }}>{node}</div>);
   // The plot measures its container, so nothing is drawn to scale until the
@@ -137,13 +147,30 @@ describe("Chart lines", () => {
 });
 
 describe("BarList", () => {
+  it("fills from nothing, and stands still when told not to", async () => {
+    render(
+      <div style={{ width: 400 }}>
+        <BarList animated={false} items={[{ label: "Idea", value: 44 }]} aria-label="Poll" />
+      </div>,
+    );
+    await settle();
+    expect(document.getAnimations()).toHaveLength(0);
+    const fill = document.querySelector("[class*='fill']")!.getBoundingClientRect().width;
+    expect(fill).toBeGreaterThan(0);
+  });
+
   it("draws each bar to its share of the longest", async () => {
     render(
       <div style={{ width: 400 }}>
         <BarList items={[{ label: "Idea", value: 44 }, { label: "Bug", value: 22 }]} aria-label="Poll" />
       </div>,
     );
+    // The bars fill on mount, one row after the next. The animation starts on
+    // the frame after the render, so look for it there, then measure once it
+    // has finished.
     await settle();
+    expect(document.getAnimations().length).toBeGreaterThan(0);
+    await drawn();
     const fills = [...document.querySelectorAll("[class*='fill']")].map((el) => el.getBoundingClientRect().width);
     expect(fills[1] / fills[0]).toBeCloseTo(0.5, 1);
   });
@@ -157,7 +184,7 @@ describe("BarList", () => {
         />
       </div>,
     );
-    await settle();
+    await drawn();
     const tracks = [...document.querySelectorAll("[class*='track']")].map((el) => el.getBoundingClientRect().left);
     expect(tracks[0]).toBeCloseTo(tracks[1], 0);
   });
