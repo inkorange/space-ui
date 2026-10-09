@@ -32,17 +32,62 @@ TextAreaStory.meta = {
 };
 
 export const SliderStory = () => {
-  const [v, setV] = useState([40]);
+  const [one, setOne] = useState([40]);
+  const [tens, setTens] = useState([30]);
+  const [mass, setMass] = useState([20, 80]);
+  const [period, setPeriod] = useState([120, 300]);
+
   return (
-    <div style={{ width: 320 }}>
-      <Slider value={v} onValueChange={setV} min={0} max={100} step={1} aria-label="Value" />
+    <div style={{ display: "grid", gap: 32, width: 320 }}>
+      <div>
+        <Text size="1" color="muted" className="docs-caption">
+          One thumb — a value. No step given, so it moves by 1
+        </Text>
+        <Slider value={one} onValueChange={setOne} min={0} max={100} aria-label="Value" />
+      </div>
+
+      <div>
+        <Text size="1" color="muted" className="docs-caption">
+          step={"{10}"} — it stops at every ten and nowhere between
+        </Text>
+        <Slider value={tens} onValueChange={setTens} min={0} max={100} step={10} aria-label="Coverage" />
+        <Text size="1" color="muted">{tens[0]}%</Text>
+      </div>
+
+      <div>
+        <Text size="1" color="muted" className="docs-caption">
+          Two thumbs — a range, reported as [start, end]
+        </Text>
+        <Slider value={mass} onValueChange={setMass} min={0} max={100} aria-label="Mass" />
+        <Text size="1" color="muted">
+          {mass[0]} to {mass[1]} Earth masses
+        </Text>
+      </div>
+
+      <div>
+        <Text size="1" color="muted" className="docs-caption">
+          minDistance keeps a gap, where an empty range would mean nothing
+        </Text>
+        <Slider
+          value={period}
+          onValueChange={setPeriod}
+          min={0}
+          max={400}
+          step={10}
+          minDistance={50}
+          thumbLabels={["Shortest period", "Longest period"]}
+        />
+        <Text size="1" color="muted">
+          {period[0]} to {period[1]} days — at least 50 apart
+        </Text>
+      </div>
     </div>
   );
 };
 SliderStory.storyName = "Slider";
 SliderStory.meta = {
   description:
-    "A range control for continuous values. Takes and returns an array so it can support multiple thumbs without an API change. The track is a glass tube, the thumb a limb-lit planet.",
+    "A range control: one thumb for a value, two for a span between values — pass one number or two. `step` sets the grid every value lands on — `step={10}` over 0–100 stops at 0, 10, 20 and nothing between, whether dragged, pressed or walked with the arrow keys — counted from `min`, and 1 by default. Each thumb is a real range input, so arrow keys, Home, End and Page Up/Down work and a screen reader announces a slider. The two cannot cross: each is clamped to the other, so the array never reads back inverted, and `minDistance` keeps a gap where a zero-width range would be meaningless. With two thumbs a press on the track moves the nearer one. The track is a glass tube, each thumb a limb-lit planet.",
 };
 
 const LONG_OPTIONS = [

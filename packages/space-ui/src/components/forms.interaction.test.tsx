@@ -1,6 +1,6 @@
 /** Behaviour tests — see select.interaction.test.tsx for what is out of scope. */
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { Checkbox, CheckboxGroup } from "./Checkbox";
@@ -9,6 +9,7 @@ import { IconToggle } from "./IconToggle";
 import { Tabs } from "./Tabs";
 import { Pagination, type PaginationState } from "./Pagination";
 import { Carousel } from "./Carousel";
+import { Slider } from "./Slider";
 
 describe("Checkbox behaviour", () => {
   it("reports each change, and can be driven from outside", async () => {
@@ -353,5 +354,176 @@ describe("Carousel behaviour", () => {
   it("leaves the row focusable, so arrow keys scroll it", () => {
     render(<Carousel aria-label="Featured planets">{slides}</Carousel>);
     expect(document.querySelector("[tabindex='0']")).not.toBeNull();
+  });
+});
+
+describe("Slider behaviour", () => {
+  const Range = ({
+    onValueChange = vi.fn(),
+    start = 20,
+    end = 80,
+    ...rest
+  }: { onValueChange?: (v: number[]) => void; start?: number; end?: number } & Record<string, unknown>) => {
+    const [value, setValue] = useState([start, end]);
+    return (
+      <Slider
+        value={value}
+        onValueChange={(next) => {
+          setValue(next);
+          onValueChange(next);
+        }}
+        min={0}
+        max={100}
+        step={1}
+        aria-label="Mass"
+        {...rest}
+      />
+    );
+  };
+
+  const thumbs = () => screen.getAllByRole("slider");
+
+  it("is one slider with one value, and two with two", () => {
+    const { rerender } = render(
+      <Slider value={[50]} onValueChange={() => {}} min={0} max={100} step={1} aria-label="Mass" />,
+    );
+    expect(screen.getAllByRole("slider")).toHaveLength(1);
+    expect(screen.getByRole("slider")).toHaveAccessibleName("Mass");
+
+    rerender(
+      <Slider value={[20, 80]} onValueChange={() => {}} min={0} max={100} step={1} aria-label="Mass" />,
+    );
+    expect(screen.getAllByRole("slider")).toHaveLength(2);
+  });
+
+  it("names each thumb, so they are not two sliders called the same thing", () => {
+    render(<Range />);
+    expect(screen.getByRole("slider", { name: "Mass minimum" })).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "Mass maximum" })).toBeInTheDocument();
+  });
+
+  it("takes names of its own when the generated ones do not fit", () => {
+    render(<Range thumbLabels={["From", "To"]} />);
+    expect(screen.getByRole("slider", { name: "From" })).toBeInTheDocument();
+    expect(screen.getByRole("slider", { name: "To" })).toBeInTheDocument();
+  });
+
+  it("reports the whole array when one thumb moves", async () => {
+    const onValueChange = vi.fn();
+    render(<Range onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[0], { target: { value: "35" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([35, 80]);
+
+    fireEvent.change(thumbs()[1], { target: { value: "60" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([35, 60]);
+  });
+
+  it("stops the lower thumb at the upper one", () => {
+    const onValueChange = vi.fn();
+    render(<Range onValueChange={onValueChange} />);
+
+    // Dragged well past its neighbour, it travels only as far as the neighbour.
+    fireEvent.change(thumbs()[0], { target: { value: "95" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([80, 80]);
+  });
+
+  it("stops the upper thumb at the lower one", () => {
+    const onValueChange = vi.fn();
+    render(<Range onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[1], { target: { value: "5" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([20, 20]);
+  });
+
+  it("says nothing once a thumb is already against its neighbour", () => {
+    // The pair is left touching; pushing further is not a new value, so the
+    // caller hears nothing rather than the same array again every frame.
+    const onValueChange = vi.fn();
+    render(<Range start={40} end={40} onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[0], { target: { value: "90" } });
+    fireEvent.change(thumbs()[1], { target: { value: "10" } });
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("keeps the gap minDistance asks for, from either side", () => {
+    const onValueChange = vi.fn();
+    const { unmount } = render(<Range minDistance={10} onValueChange={onValueChange} />);
+    fireEvent.change(thumbs()[0], { target: { value: "95" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([70, 80]);
+    unmount();
+
+    onValueChange.mockClear();
+    render(<Range minDistance={10} onValueChange={onValueChange} />);
+    fireEvent.change(thumbs()[1], { target: { value: "0" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([20, 30]);
+  });
+
+  it("holds both thumbs inside the bounds", () => {
+    const onValueChange = vi.fn();
+    render(<Range onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[0], { target: { value: "-40" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([0, 80]);
+
+    onValueChange.mockClear();
+    fireEvent.change(thumbs()[1], { target: { value: "160" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([0, 100]);
+  });
+
+  it("says nothing when a move changes nothing", () => {
+    const onValueChange = vi.fn();
+    render(<Range onValueChange={onValueChange} />);
+    fireEvent.change(thumbs()[0], { target: { value: "20" } });
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("steps by one unless told otherwise", () => {
+    // step is optional: a slider that does not care about granularity should
+    // not have to say so, and 1 is what a bare range input does.
+    render(
+      <Slider value={[40]} onValueChange={() => {}} min={0} max={100} aria-label="Mass" />,
+    );
+    expect(screen.getByRole("slider")).toHaveAttribute("step", "1");
+  });
+
+  it("puts the step on every thumb, however many there are", () => {
+    render(<Range step={10} />);
+    for (const thumb of thumbs()) expect(thumb).toHaveAttribute("step", "10");
+  });
+
+  it("keeps a clamped thumb on the step grid", () => {
+    // step 10 with a gap of 25 would otherwise park the lower thumb on 75 —
+    // a value the slider cannot produce any other way. It settles on 70, the
+    // next step that still leaves the gap.
+    const onValueChange = vi.fn();
+    render(<Range start={20} end={100} step={10} minDistance={25} onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[0], { target: { value: "100" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([70, 100]);
+  });
+
+  it("keeps the upper thumb on the grid too", () => {
+    const onValueChange = vi.fn();
+    render(<Range start={0} end={80} step={10} minDistance={25} onValueChange={onValueChange} />);
+
+    fireEvent.change(thumbs()[1], { target: { value: "0" } });
+    expect(onValueChange).toHaveBeenLastCalledWith([0, 30]);
+  });
+
+  it("counts the grid from min, not from zero", () => {
+    const onValueChange = vi.fn();
+    render(
+      <Slider value={[25]} onValueChange={onValueChange} min={5} max={105} step={10} aria-label="Mass" />,
+    );
+    // The grid here is 5, 15, 25 … so the input's own step anchor matters.
+    expect(screen.getByRole("slider")).toHaveAttribute("min", "5");
+    expect(screen.getByRole("slider")).toHaveAttribute("step", "10");
+  });
+
+  it("takes both thumbs out of the tab order when disabled", () => {
+    render(<Range disabled />);
+    for (const thumb of thumbs()) expect(thumb).toBeDisabled();
   });
 });
