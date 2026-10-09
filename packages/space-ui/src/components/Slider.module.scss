@@ -18,7 +18,10 @@
   overflow: hidden;
 }
 
+/* The lit part of the tube. With one thumb it runs from the start; with two
+   it is the span between them, so it is positioned as well as sized. */
 .range {
+  position: relative;
   display: block;
   height: 100%;
   border-radius: inherit;
@@ -34,6 +37,8 @@
   pointer-events: none;
 }
 
+/* The real control, invisible over the drawn one. Everything above is paint;
+   this is what the browser and a screen reader see. */
 .input {
   position: absolute;
   inset: 0;
@@ -43,4 +48,44 @@
   cursor: pointer;
 
   &:disabled { cursor: not-allowed; }
+}
+
+/* Two thumbs means two inputs lying on top of each other, each covering the
+   whole track. Left alone, the upper one swallows every press — including
+   those meant for the thumb beneath it. So in range mode the inputs
+   themselves stop taking pointer events and only their thumbs accept one;
+   a press on the track is handled by the component, which moves whichever
+   thumb is nearer. */
+.root[data-range] .input {
+  pointer-events: none;
+}
+
+/* The hit area, matching the drawn thumb. The native thumb has to be given
+   a size of its own: with appearance reset it has none. */
+.root[data-range] .input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: grab;
+}
+
+.root[data-range] .input::-moz-range-thumb {
+  pointer-events: auto;
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: grab;
+}
+
+.root[data-range] .input:active::-webkit-slider-thumb {
+  cursor: grabbing;
+}
+
+.root[data-range] .input:active::-moz-range-thumb {
+  cursor: grabbing;
 }
