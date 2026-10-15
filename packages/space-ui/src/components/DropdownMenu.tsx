@@ -269,6 +269,20 @@ function Separator() {
   return <div role="separator" className={styles.separator} />;
 }
 
-// The parts hang off the component rather than being separate exports, so the
-// whole API is reachable from the one name a consumer already imported.
+/**
+ * A button that opens a list of actions.
+ *
+ * Actions, not choices: every item does something when picked, and nothing in
+ * the menu holds a value. For choosing one of a set of values, that is
+ * `Select`, which looks similar and means something entirely different to a
+ * screen reader.
+ *
+ * Arrow keys move through the items, Home and End jump to the ends, Escape
+ * closes and returns focus to the button, and typing a letter jumps to the
+ * next item starting with it. The panel uses the browser's popover layer, so
+ * it stacks above the page without a z-index to maintain.
+ *
+ * Compose it from `DropdownMenu.Item`, `DropdownMenu.Label` and
+ * `DropdownMenu.Separator`.
+ */
 export const DropdownMenu = Object.assign(DropdownMenuRoot, { Item, Separator, Label });

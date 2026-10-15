@@ -21,9 +21,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 
 /**
- * "Limb-lit glass" button: cosmic glass capsule whose rim glows like a planet's
- * sunlit atmosphere limb, with twinkling stars inside and a periodic glint
- * sweep. Plain <button>, so it composes with Radix Dialog.Trigger (Slot).
+ * The thing a reader presses to make something happen. A glass capsule whose
+ * rim glows like a planet's sunlit limb, with stars twinkling inside it and a
+ * glint that sweeps across it now and then.
+ *
+ * It renders a plain `<button>` and forwards its ref, so it drops into
+ * anything that needs to borrow a trigger — a dialog, a menu, a router link's
+ * render prop — without a wrapper in between.
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button({ iconOnly, ember, size = "md", fullWidth, animated = true, className, children, ...rest }, ref) {

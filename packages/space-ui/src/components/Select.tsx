@@ -384,6 +384,21 @@ function Item({ value, disabled, children }: SelectItemProps) {
   );
 }
 
-// Item hangs off the component rather than being a separate export, so the
-// whole API is reachable from the one name a consumer already imported.
+/**
+ * Choosing one value from a list, with the list kept out of the way until it
+ * is wanted.
+ *
+ * The right control when the options are many, or dull, or both — a country, a
+ * size, a sort order. Where there are few options and each one deserves to be
+ * read, `RadioGroup` shows them all without a click. Where the items are
+ * actions rather than values, that is `DropdownMenu`.
+ *
+ * The panel opens on the browser's popover layer, which is what lets it escape
+ * a dialog, a transformed ancestor or a clipping overflow and sit above the
+ * page at its full height. It flips above the trigger when there is no room
+ * below, follows the trigger if the page scrolls, and closes on Escape with
+ * focus handed back. Typing jumps to a matching option.
+ *
+ * Compose it from `Select.Item`.
+ */
 export const Select = Object.assign(SelectRoot, { Item });

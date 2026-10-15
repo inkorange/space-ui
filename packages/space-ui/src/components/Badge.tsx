@@ -41,9 +41,9 @@ export interface BadgeProps
   variant?: "soft" | "solid";
   /** 1 is the default chip; 2 is for standalone use away from body text. */
   size?: "1" | "2";
-  /** Badges are single-line by default (Radix parity). Long free-text
-   *  content — e.g. user-named star systems on planet cards — opts into
-   *  wrapping so it can't overflow its card. */
+  /** Badges are single-line by default: one that wraps stops reading as a
+   *  badge. Opt into wrapping for free text you do not control — anything a
+   *  reader named rather than you — so it cannot overflow what contains it. */
   wrap?: boolean;
   /** Label text. Keep it short — a badge that wraps stops reading as one. */
   children?: ReactNode;

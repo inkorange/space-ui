@@ -1,3 +1,41 @@
+/**
+ * SpaceUI — a React 19 component library and design system for dark
+ * interfaces. Zero runtime dependencies, precompiled CSS, and a role-based
+ * design-token system.
+ *
+ * ```tsx
+ * import "@inkorange/space-ui/styles.css";
+ * import { Card, Heading, Text, Button } from "@inkorange/space-ui";
+ * ```
+ *
+ * What is not visible in the type signatures below:
+ *
+ * - One stylesheet import, at the application root. There is no
+ *   per-component CSS, no provider, no context and no theme wrapper.
+ * - Style with tokens, not lengths: `var(--spacing-md)` over `16px`. Spacing
+ *   is an 8pt grid, every step a multiple of `--sp-grid-base-size`. Control
+ *   heights come from `--sp-control-height` (40px, `-sm` 36, `-lg` 48), so
+ *   controls placed side by side line up without arithmetic. Colour is a
+ *   named role — `primary`, `success`, `warning`, `danger`, `accent` — with
+ *   `-solid`, `-text`, `-soft`, `-border`, `-glow` and `-deep` saying which
+ *   job within it.
+ * - Override a component token on a class, never in an inline `style`: inline
+ *   beats every media and container query written afterwards.
+ * - Boolean props default to false, so `<Button fullWidth />` is the idiom.
+ *   `animated` is the one exception, defaulting to true.
+ * - Selection is controlled through `onValueChange`. Native text inputs keep
+ *   React's own `value` and `onChange`.
+ * - Keyboard behaviour and ARIA live inside the components. Pass `aria-label`
+ *   where there is no visible label; do not re-declare the rest.
+ * - The components are drawn as lit glass over a dark ground. The tokens can
+ *   be re-pointed, but there is no supported light theme, and a light palette
+ *   misrepresents every surface here.
+ *
+ * The full generated reference, including every token each component accepts,
+ * is at https://space-components.vercel.app/llms.txt
+ *
+ * @packageDocumentation
+ */
 // The default token values ship WITH the components, so `styles.css` alone
 // renders a working library. A consuming app overrides by loading its own
 // :root block afterwards — same specificity, later source order — which is

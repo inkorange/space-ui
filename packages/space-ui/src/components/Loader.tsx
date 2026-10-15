@@ -13,10 +13,14 @@ export interface LoaderProps {
 }
 
 /**
- * Orbital spinner: a small pulsing "planet" disc at the center of a static
- * ring, with a "moon" dot traveling the ring. Dependency-free CSS animation
- * so it composes cleanly wherever a lazy chunk or async panel needs a
- * space-themed loading state (see SurfaceView's dynamic-import loader).
+ * An orbital spinner, for work whose length you cannot measure: a small
+ * pulsing planet at the centre of a static ring, with a moon travelling it.
+ * Where you CAN measure the work, use `Progress` instead — a spinner that
+ * could have been a bar tells the reader less than it knows.
+ *
+ * The motion is pure CSS and runs on the compositor, so it keeps turning
+ * smoothly while the main thread is busy doing the thing it is waiting on —
+ * which is exactly when a loader is on screen.
  */
 export function Loader({ size = "md", label, className }: LoaderProps) {
   return (

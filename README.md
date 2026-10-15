@@ -205,6 +205,40 @@ their edge cases already found rather than imagined.
 **Requires** React 19 and a dark surface. There is deliberately no light theme;
 these components assume the dark they were drawn for.
 
+## For AI agents
+
+The full API — every component, prop, data shape and design token — is
+published in machine-readable form, generated from this source on every deploy
+so it describes the published version exactly:
+
+- [`llms.txt`](https://space-components.vercel.app/llms.txt) — the index:
+  install, the rules below, the scales, and one line per component.
+- [`llms-full.txt`](https://space-components.vercel.app/llms-full.txt) — the
+  whole reference, as one file.
+- [`reference.html`](https://space-components.vercel.app/reference.html) — the
+  same, as a page that needs no JavaScript.
+- [`AGENTS.md`](https://github.com/inkorange/space-ui/blob/main/AGENTS.md) —
+  the short version, and it ships inside the package, so an agent working in a
+  project that depends on SpaceUI finds it without fetching anything.
+
+The things that are easy to get wrong because no type signature says them:
+
+- **One stylesheet import, at the root.** No per-component CSS, no provider, no
+  context, no theme wrapper, no build plugin.
+- **Dark only.** The tokens can be re-pointed, but there is no supported light
+  theme — these components are drawn as lit glass over a dark ground.
+- **Tokens, not lengths.** `var(--spacing-md)` over `16px`; spacing is an 8pt
+  grid and control heights come from a three-step ladder, so controls placed
+  side by side line up without arithmetic.
+- **Set a component token on a class, never in an inline `style`** — inline
+  beats every media query a consumer will write afterwards.
+- **Booleans default to false**, so `<Button fullWidth />` is the idiom.
+  `animated` is the one exception, defaulting to true.
+- **Selection is controlled through `onValueChange`.** Native text inputs keep
+  React's `value` and `onChange`.
+- **Keyboard behaviour and ARIA are already inside the components.** Add
+  `aria-label` where there is no visible label; do not re-declare the rest.
+
 ## License
 
 MIT

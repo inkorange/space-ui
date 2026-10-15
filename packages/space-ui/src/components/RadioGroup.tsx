@@ -90,6 +90,19 @@ function Item({ value, disabled, children }: RadioGroupItemProps) {
   );
 }
 
-// Item hangs off the component rather than being a separate export, so the
-// whole API is reachable from the one name a consumer already imported.
+/**
+ * Exactly one choice from a set you can see all of at once.
+ *
+ * Use it where the options matter enough to be read side by side and there are
+ * few enough to show — up to about seven. Past that a `Select` keeps the page
+ * calm. Where several answers can be true at the same time, that is
+ * `CheckboxGroup`.
+ *
+ * Hold the chosen value and pass `onValueChange`. Each orb ignites when it is
+ * chosen, arrow keys move between the options the way a native radio group
+ * does, and a label that wraps to two lines keeps its orb beside the first
+ * line rather than drifting to the middle.
+ *
+ * Compose it from `RadioGroup.Item`.
+ */
 export const RadioGroup = Object.assign(RadioGroupRoot, { Item });
