@@ -275,9 +275,22 @@ export function Description(props: TextProps) {
   return <Text as="p" {...props} id={d.descId} />;
 }
 
-// The parts hang off the component rather than being separate exports, so the
-// whole API is reachable from the one name a consumer already imported. They
-// stay exported above too, because AlertDialog is assembled from them.
+/**
+ * A modal window over the page, for a task that has to finish or be abandoned
+ * before anything else happens.
+ *
+ * It rides the platform's own `<dialog>`, so the backdrop, the top layer, the
+ * Escape key and the focus trap are the browser's rather than an
+ * approximation of them. Opening moves focus inside; closing returns it to
+ * whatever opened it.
+ *
+ * For a decision with consequences — deleting, discarding, overwriting —
+ * reach for `AlertDialog`, which refuses to close by a click outside, so a
+ * misplaced click cannot answer the question for the reader.
+ *
+ * Compose it from the parts hanging off this name: `Dialog.Trigger`,
+ * `Dialog.Content`, `Dialog.Title`, `Dialog.Description` and `Dialog.Close`.
+ */
 export const Dialog = Object.assign(Root, {
   Trigger,
   Close,

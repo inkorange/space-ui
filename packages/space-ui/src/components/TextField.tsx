@@ -59,6 +59,16 @@ function Slot({
   return <span className={styles.slot}>{children}</span>;
 }
 
-// Slot hangs off the component rather than being a separate export, so the
-// whole API is reachable from the one name a consumer already imported.
+/**
+ * A single line of text the reader types.
+ *
+ * A real `<input>` underneath, so `value`, `onChange`, `type`, `required`,
+ * `autoComplete` and the rest of the native attributes all work as they
+ * already do, and the browser's own autofill and validation come along with
+ * them. For more than a line, use `TextArea`.
+ *
+ * Put an icon, a unit or a small button beside the text with `TextField.Slot`.
+ * It sits inside the field's rim and keeps its own padding, so the text never
+ * runs underneath it.
+ */
 export const TextField = Object.assign(TextFieldRoot, { Slot });

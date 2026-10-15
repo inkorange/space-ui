@@ -12,13 +12,15 @@ export interface IconToggleOption<V extends string> {
 }
 
 /**
- * A segmented icon toggle: every option is always visible in one pill, the
- * selected one reads as active, clicking any option selects it. Built for the
- * scene view switcher (planet / orrery / surface), where the old pattern —
- * showing only the views you are NOT on and swapping icons on click — made
- * the control's meaning flip under the cursor (owner: both icons should be
- * "always visible, the selected one is the active one"). Generic over the
- * option set so other icon-mode switchers can reuse it.
+ * A segmented icon toggle: every option visible at once in a single pill, the
+ * selected one reading as active, and a click on any of them selecting it.
+ *
+ * Reach for it to switch between modes or views of the same thing, where the
+ * options are few and each has an obvious glyph. The alternative pattern — one
+ * button that shows the mode you are NOT in and swaps its own icon on click —
+ * is deliberately not what this does: the control's meaning changes under the
+ * cursor, and nobody can tell whether the icon means "you are here" or "go
+ * here". Generic over the option set, so the values stay your own union type.
  */
 export function IconToggle<V extends string>({
   options,

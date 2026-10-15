@@ -85,6 +85,11 @@ export interface AutocompleteProps
   style?: React.CSSProperties;
 }
 
+/** Gap between field and panel, and the least room to leave at a viewport
+ *  edge — the same values Select and Popover place by. */
+const OFFSET = 8;
+const EDGE_PADDING = 8;
+
 /**
  * A text field that offers matching rows as you type.
  *
@@ -96,11 +101,6 @@ export interface AutocompleteProps
  * mid-keystroke and push the page down under the cursor are disorienting, and
  * whatever is being searched usually sits directly below the field.
  */
-/** Gap between field and panel, and the least room to leave at a viewport
- *  edge — the same values Select and Popover place by. */
-const OFFSET = 8;
-const EDGE_PADDING = 8;
-
 export function Autocomplete({
   value,
   onValueChange,

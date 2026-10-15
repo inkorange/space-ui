@@ -349,7 +349,7 @@ const createChecker = () => {
   }
 };
 
-const buildDocs = (): ComponentDoc[] => {
+export const buildDocs = (): ComponentDoc[] => {
   const docs: ComponentDoc[] = [];
   const seen = new Set<string>();
   const tc = createChecker();
@@ -572,7 +572,7 @@ const buildDocs = (): ComponentDoc[] => {
  * `endsWith("Icon")` test both undercounts the icons and miscounts those two
  * as components.
  */
-const buildIconNames = (): string[] => {
+export const buildIconNames = (): string[] => {
   try {
     const code = readFileSync(resolve(COMPONENTS_DIR, "icons.tsx"), "utf8");
     return [...code.matchAll(/^export (?:const|function) ([A-Z][A-Za-z0-9]*)/gm)]
@@ -584,7 +584,7 @@ const buildIconNames = (): string[] => {
 };
 
 /** Tokens referenced by the shared skin layer, grouped by its class. */
-const buildSkinTokens = (): Record<string, string[]> => {
+export const buildSkinTokens = (): Record<string, string[]> => {
   try {
     const css = readFileSync(resolve(STYLES_DIR, "spaceControls.module.scss"), "utf8");
     const out: Record<string, string[]> = {};

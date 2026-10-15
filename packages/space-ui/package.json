@@ -13,11 +13,22 @@
   },
   "keywords": [
     "react",
+    "react-19",
+    "react-components",
     "design-system",
     "component-library",
-    "dark-theme",
+    "ui-components",
     "design-tokens",
-    "react-19"
+    "css-variables",
+    "dark-theme",
+    "dark-mode",
+    "dark-ui",
+    "accessible",
+    "a11y",
+    "charts",
+    "carousel",
+    "zero-dependencies",
+    "typescript"
   ],
   "repository": {
     "type": "git",
@@ -28,7 +39,8 @@
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "AGENTS.md"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -44,7 +56,7 @@
   },
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css",
-    "prepack": "cp ../../README.md ../../LICENSE .",
+    "prepack": "cp ../../README.md ../../LICENSE ../../AGENTS.md .",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:browser": "vitest run --project browser",

@@ -144,6 +144,19 @@ function Content({
   );
 }
 
-// The parts hang off the component rather than being separate exports, so the
-// whole API is reachable from the one name a consumer already imported.
+/**
+ * Several panels sharing one piece of the page, one visible at a time.
+ *
+ * Right for views of the same subject that a reader moves between and
+ * compares — overview, history, settings for one record. Wrong for steps in a
+ * sequence, where the reader needs to know how far along they are, and wrong
+ * for content that should be findable by search or linkable on its own: a
+ * hidden panel is invisible to both.
+ *
+ * Arrow keys move between the tabs, Home and End jump to the ends, and only
+ * the selected tab is in the tab order, so one press of Tab leaves the strip
+ * for the panel instead of walking every tab in it.
+ *
+ * Compose it from `Tabs.List`, `Tabs.Trigger` and `Tabs.Content`.
+ */
 export const Tabs = Object.assign(TabsRoot, { List, Trigger, Content });
