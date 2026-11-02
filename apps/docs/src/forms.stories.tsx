@@ -36,6 +36,7 @@ export const SliderStory = () => {
   const [tens, setTens] = useState([30]);
   const [mass, setMass] = useState([20, 80]);
   const [period, setPeriod] = useState([120, 300]);
+  const [distance, setDistance] = useState([4000, 4050]);
 
   return (
     <div style={{ display: "grid", gap: 32, width: 320 }}>
@@ -81,13 +82,31 @@ export const SliderStory = () => {
           {period[0]} to {period[1]} days — at least 50 apart
         </Text>
       </div>
+
+      <div>
+        <Text size="1" color="muted" className="docs-caption">
+          A wide range, where the two thumbs sit on top of each other
+        </Text>
+        <Slider
+          value={distance}
+          onValueChange={setDistance}
+          min={0}
+          max={10000}
+          thumbLabels={["Nearest", "Furthest"]}
+        />
+        <Text size="1" color="muted">
+          {distance[0]} to {distance[1]} light years — 50 apart is a fifth of a
+          pixel, so both handles are in the same place. Either one still picks
+          up, and drags the way you pull it.
+        </Text>
+      </div>
     </div>
   );
 };
 SliderStory.storyName = "Slider";
 SliderStory.meta = {
   description:
-    "A range control: one thumb for a value, two for a span between values — pass one number or two. `step` sets the grid every value lands on — `step={10}` over 0–100 stops at 0, 10, 20 and nothing between, whether dragged, pressed or walked with the arrow keys — counted from `min`, and 1 by default. Each thumb is a real range input, so arrow keys, Home, End and Page Up/Down work and a screen reader announces a slider. The two cannot cross: each is clamped to the other, so the array never reads back inverted, and `minDistance` keeps a gap where a zero-width range would be meaningless. With two thumbs a press on the track moves the nearer one. The track is a glass tube, each thumb a limb-lit planet.",
+    "A range control: one thumb for a value, two for a span between values — pass one number or two. `step` sets the grid every value lands on — `step={10}` over 0–100 stops at 0, 10, 20 and nothing between, whether dragged, pressed or walked with the arrow keys — counted from `min`, and 1 by default. Each thumb is a real range input, so arrow keys, Home, End and Page Up/Down work and a screen reader announces a slider. The two cannot cross: each is clamped to the other, so the array never reads back inverted, and `minDistance` keeps a gap where a zero-width range would be meaningless. With two thumbs a press anywhere takes hold of the thumb drawn nearest the pointer and drags it until you let go — measured in pixels, so it stays right where a wide range puts both thumbs in the same place. The track is a glass tube, each thumb a limb-lit planet.",
 };
 
 const LONG_OPTIONS = [

@@ -16,8 +16,9 @@ function Range({
   onValueChange = () => {},
   start = 20,
   end = 80,
+  max = 100,
   ...rest
-}: { onValueChange?: (v: number[]) => void; start?: number; end?: number } & Record<string, unknown>) {
+}: { onValueChange?: (v: number[]) => void; start?: number; end?: number; max?: number } & Record<string, unknown>) {
   const [value, setValue] = useState([start, end]);
   return (
     <div style={{ width: 400 }}>
@@ -28,7 +29,7 @@ function Range({
           onValueChange(next);
         }}
         min={0}
-        max={100}
+        max={max}
         step={1}
         aria-label="Mass"
         {...rest}
@@ -42,12 +43,6 @@ const drawn = () => [...document.querySelectorAll("[class*='thumb']")] as HTMLEl
 const fill = () => document.querySelector("[class*='range']") as HTMLElement;
 const root = () => document.querySelector("[class*='root']") as HTMLElement;
 
-/** `auto` is the absence of a stacking order, which is below any number. */
-const layer = (el: Element) => {
-  const value = getComputedStyle(el).zIndex;
-  return value === "auto" ? 0 : Number(value);
-};
-
 /** A press on the track at this fraction of its width. */
 function pressTrack(at: number) {
   const box = root().getBoundingClientRect();
@@ -58,6 +53,31 @@ function pressTrack(at: number) {
       clientY: box.top + box.height / 2,
       pointerId: 1,
       pointerType: "mouse",
+    }),
+  );
+}
+
+/** A pointer move, delivered where a captured drag's listeners hear it. */
+function move(x: number) {
+  const y = root().getBoundingClientRect().top + 10;
+  window.dispatchEvent(
+    new PointerEvent("pointermove", { bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: "mouse" }),
+  );
+}
+
+/** A whole drag: press at the first x, travel through the rest, release. */
+function dragFrom(x: number, ...through: number[]) {
+  const y = root().getBoundingClientRect().top + 10;
+  const target = document.elementFromPoint(x, y) ?? root();
+  target.dispatchEvent(
+    new PointerEvent("pointerdown", {
+      bubbles: true, clientX: x, clientY: y, pointerId: 1, pointerType: "mouse", button: 0,
+    }),
+  );
+  for (const next of through) move(next);
+  window.dispatchEvent(
+    new PointerEvent("pointerup", {
+      bubbles: true, clientX: through.at(-1) ?? x, clientY: y, pointerId: 1, pointerType: "mouse",
     }),
   );
 }
@@ -124,61 +144,119 @@ describe("Slider range", () => {
     expect(document.activeElement).toBe(thumbs()[1]);
   });
 
-  it("leaves a press on a thumb to the browser", async () => {
+  it("grabs a thumb without moving it", async () => {
     const onValueChange = vi.fn();
     render(<Range onValueChange={onValueChange} />);
     await settle();
 
-    // A press that lands on the lower thumb itself must not be read as a
-    // track press and jump the value to where the pointer is.
-    const box = thumbs()[0].getBoundingClientRect();
-    thumbs()[0].dispatchEvent(
-      new PointerEvent("pointerdown", {
-        bubbles: true,
-        clientX: box.left + box.width / 2,
-        clientY: box.top + box.height / 2,
-        pointerId: 1,
-        pointerType: "mouse",
-      }),
-    );
+    // A press on the thumb takes hold of it where it stands. Only a press on
+    // the track moves it to the pointer.
+    const box = drawn()[0].getBoundingClientRect();
+    dragFrom(box.left + box.width / 2);
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
-  it("keeps both thumbs reachable when they are stacked at the top", async () => {
-    // Both at 100: the upper thumb has nowhere to go, so the lower one must
-    // be the one on top, or the range can never be opened again.
-    render(<Range start={100} end={100} />);
+  it("grabs the thumb nearest the pointer, not whichever is stacked on top", async () => {
+    // The bug this test exists for. Over a wide range two values a few units
+    // apart are a fraction of a pixel apart on screen, so the thumbs sit on
+    // top of each other. Pressing the lower one used to hand the drag to the
+    // upper one, whose clamp then refused to travel — the thumb snapped a
+    // step and stopped.
+    const seen: number[][] = [];
+    render(<Range start={5000} end={5005} max={10000} onValueChange={(v) => seen.push(v)} />);
     await settle();
 
-    const [lower, upper] = thumbs();
-    expect(layer(lower)).toBeGreaterThan(layer(upper));
+    const centre = drawn()[0].getBoundingClientRect();
+    const x = centre.left + centre.width / 2;
+    dragFrom(x - 2, x - 40);
+    await settle();
+
+    const last = seen.at(-1)!;
+    expect(last[0]).toBeLessThan(5000);
+    expect(last[1]).toBe(5005);
   });
 
-  it("keeps both thumbs reachable when they are stacked anywhere else", async () => {
-    render(<Range start={40} end={40} />);
-    await settle();
+  it("can still grab either thumb when the two hold the same value", async () => {
+    for (const [direction, expected] of [["left", 0], ["right", 1]] as const) {
+      const seen: number[][] = [];
+      document.body.innerHTML = "";
+      render(<Range start={50} end={50} onValueChange={(v) => seen.push(v)} />);
+      await settle();
 
-    const [lower, upper] = thumbs();
-    expect(layer(upper)).toBeGreaterThan(layer(lower));
-  });
+      const box = root().getBoundingClientRect();
+      const mid = box.left + box.width / 2;
+      dragFrom(mid, direction === "left" ? mid - 60 : mid + 60);
+      await settle();
 
-  it("only the thumbs take a pointer, so neither input swallows the other", async () => {
-    render(<Range />);
-    await settle();
-    for (const input of thumbs()) {
-      expect(getComputedStyle(input).pointerEvents).toBe("none");
+      const last = seen.at(-1)!;
+      // Whichever thumb was asked for is the one that moved; the other stayed.
+      expect(last[expected === 0 ? 1 : 0]).toBe(50);
+      expect(expected === 0 ? last[0] < 50 : last[1] > 50).toBe(true);
     }
   });
 
-  it("still takes a press anywhere on the track with one thumb", async () => {
-    // Single-thumb sliders keep the native behaviour: the input covers the
-    // track, so the browser moves the thumb to the press.
+  it("can grab a thumb sitting at the maximum", async () => {
+    // Half of that thumb hangs past the end of the track, so the press has to
+    // be taken by the thumb rather than by the track underneath it.
+    const seen: number[][] = [];
+    render(<Range start={0} end={100} onValueChange={(v) => seen.push(v)} />);
+    await settle();
+
+    const box = drawn()[1].getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    dragFrom(x, x - 80);
+    await settle();
+
+    expect(seen.at(-1)![1]).toBeLessThan(100);
+  });
+
+  it("keeps dragging after the press, instead of jumping once and stopping", async () => {
+    const seen: number[][] = [];
+    render(<Range onValueChange={(v) => seen.push(v)} />);
+    await settle();
+
+    const box = root().getBoundingClientRect();
+    const at = (f: number) => box.left + box.width * f;
+    dragFrom(at(0.3), at(0.4), at(0.5), at(0.6));
+    await settle();
+
+    // One jump is the old behaviour: a press moved a thumb and the drag died
+    // with it, because no input had the pointer.
+    expect(seen.length).toBeGreaterThan(2);
+    const lowers = seen.map((v) => v[0]);
+    expect(lowers.at(-1)!).toBeGreaterThan(lowers[0]);
+  });
+
+  it("lets go on release", async () => {
+    const seen: number[][] = [];
+    render(<Range onValueChange={(v) => seen.push(v)} />);
+    await settle();
+
+    const box = root().getBoundingClientRect();
+    const at = (f: number) => box.left + box.width * f;
+    dragFrom(at(0.3), at(0.4));
+    await settle();
+    const after = seen.length;
+
+    // The pointer is up; moving it must do nothing.
+    move(at(0.9));
+    await settle();
+    expect(seen.length).toBe(after);
+  });
+
+  it("drags a single thumb from a press anywhere on the track", async () => {
+    const seen: number[][] = [];
     render(
       <div style={{ width: 400 }}>
-        <Slider value={[25]} onValueChange={() => {}} min={0} max={100} step={1} aria-label="Mass" />
+        <Slider value={[25]} onValueChange={(v) => seen.push(v)} min={0} max={100} step={1} aria-label="Mass" />
       </div>,
     );
     await settle();
-    expect(getComputedStyle(thumbs()[0]).pointerEvents).not.toBe("none");
+
+    const box = root().getBoundingClientRect();
+    dragFrom(box.left + box.width * 0.2, box.left + box.width * 0.75);
+    await settle();
+
+    expect(seen.at(-1)![0]).toBeGreaterThan(60);
   });
 });
