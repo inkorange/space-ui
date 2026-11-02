@@ -1,6 +1,6 @@
 "use client";
 import type * as React from "react";
-import { forwardRef, useRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import { cx } from "./propShared";
 import styles from "./Slider.module.scss";
 import ctl from "../styles/spaceControls";
@@ -56,6 +56,16 @@ const clamp = (value: number, low: number, high: number) =>
  * With two thumbs they cannot cross: each is clamped to the other, so the
  * array stays in order and a range can never read back inverted. `minDistance`
  * keeps a gap between them where a zero-width range would be meaningless.
+ *
+ * The pointer is the component's own business, and the inputs take none of it.
+ * Two inputs each covering the whole track cannot decide between them which
+ * thumb a press meant: the browser hit-tests before any of this code runs, so
+ * the answer came down to which input was later in the DOM. Whenever the
+ * thumbs were within a thumb's width of each other — constant over a wide
+ * range, where a few units are a fraction of a pixel — a press on the lower
+ * one was handed to the upper one, which then refused to travel. So a press
+ * anywhere on the control is measured here, against where the thumbs actually
+ * are, and the nearest one is dragged until the pointer is released.
  */
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
   {
@@ -74,6 +84,13 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
 ) {
   const rootRef = useRef<HTMLSpanElement | null>(null);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
+  const marks = useRef<(HTMLSpanElement | null)[]>([]);
+  /** The drag in progress: which thumb it carries, and where it began. A null
+   *  `index` means the press was exactly on two stacked thumbs and has not yet
+   *  said which one it wants — see `onPointerDown`. */
+  const drag = useRef<{ index: number | null; startX: number } | null>(null);
+  /** Takes the window listeners back off again. */
+  const release = useRef<(() => void) | null>(null);
 
   const isRange = value.length > 1;
   const span = max - min || 1;
@@ -83,12 +100,31 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
 
   const percent = (v: number) => ((v - min) / span) * 100;
 
+  /**
+   * What the component knows right now.
+   *
+   * A drag's listeners are attached once, when the pointer goes down, so they
+   * close over that render — and the value they are moving changes under them
+   * on every frame of the drag. Reading through a ref instead means the
+   * clamping sees where the OTHER thumb is now, not where it was when the
+   * drag began, which is the difference between two thumbs that cannot cross
+   * and two that cross once and stick.
+   */
+  const now = useRef({ values, min, max, span, step, minDistance, isRange, onValueChange });
+  now.current = { values, min, max, span, step, minDistance, isRange, onValueChange };
+
   /** The nearest value on the step grid at or below `v`, and at or above. The
    *  grid is counted from `min`, and rounded before flooring because a sum of
    *  floats lands a hair under the mark often enough to matter: 0.1 * 3 is
    *  0.30000000000000004, and floor would send it a whole step backwards. */
-  const gridBelow = (v: number) => min + Math.floor(Number(((v - min) / step).toFixed(8))) * step;
-  const gridAbove = (v: number) => min + Math.ceil(Number(((v - min) / step).toFixed(8))) * step;
+  const gridBelow = (v: number) => {
+    const s = now.current;
+    return s.min + Math.floor(Number(((v - s.min) / s.step).toFixed(8))) * s.step;
+  };
+  const gridAbove = (v: number) => {
+    const s = now.current;
+    return s.min + Math.ceil(Number(((v - s.min) / s.step).toFixed(8))) * s.step;
+  };
 
   /** A thumb's new value, clamped so the two can never cross — and kept on
    *  the step grid while doing it. A `minDistance` that is not a whole number
@@ -97,51 +133,137 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
    *  not a value this slider can otherwise produce. The gap is the floor, so
    *  the thumb settles on the next step that still honours it. */
   const clampThumb = (index: number, next: number) => {
-    if (!isRange) return clamp(next, min, max);
+    const s = now.current;
+    if (!s.isRange) return clamp(next, s.min, s.max);
     return index === 0
-      ? clamp(next, min, Math.max(min, gridBelow(upper - minDistance)))
-      : clamp(next, Math.min(max, gridAbove(lower + minDistance)), max);
+      ? clamp(next, s.min, Math.max(s.min, gridBelow(s.values[1] - s.minDistance)))
+      : clamp(next, Math.min(s.max, gridAbove(s.values[0] + s.minDistance)), s.max);
   };
 
   const move = (index: number, next: number) => {
+    const s = now.current;
     const settled = clampThumb(index, next);
-    if (settled === values[index]) return;
-    const updated = [...values];
+    if (settled === s.values[index]) return;
+    const updated = [...s.values];
     updated[index] = settled;
-    onValueChange(updated);
+    s.onValueChange(updated);
   };
 
-  /** Which thumb a press at this point is asking for: the nearer one, and at
-   *  a tie the one that can actually travel that way. */
-  const nearestTo = (target: number) => {
-    if (!isRange) return 0;
-    const toLower = Math.abs(target - lower);
-    const toUpper = Math.abs(target - upper);
-    if (toLower === toUpper) return target < lower ? 0 : 1;
-    return toLower < toUpper ? 0 : 1;
-  };
-
-  /** A press on the track moves the nearer thumb to it, rather than doing
-   *  nothing: with two overlaid inputs only the thumbs take pointer events,
-   *  so without this the track would be dead to the pointer. */
-  const onTrackPointerDown = (event: React.PointerEvent<HTMLSpanElement>) => {
-    if (!isRange || disabled) return;
-    // A press that landed on a thumb is the browser's to handle.
-    if ((event.target as HTMLElement).tagName === "INPUT") return;
-
+  /** The value a press at this point on the screen is asking for. */
+  const valueAt = (clientX: number) => {
+    const s = now.current;
     const box = rootRef.current?.getBoundingClientRect();
-    if (!box || box.width === 0) return;
-
-    const ratio = clamp((event.clientX - box.left) / box.width, 0, 1);
-    const raw = min + ratio * span;
-    const snapped = clamp(min + Math.round((raw - min) / step) * step, min, max);
-    const index = nearestTo(snapped);
-
-    move(index, snapped);
-    // Focus follows the press, so the keyboard carries on from the thumb the
-    // reader just moved.
-    inputs.current[index]?.focus();
+    if (!box || box.width === 0) return s.values[0];
+    const ratio = clamp((clientX - box.left) / box.width, 0, 1);
+    const raw = s.min + ratio * s.span;
+    return clamp(s.min + Math.round((raw - s.min) / s.step) * s.step, s.min, s.max);
   };
+
+  /** Where a thumb is drawn, in screen pixels, and how wide it is. */
+  const markBox = (index: number) => marks.current[index]?.getBoundingClientRect();
+
+  /**
+   * Which thumb a press belongs to: the one drawn nearest the pointer. Asking
+   * in pixels rather than in values is the point — over a wide range two very
+   * different numbers are the same place on screen, and the reader is pressing
+   * a place.
+   */
+  const nearestTo = (clientX: number): number | null => {
+    if (!now.current.isRange) return 0;
+    const first = markBox(0);
+    const second = markBox(1);
+    if (!first || !second) return 0;
+    const firstCentre = first.left + first.width / 2;
+    const toFirst = Math.abs(clientX - firstCentre);
+    const toSecond = Math.abs(clientX - (second.left + second.width / 2));
+    if (toFirst !== toSecond) return toFirst < toSecond ? 0 : 1;
+    // Equally near, which with two thumbs at one value is every press on
+    // them. Off to one side, the side is the answer: a press to the left of
+    // the pair wants the lower thumb, because that is the one that can travel
+    // that way. Dead centre, nothing in the press says which, so the question
+    // is left to the first move of the drag.
+    if (Math.abs(clientX - firstCentre) <= 1) return null;
+    return clientX < firstCentre ? 0 : 1;
+  };
+
+  /** Whether the press landed on the thumb itself rather than on the track. */
+  const onThumb = (index: number, clientX: number) => {
+    const box = markBox(index);
+    if (!box) return false;
+    return Math.abs(clientX - (box.left + box.width / 2)) <= box.width / 2;
+  };
+
+  const stopDragging = () => {
+    drag.current = null;
+    rootRef.current?.removeAttribute("data-dragging");
+    release.current?.();
+  };
+
+  /**
+   * Takes hold of a thumb and drags it until the pointer lets go.
+   *
+   * A press on the track moves the nearest thumb to it first; a press on a
+   * thumb takes hold of it where it stands, so grabbing a handle never jogs
+   * the value before the drag has begun.
+   */
+  const onPointerDown = (event: React.PointerEvent<HTMLSpanElement>) => {
+    if (disabled || event.button !== 0) return;
+    // A second pointer coming down mid-drag would otherwise strand the first
+    // drag's listeners on the window.
+    release.current?.();
+
+    const index = nearestTo(event.clientX);
+    drag.current = { index, startX: event.clientX };
+    rootRef.current?.setAttribute("data-dragging", "");
+
+    if (index !== null) {
+      if (!onThumb(index, event.clientX)) move(index, valueAt(event.clientX));
+      // Focus follows the press, so the keyboard carries on from the thumb the
+      // reader just moved.
+      inputs.current[index]?.focus();
+    }
+
+    // Keeps the drag alive when the pointer leaves the control, and keeps a
+    // touch drag from scrolling the page with it. Synthetic events in a test
+    // have no live pointer to capture, hence the guard rather than a crash.
+    try {
+      rootRef.current?.setPointerCapture(event.pointerId);
+    } catch {
+      /* no such pointer */
+    }
+
+    const onPointerMove = (e: PointerEvent) => {
+      const held = drag.current;
+      if (!held) return;
+      if (held.index === null) {
+        // The press sat on two stacked thumbs. Whichever way it travels names
+        // the thumb: left is the lower one, right is the upper, and those are
+        // the only directions each can go from a dead heat.
+        const travelled = e.clientX - held.startX;
+        if (Math.abs(travelled) < 1) return;
+        held.index = travelled < 0 ? 0 : 1;
+        inputs.current[held.index]?.focus();
+      }
+      move(held.index, valueAt(e.clientX));
+    };
+    // On the window, not the element: a drag that runs off the end of the
+    // track has to keep reporting, and the release can happen anywhere.
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", stopDragging);
+    window.addEventListener("pointercancel", stopDragging);
+    release.current = () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", stopDragging);
+      window.removeEventListener("pointercancel", stopDragging);
+      release.current = null;
+    };
+
+    // Stops the press selecting the text around the slider as it travels.
+    event.preventDefault();
+  };
+
+  // A slider unmounted mid-drag would otherwise leave its listeners behind.
+  useEffect(() => () => release.current?.(), []);
 
   const labelFor = (index: number) => {
     if (thumbLabels) return thumbLabels[index];
@@ -150,18 +272,13 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
     return `${ariaLabel} ${index === 0 ? "minimum" : "maximum"}`;
   };
 
-  // Stacked thumbs would otherwise leave one unreachable: at the top of the
-  // scale the upper thumb covers the lower, and vice versa. Raise whichever
-  // one still has somewhere to go.
-  const raised = isRange && lower === upper ? (upper >= max ? 0 : 1) : -1;
-
   return (
     <span
       ref={rootRef}
       className={cx(styles.root, ctl.spaceSlider, className)}
       data-disabled={disabled || undefined}
       data-range={isRange || undefined}
-      onPointerDown={onTrackPointerDown}
+      onPointerDown={onPointerDown}
     >
       <span className={cx(styles.track, "spSliderTrack")}>
         <span
@@ -176,6 +293,9 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
       {values.map((v, index) => (
         <span
           key={index}
+          ref={(node) => {
+            marks.current[index] = node;
+          }}
           className={cx(styles.thumb, "spSliderThumb")}
           style={{ left: `${percent(v)}%` }}
           data-thumb={index}
@@ -200,7 +320,6 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
           step={step}
           disabled={disabled}
           aria-label={labelFor(index)}
-          style={raised === index ? { zIndex: 1 } : undefined}
           onChange={(e) => move(index, Number(e.target.value))}
         />
       ))}

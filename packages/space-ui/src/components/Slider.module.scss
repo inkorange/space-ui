@@ -4,8 +4,17 @@
   align-items: center;
   width: 100%;
   height: 20px;
+  cursor: pointer;
+  // The component drags the thumbs itself, so a touch that starts here is a
+  // drag and not the beginning of a scroll.
+  touch-action: none;
 
-  &[data-disabled] { opacity: 0.55; }
+  &[data-dragging] { cursor: grabbing; }
+
+  &[data-disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 }
 
 .track {
@@ -27,6 +36,10 @@
   border-radius: inherit;
 }
 
+/* The handle. It takes pointer events — not to do anything with them, but so
+   that the half of it hanging past the end of the track is still a place the
+   reader can press. The press bubbles to the root, which works out from the
+   coordinates which thumb was meant. */
 .thumb {
   position: absolute;
   top: 50%;
@@ -34,58 +47,26 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  pointer-events: none;
+  cursor: grab;
+
+  .root[data-dragging] & { cursor: grabbing; }
 }
 
 /* The real control, invisible over the drawn one. Everything above is paint;
-   this is what the browser and a screen reader see. */
+   this is what the browser and a screen reader see: focus, the arrow keys,
+   Home, End, Page Up and Page Down, and the slider role itself.
+
+   It takes no pointer events, in range mode or out of it. Two inputs each
+   covering the whole track cannot say which thumb a press meant — the browser
+   hit-tests before any script runs, so the answer was decided by DOM order,
+   and a press on the lower thumb went to the upper one whenever the two were
+   within a thumb's width of each other. The component measures the press
+   against the drawn thumbs instead. */
 .input {
   position: absolute;
   inset: 0;
   width: 100%;
   margin: 0;
   opacity: 0;
-  cursor: pointer;
-
-  &:disabled { cursor: not-allowed; }
-}
-
-/* Two thumbs means two inputs lying on top of each other, each covering the
-   whole track. Left alone, the upper one swallows every press — including
-   those meant for the thumb beneath it. So in range mode the inputs
-   themselves stop taking pointer events and only their thumbs accept one;
-   a press on the track is handled by the component, which moves whichever
-   thumb is nearer. */
-.root[data-range] .input {
   pointer-events: none;
-}
-
-/* The hit area, matching the drawn thumb. The native thumb has to be given
-   a size of its own: with appearance reset it has none. */
-.root[data-range] .input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  pointer-events: auto;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: transparent;
-  cursor: grab;
-}
-
-.root[data-range] .input::-moz-range-thumb {
-  pointer-events: auto;
-  width: 16px;
-  height: 16px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: grab;
-}
-
-.root[data-range] .input:active::-webkit-slider-thumb {
-  cursor: grabbing;
-}
-
-.root[data-range] .input:active::-moz-range-thumb {
-  cursor: grabbing;
 }
