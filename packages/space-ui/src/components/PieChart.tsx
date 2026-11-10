@@ -94,11 +94,15 @@ export function PieChart({
 
     // A single slice is the whole circle, which an arc cannot draw: its start
     // and end points are the same, so the path collapses to nothing.
+    // The hole runs the other way round, so its end sits just RIGHT of the
+    // top: a large anticlockwise arc to a point just left of the top lies on
+    // a circle centred above the start, which drew a dark disc over the
+    // ring's top edge instead of cutting the hole.
     const whole = fraction >= 0.999;
     const d = whole
       ? donut
         ? `M${centre},${centre - radius} A${radius},${radius} 0 1 1 ${centre - 0.01},${centre - radius} Z ` +
-          `M${centre},${centre - hole} A${hole},${hole} 0 1 0 ${centre - 0.01},${centre - hole} Z`
+          `M${centre},${centre - hole} A${hole},${hole} 0 1 0 ${centre + 0.01},${centre - hole} Z`
         : `M${centre},${centre - radius} A${radius},${radius} 0 1 1 ${centre - 0.01},${centre - radius} Z`
       : donut
         ? `M${outerFrom.x},${outerFrom.y} A${radius},${radius} 0 ${large} 1 ${outerTo.x},${outerTo.y} ` +
