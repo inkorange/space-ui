@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { Checkbox, CheckboxGroup } from "./Checkbox";
+import { Switch } from "./Switch";
 import { RadioGroup } from "./RadioGroup";
 import { IconToggle } from "./IconToggle";
 import { Tabs } from "./Tabs";
@@ -61,6 +62,90 @@ describe("Checkbox behaviour", () => {
     render(<Checkbox checked={false} disabled onCheckedChange={onCheckedChange}>Nope</Checkbox>);
     await user.click(screen.getByText("Nope"));
     expect(onCheckedChange).not.toHaveBeenCalled();
+  });
+});
+
+describe("Switch behaviour", () => {
+  const Lamp = ({
+    onChange = () => {},
+    disabled = false,
+  }: {
+    onChange?: (next: boolean) => void;
+    disabled?: boolean;
+  }) => {
+    const [on, setOn] = useState(false);
+    return (
+      <Switch
+        checked={on}
+        disabled={disabled}
+        onCheckedChange={(next) => {
+          setOn(next);
+          onChange(next);
+        }}
+      >
+        Night vision
+      </Switch>
+    );
+  };
+
+  it("announces as a switch rather than as a checkbox", () => {
+    // The whole reason this is not just a Checkbox: a reader is told the
+    // setting is on or off, not that a box is ticked.
+    render(<Lamp />);
+    expect(screen.getByRole("switch", { name: "Night vision" })).not.toBeChecked();
+  });
+
+  it("toggles from the label, which is part of the target", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<Lamp onChange={onChange} />);
+
+    // Pressing the words has to work: a 36px tube is a small thing to hit,
+    // and the label is the larger half of the control.
+    await user.click(screen.getByText("Night vision"));
+    expect(onChange).toHaveBeenCalledWith(true);
+    expect(screen.getByRole("switch")).toBeChecked();
+  });
+
+  it("toggles on Space, like the native control it is built from", async () => {
+    const user = userEvent.setup();
+    render(<Lamp />);
+
+    await user.tab();
+    expect(screen.getByRole("switch")).toHaveFocus();
+    await user.keyboard(" ");
+    expect(screen.getByRole("switch")).toBeChecked();
+  });
+
+  it("stays put when disabled", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<Lamp onChange={onChange} disabled />);
+
+    await user.click(screen.getByText("Night vision"));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("switch")).not.toBeChecked();
+  });
+
+  it("takes a name from aria-label when it has no visible one", () => {
+    render(<Switch checked={false} onCheckedChange={() => {}} aria-label="Night vision" />);
+    expect(screen.getByRole("switch", { name: "Night vision" })).toBeInTheDocument();
+  });
+
+  it("is controlled: it does not move unless the owner says so", async () => {
+    // A switch that flipped itself and then snapped back would tell the
+    // reader the setting took effect when it did not.
+    const user = userEvent.setup();
+    const onCheckedChange = vi.fn();
+    render(
+      <Switch checked={false} onCheckedChange={onCheckedChange}>
+        Night vision
+      </Switch>,
+    );
+
+    await user.click(screen.getByRole("switch"));
+    expect(onCheckedChange).toHaveBeenCalledWith(true);
+    expect(screen.getByRole("switch")).not.toBeChecked();
   });
 });
 

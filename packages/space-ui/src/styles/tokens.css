@@ -173,6 +173,18 @@
   --sp-checkbox-mark-color: #eaf2ff;
   --sp-checkbox-glow-color: rgba(190, 215, 255, 0.85);
   --sp-checkbox-halo-color: rgba(120, 170, 255, 0.55);
+
+  /* Switch. A tube with a moon travelling along it: the track's two sizes
+     decide the shape, and the thumb's inset is derived from them so the gap
+     at each end stays equal however they are retuned. */
+  --sp-switch-track-width: 36px;
+  --sp-switch-track-height: 20px;
+  --sp-switch-thumb-size: 16px;
+  --sp-switch-label-gap-size: calc(var(--sp-grid-base-size) * 2);
+  --sp-switch-track-on-color: var(--sp-primary-solid);
+  --sp-switch-thumb-color: #eaf2ff;
+  --sp-switch-glow-color: rgba(190, 215, 255, 0.85);
+  --sp-switch-halo-color: rgba(120, 170, 255, 0.55);
   --sp-radio-group-label-gap-size: calc(var(--sp-grid-base-size) * 2);
   --sp-radio-group-row-gap-size: calc(var(--sp-grid-base-size) * 2);
   --sp-radio-group-orb-highlight-color: #cfe0ff;

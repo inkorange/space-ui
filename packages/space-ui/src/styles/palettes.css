@@ -167,6 +167,12 @@
   --sp-checkbox-glow-color: rgb(var(--sp-rim-rgb) / 0.85);
   --sp-checkbox-halo-color: rgb(var(--sp-glow-rgb) / 0.55);
 
+  /* The switch: a tube that fills with the accent, and a moon on it. */
+  --sp-switch-track-on-color: var(--sp-primary-solid);
+  --sp-switch-thumb-color: rgb(var(--sp-glint-rgb));
+  --sp-switch-glow-color: rgb(var(--sp-rim-rgb) / 0.85);
+  --sp-switch-halo-color: rgb(var(--sp-glow-rgb) / 0.55);
+
   /* Washes over the glass: a highlighted row, a selected segment. */
   --sp-autocomplete-option-highlight-color: rgb(var(--sp-rim-rgb) / 0.14);
   --sp-panel-item-highlight-color: rgb(var(--sp-glint-rgb) / 0.45);

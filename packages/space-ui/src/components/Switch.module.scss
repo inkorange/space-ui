@@ -1,0 +1,152 @@
+@use "../styles/burst" as *;
+@use "../styles/type" as *;
+
+/* @token --sp-switch-track-width The track's length.
+   @token --sp-switch-track-height The track's height; the thumb sits inside it.
+   @token --sp-switch-thumb-size The travelling sphere's diameter.
+   @token --sp-switch-label-gap-size The space between the track and its label.
+   @token --sp-switch-track-on-color The track once the setting is on.
+   @token --sp-switch-thumb-color The sphere itself.
+   @token --sp-switch-glow-color The lit rim of an on track.
+   @token --sp-switch-halo-color The bloom around an on track. */
+
+/* Where the Checkbox is a panel that lights and the RadioGroup a sphere that
+   ignites, the switch is a sphere that TRAVELS: the same glass tube as a
+   Slider's track, with a lit moon crossing it. Off, the tube is unlit glass
+   and the moon sits in shadow at the near end. On, the tube fills with the
+   accent and the moon carries the light to the far end.
+
+   The movement is the whole point. A switch that only changed colour would
+   say the same thing as a checkbox; it is the travel that says the setting
+   went somewhere. */
+.item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-switch-label-gap-size, calc(var(--sp-grid-base-size, var(--spacing-sm)) * 2));
+  // The library's 14px step, as every other control's label uses, so a
+  // switch in a settings list sits at the same size as the text around it.
+  font-size: var(--sp-font-sm);
+  line-height: rem(20);
+}
+
+.selfLabeled {
+  cursor: pointer;
+}
+
+// Lets a long label wrap inside the row rather than widening it.
+.label {
+  min-width: 0;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  width: var(--sp-switch-track-width);
+  height: var(--sp-switch-track-height);
+  // The largest step on the radius scale, which at the default track height
+  // IS a pill: 12px of corner on a 20px tube exceeds half its height, so the
+  // browser clamps it to one. Nothing changes at the shipped sizes, and the
+  // tube squares off with the rest of the library as the base comes down —
+  // a rounded rectangle at 4, square at 0. The moon stays a circle, or it
+  // stops reading as something travelling along a tube.
+  border-radius: var(--sp-radius-xl);
+  background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.92), rgb(var(--sp-glass-deep-rgb) / 0.96));
+  box-shadow: inset 0 0 0 1px rgb(var(--sp-rim-rgb) / 0.35);
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* The moon. It sits inset from the tube's edge by half the difference
+   between them, so the gap at the near end matches the gap at the far one
+   however the two sizes are retuned. */
+.thumb {
+  position: absolute;
+  top: 50%;
+  left: calc((var(--sp-switch-track-height) - var(--sp-switch-thumb-size)) / 2);
+  width: var(--sp-switch-thumb-size);
+  height: var(--sp-switch-thumb-size);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--sp-switch-thumb-color),
+    color-mix(in srgb, var(--sp-switch-thumb-color) 55%, rgb(var(--sp-glass-rgb)))
+  );
+  box-shadow: 0 1px 2px rgb(var(--sp-shadow-rgb) / 0.5);
+  transform: translate(0, -50%);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* The flash of ignition, the same ring RadioGroup's orb and Checkbox's tile
+   give. It leaves the MOON rather than the tube: the moon is what lights, and
+   a ring expanding off a 36px pill would read as the whole control flashing
+   rather than as something switching on. It travels with the moon, because it
+   is drawn inside it. */
+.burst {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.burst::after {
+  @include burst-ring(var(--sp-switch-glow-color), 50%);
+}
+
+.input:checked ~ .track .burst::after {
+  @include burst-play;
+}
+
+.input:checked ~ .track {
+  background: linear-gradient(
+    180deg,
+    var(--sp-switch-track-on-color),
+    color-mix(in srgb, var(--sp-switch-track-on-color) 72%, rgb(var(--sp-glass-deep-rgb)))
+  );
+  box-shadow:
+    inset 0 0 0 1px var(--sp-switch-glow-color),
+    0 0 12px var(--sp-switch-halo-color);
+}
+
+/* Travel is the full tube less the moon and both end gaps — stated in terms
+   of the tokens so retuning either size keeps the moon inside the tube. */
+.input:checked ~ .track .thumb {
+  transform: translate(
+      calc(var(--sp-switch-track-width) - var(--sp-switch-thumb-size) - (var(--sp-switch-track-height) - var(--sp-switch-thumb-size))),
+      -50%
+    );
+  box-shadow:
+    0 1px 2px rgb(var(--sp-shadow-rgb) / 0.5),
+    0 0 8px var(--sp-switch-halo-color);
+}
+
+.input:focus-visible ~ .track {
+  outline: 2px solid var(--sp-focus-ring);
+  outline-offset: 2px;
+}
+
+.input:disabled ~ .track,
+.input:disabled ~ .label {
+  opacity: 0.55;
+}
+
+.selfLabeled:has(.input:disabled) {
+  cursor: not-allowed;
+}
+
+// The moon is simply at the other end: no travel, no fade of the tube.
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .thumb {
+    transition: none;
+  }
+}
