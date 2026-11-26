@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Autocomplete, Checkbox, CheckboxGroup, MagnifyingGlassIcon, RadioGroup, Select, Slider, Text, TextArea, TextField } from "@inkorange/space-ui";
+import { Autocomplete, Checkbox, CheckboxGroup, MagnifyingGlassIcon, RadioGroup, Select, Slider, Switch, Text, TextArea, TextField } from "@inkorange/space-ui";
 
 export default {
   title: "Components/Forms",
@@ -255,6 +255,62 @@ CheckboxStory.meta = {
   description:
     "A yes/no choice. On its own it holds one boolean; wrapped in a CheckboxGroup the group holds an array, so choosing several costs one piece of state rather than one per option. `indeterminate` draws a dash for a select-all row that is only partly chosen, and announces as mixed. A label is part of the click target, and a label that wraps keeps its tile against the first line.",
 };
+
+
+export const SwitchStory = () => {
+  const [vision, setVision] = useState(true);
+  const [grid, setGrid] = useState(false);
+  const [labels, setLabels] = useState(true);
+  const [telemetry, setTelemetry] = useState(false);
+
+  return (
+    <div style={{ display: "grid", gap: 32 }}>
+      <div style={column}>
+        <Text size="1" color="muted" className="docs-caption">
+          Settings that take effect at once
+        </Text>
+        {/* No Save button anywhere near these on purpose: that is the whole
+            distinction from a Checkbox. */}
+        <Switch checked={vision} onCheckedChange={setVision}>
+          Night vision
+        </Switch>
+        <Switch checked={grid} onCheckedChange={setGrid}>
+          Orbital grid
+        </Switch>
+        <Switch checked={labels} onCheckedChange={setLabels}>
+          Body labels
+        </Switch>
+      </div>
+
+      <div style={{ ...column, width: 280 }}>
+        <Text size="1" color="muted" className="docs-caption">
+          Disabled, and a label that wraps
+        </Text>
+        <Switch checked={false} onCheckedChange={() => {}} disabled>
+          Deep-field imaging (needs a larger aperture than this instrument has)
+        </Switch>
+        <Switch checked={telemetry} onCheckedChange={setTelemetry}>
+          Stream telemetry continuously rather than in a burst at the end of
+          each pass
+        </Switch>
+      </div>
+
+      <div style={column}>
+        <Text size="1" color="muted" className="docs-caption">
+          With no visible label
+        </Text>
+        <Switch checked={vision} onCheckedChange={setVision} aria-label="Night vision" />
+      </div>
+    </div>
+  );
+};
+SwitchStory.storyName = "Switch";
+SwitchStory.meta = {
+  components: ["Switch"],
+  description:
+    "A setting that takes effect the moment it is flipped — a layer shown, a mode entered. Reach for Checkbox instead when the choice is collected and submitted with the rest of a form: the two look alike but answer different questions, and a switch in a form that has not saved yet tells the reader a lie about what has happened. It is a native checkbox underneath with `role=\"switch\"` over it, so focus, Space and the disabled state come from the browser, and a reader hears on or off rather than ticked. The label is part of the click target.",
+};
+
 
 export const RadioGroupStory = () => {
   const [v, setV] = useState("public");

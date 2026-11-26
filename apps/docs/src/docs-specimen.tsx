@@ -12,6 +12,7 @@ import {
   RadioGroup,
   Select,
   Slider,
+  Switch,
   Tabs,
   Text,
   TextField,
@@ -79,6 +80,7 @@ export const SpecimenSuite = () => {
   const [band, setBand] = useState("x");
   const [range, setRange] = useState([30, 70]);
   const [checked, setChecked] = useState(true);
+  const [stream, setStream] = useState(true);
   const [page, setPage] = useState(3);
 
   return (
@@ -100,15 +102,19 @@ export const SpecimenSuite = () => {
             <Tabs.Trigger value="coast">Coast</Tabs.Trigger>
             <Tabs.Trigger value="entry">Entry</Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content value="burn">
-            <Text size="2">Ignition at T−40s.</Text>
-          </Tabs.Content>
-          <Tabs.Content value="coast">
-            <Text size="2">Ballistic for 11 minutes.</Text>
-          </Tabs.Content>
-          <Tabs.Content value="entry">
-            <Text size="2">Interface at 120km.</Text>
-          </Tabs.Content>
+          {/* The panel under the content is the consumer's to draw — Tabs
+              gives the strip and breaks through its top line. */}
+          <div className="docs-tabspanel">
+            <Tabs.Content value="burn">
+              <Text size="2">Ignition at T−40s.</Text>
+            </Tabs.Content>
+            <Tabs.Content value="coast">
+              <Text size="2">Ballistic for 11 minutes.</Text>
+            </Tabs.Content>
+            <Tabs.Content value="entry">
+              <Text size="2">Interface at 120km.</Text>
+            </Tabs.Content>
+          </div>
         </Tabs>
       </section>
 
@@ -140,6 +146,11 @@ export const SpecimenSuite = () => {
           </Checkbox>
           <Loader size="sm" label="Computing" />
         </div>
+        {/* The switch is the clearest read on an accent: a filled track is
+            the largest solid area of it anywhere in the library. */}
+        <Switch checked={stream} onCheckedChange={setStream}>
+          Stream telemetry
+        </Switch>
         <RadioGroup value={band} onValueChange={setBand}>
           <RadioGroup.Item value="s">S-band</RadioGroup.Item>
           <RadioGroup.Item value="x">X-band</RadioGroup.Item>

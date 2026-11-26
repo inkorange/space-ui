@@ -23,6 +23,7 @@ import {
   Select,
   Separator,
   Slider,
+  Switch,
   MagnifyingGlassIcon,
   PersonIcon,
   PlusIcon,
@@ -56,6 +57,8 @@ export const Stickersheet = () => {
   const [band, setBand] = useState("habitable");
   const [tab, setTab] = useState("mass");
   const [types, setTypes] = useState<string[]>(["ocean"]);
+  const [vision, setVision] = useState(true);
+  const [orbitGrid, setOrbitGrid] = useState(false);
 
   return (
     <div className="docs-sheet" data-stickersheet>
@@ -126,6 +129,11 @@ export const Stickersheet = () => {
             <CheckboxGroup.Item value="ice">Ice</CheckboxGroup.Item>
           </CheckboxGroup>
           <Checkbox checked indeterminate onCheckedChange={() => {}}>Mixed</Checkbox>
+        </Cell>
+
+        <Cell label="Switch">
+          <Switch checked={vision} onCheckedChange={setVision}>Night vision</Switch>
+          <Switch checked={orbitGrid} onCheckedChange={setOrbitGrid}>Orbital grid</Switch>
         </Cell>
 
         <Cell label="RadioGroup">

@@ -2260,10 +2260,16 @@ nav.ladle-aside a:focus-visible {
 
 /* Folder tabs seat onto the surface below them; with nothing there they float
    and the design reads as a mistake. Same panel the Tabs story uses. */
+/* Tabs ships a strip, not a panel — the surface under the content is the
+   consumer's to draw, which the library's own comment says. Both the sticker
+   sheet and the generator need one, so they share it rather than inventing
+   two slightly different panels. The radius is the token, so it follows the
+   generator's radius control instead of sitting at a fixed 12px. */
+.docs-tabspanel,
 .docs-sheet__tabspanel {
   background: var(--sp-tabs-surface-color);
   border: 1px solid var(--sp-gray-border);
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--sp-radius-xl) var(--sp-radius-xl);
   padding: 16px;
 }
 

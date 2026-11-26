@@ -44,6 +44,10 @@ export const EXPECTED_TOKENS = [
   "--sp-bar-list-label-width", "--sp-bar-list-track-height", "--sp-pie-chart-gap-size",
   "--sp-checkbox-row-gap-size", "--sp-checkbox-label-gap-size", "--sp-checkbox-box-size",
   "--sp-checkbox-mark-color", "--sp-checkbox-glow-color", "--sp-checkbox-halo-color",
+  // Switch — the tube, the moon, and the light they carry.
+  "--sp-switch-track-width", "--sp-switch-track-height", "--sp-switch-thumb-size",
+  "--sp-switch-label-gap-size", "--sp-switch-track-on-color", "--sp-switch-thumb-color",
+  "--sp-switch-glow-color", "--sp-switch-halo-color",
   "--sp-radio-group-label-gap-size",
   "--sp-radio-group-row-gap-size",
   "--sp-radio-group-orb-highlight-color", "--sp-radio-group-orb-mid-color",
