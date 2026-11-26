@@ -23,7 +23,7 @@
   padding: 0;
   background: var(--sp-gray-panel);
   color: var(--sp-gray-text);
-  border-radius: 12px; // measured: --radius-5 (size-3 and size-4 both resolve here)
+  border-radius: var(--sp-radius-xl); // measured: --radius-5 (size-3 and size-4 both resolve here)
   width: calc(100vw - 32px);
   max-width: 580px;
   max-height: calc(100vh - 64px);

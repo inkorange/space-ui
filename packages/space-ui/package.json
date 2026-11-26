@@ -28,7 +28,12 @@
     "charts",
     "carousel",
     "zero-dependencies",
-    "typescript"
+    "typescript",
+    "theming",
+    "palette",
+    "color-palette",
+    "css-custom-properties",
+    "token-generator"
   ],
   "repository": {
     "type": "git",
@@ -52,10 +57,11 @@
       "require": "./dist/index.cjs"
     },
     "./styles.css": "./dist/space-ui.css",
-    "./tokens.css": "./dist/tokens.css"
+    "./tokens.css": "./dist/tokens.css",
+    "./palettes.css": "./dist/palettes.css"
   },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css",
+    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && cp src/styles/tokens.css dist/tokens.css && cp src/styles/palettes.css dist/palettes.css",
     "prepack": "cp ../../README.md ../../LICENSE ../../AGENTS.md .",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",

@@ -13,7 +13,7 @@
   background: var(--sp-gray-panel);
   color: var(--sp-gray-text);
   border: 1px solid var(--sp-gray-border);
-  border-radius: 10px;
+  border-radius: var(--sp-radius-xl);
   box-shadow: 0 10px 40px rgb(var(--sp-shadow-rgb) / 0.5);
 
   /* The shared reveal. It always opens below its trigger, so it falls into
@@ -41,7 +41,7 @@
   color: var(--sp-gray-text);
   font: inherit;
   font-size: rem(14);
-  border-radius: 6px;
+  border-radius: var(--sp-radius-md);
   cursor: pointer;
   text-decoration: none;
 

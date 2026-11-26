@@ -1,0 +1,230 @@
+/* ============================================================
+   Optional palettes — an entry a consumer imports on purpose.
+
+   A palette moves the LIGHT and the PRIMARY accent: the glass a
+   surface is cut from, the limb lit along its edge, the bloom
+   under a hover, and the one hue that means "this is the action".
+   It deliberately moves nothing else. Status colour still means
+   status, the chart series are still the measured colour-blind
+   ramp, and the neutral text ramp still carries the contrast
+   guarantees it was chosen for — a brand hue has no business
+   deciding whether body text is readable.
+
+   Everything here is scoped to [data-sp-palette], so it costs a
+   consumer nothing until they ask for it, and it cascades: set
+   the attribute on <html> to repaint the application, or on one
+   element to repaint one panel.
+
+   The default palette lives in tokens.css under :root and is
+   hand-tuned. The presets below are systematic — each states its
+   six channels and its accent, and the shared block at the end
+   derives every piece of lit chrome from them. That is the whole
+   point: a palette is a dozen decisions, not eighty.
+   ============================================================ */
+
+/* ---- Deep Space — the default, named so a picker can select it.
+   These are the same values tokens.css states on :root. */
+[data-sp-palette="deep-space"] {
+  --sp-glass-rgb: 15 20 40;
+  --sp-glass-deep-rgb: 5 7 15;
+  --sp-sheen-rgb: 96 150 250;
+  --sp-rim-rgb: 150 190 255;
+  --sp-glow-rgb: 110 160 255;
+  --sp-glint-rgb: 225 238 255;
+
+  --sp-primary-solid: #0090ff;
+  --sp-primary-text: #70b8ff;
+  --sp-primary-soft: #0077ff3a;
+  --sp-primary-border: #2870bd;
+  --sp-primary-glow: #0f89fd7f;
+  --sp-primary-deep: #111927;
+
+  --sp-focus-ring: #9cc0ff;
+  --sp-glass-text: #eaf2ff;
+}
+
+/* ---- Nebula — violet glass, magenta limb. Expressive: media,
+   editorial, anything that would rather be felt than measured. */
+[data-sp-palette="nebula"] {
+  --sp-glass-rgb: 28 16 44;
+  --sp-glass-deep-rgb: 10 5 18;
+  --sp-sheen-rgb: 186 120 250;
+  --sp-rim-rgb: 214 170 255;
+  --sp-glow-rgb: 170 110 255;
+  --sp-glint-rgb: 243 232 255;
+
+  --sp-primary-solid: #a855f7;
+  --sp-primary-text: #d0a6ff;
+  --sp-primary-soft: #a855f73a;
+  --sp-primary-border: #7c3aad;
+  --sp-primary-glow: #a855f77f;
+  --sp-primary-deep: #1b1028;
+
+  --sp-focus-ring: #c9a6ff;
+  --sp-glass-text: #f3e9ff;
+}
+
+/* ---- Verdant — teal glass, green limb. For data that is mostly
+   healthy: monitoring, uptime, anything with a baseline. */
+[data-sp-palette="verdant"] {
+  --sp-glass-rgb: 10 32 32;
+  --sp-glass-deep-rgb: 3 12 12;
+  --sp-sheen-rgb: 70 210 170;
+  --sp-rim-rgb: 150 245 215;
+  --sp-glow-rgb: 60 215 160;
+  --sp-glint-rgb: 226 255 246;
+
+  --sp-primary-solid: #10b981;
+  --sp-primary-text: #5fe3b0;
+  --sp-primary-soft: #10b9813a;
+  --sp-primary-border: #0f8a62;
+  --sp-primary-glow: #10b9817f;
+  --sp-primary-deep: #08201c;
+
+  --sp-focus-ring: #7fe9c4;
+  --sp-glass-text: #e6fff7;
+}
+
+/* ---- Solar — warm amber. Note the tension: this palette's limb
+   sits where the warning colour lives, so a warning Message reads
+   as part of the surface rather than against it. Worth choosing
+   deliberately, and worth avoiding in an interface whose job is
+   to raise alarms. */
+[data-sp-palette="solar"] {
+  --sp-glass-rgb: 40 26 12;
+  --sp-glass-deep-rgb: 16 9 3;
+  --sp-sheen-rgb: 250 180 90;
+  --sp-rim-rgb: 255 215 150;
+  --sp-glow-rgb: 255 180 90;
+  --sp-glint-rgb: 255 244 226;
+
+  --sp-primary-solid: #f59e0b;
+  --sp-primary-text: #fcc453;
+  --sp-primary-soft: #f59e0b3a;
+  --sp-primary-border: #b4740a;
+  --sp-primary-glow: #f59e0b7f;
+  --sp-primary-deep: #2a1c08;
+
+  --sp-focus-ring: #fdd080;
+  --sp-glass-text: #fff6e8;
+}
+
+/* ---- Void — steel, all but colourless. The one a consumer with
+   their own brand actually ships: it proves the system reads with
+   no hue at all, so their accent can be the only colour on screen. */
+[data-sp-palette="void"] {
+  --sp-glass-rgb: 22 24 28;
+  --sp-glass-deep-rgb: 8 9 11;
+  --sp-sheen-rgb: 150 160 175;
+  --sp-rim-rgb: 205 212 222;
+  --sp-glow-rgb: 160 170 185;
+  --sp-glint-rgb: 240 243 247;
+
+  --sp-primary-solid: #8a93a3;
+  --sp-primary-text: #c3cad6;
+  --sp-primary-soft: #8a93a33a;
+  --sp-primary-border: #5d6675;
+  --sp-primary-glow: #8a93a37f;
+  --sp-primary-deep: #16181c;
+
+  --sp-focus-ring: #ccd3de;
+  --sp-glass-text: #eef1f5;
+}
+
+/* ============================================================
+   The derived chrome.
+
+   tokens.css states each of these as a hand-tuned literal, which
+   is right for one palette and impossible for five. Here they are
+   expressed once in terms of the channels above, so a palette
+   states its light and the spheres, washes and limbs follow.
+
+   The selector matches ANY palette, so adding a preset above is
+   a dozen lines and nothing else.
+   ============================================================ */
+[data-sp-palette] {
+  /* Lit spheres: the radio orb and the slider thumb are the same
+     object under different light — a highlight, a midtone, a limb
+     and a shaded underside. */
+  --sp-radio-group-orb-highlight-color: rgb(var(--sp-glint-rgb));
+  --sp-radio-group-orb-mid-color: rgb(var(--sp-rim-rgb));
+  --sp-radio-group-orb-rim-color: rgb(var(--sp-rim-rgb) / 0.9);
+  --sp-radio-group-orb-glow-color: rgb(var(--sp-rim-rgb) / 0.85);
+  --sp-radio-group-orb-halo-color: rgb(var(--sp-glow-rgb) / 0.55);
+
+  --sp-slider-thumb-highlight-color: rgb(var(--sp-glint-rgb));
+  --sp-slider-thumb-mid-color: color-mix(in srgb, rgb(var(--sp-rim-rgb)) 60%, rgb(var(--sp-sheen-rgb)));
+  --sp-slider-thumb-shade-color: color-mix(in srgb, rgb(var(--sp-sheen-rgb)) 35%, rgb(var(--sp-glass-rgb)));
+  --sp-slider-thumb-limb-color: rgb(var(--sp-glass-deep-rgb));
+  --sp-slider-thumb-rim-color: rgb(var(--sp-rim-rgb) / 0.75);
+  --sp-slider-thumb-rim-hover-color: rgb(var(--sp-glint-rgb) / 0.9);
+  --sp-slider-thumb-glow-hover-color: rgb(var(--sp-glow-rgb) / 0.75);
+  --sp-slider-range-from-color: rgb(var(--sp-sheen-rgb) / 0.85);
+
+  /* The checkbox is a lit plate rather than a sphere: a mark, the
+     light along its edge, the bloom under it. */
+  --sp-checkbox-mark-color: rgb(var(--sp-glint-rgb));
+  --sp-checkbox-glow-color: rgb(var(--sp-rim-rgb) / 0.85);
+  --sp-checkbox-halo-color: rgb(var(--sp-glow-rgb) / 0.55);
+
+  /* Washes over the glass: a highlighted row, a selected segment. */
+  --sp-autocomplete-option-highlight-color: rgb(var(--sp-rim-rgb) / 0.14);
+  --sp-panel-item-highlight-color: rgb(var(--sp-glint-rgb) / 0.45);
+
+  --sp-icon-toggle-label-color: rgb(var(--sp-glint-rgb) / 0.92);
+  --sp-icon-toggle-label-dim-color: rgb(var(--sp-glint-rgb) / 0.55);
+  --sp-icon-toggle-active-from-color: rgb(var(--sp-sheen-rgb) / 0.28);
+  --sp-icon-toggle-active-rim-color: rgb(var(--sp-rim-rgb) / 0.45);
+  --sp-icon-toggle-active-to-color: rgb(var(--sp-sheen-rgb) / 0.35);
+
+  /* Tabs: a recessed strip with one raised, lit segment. */
+  --sp-tabs-surface-color: rgb(var(--sp-glass-deep-rgb));
+  --sp-tabs-rest-from-color: rgb(var(--sp-glass-rgb) / 0.6);
+  --sp-tabs-rest-to-color: rgb(var(--sp-glass-deep-rgb) / 0.3);
+  --sp-tabs-hover-from-color: rgb(var(--sp-glass-rgb) / 0.75);
+  --sp-tabs-hover-to-color: rgb(var(--sp-glass-rgb) / 0.45);
+  --sp-tabs-active-from-color: rgb(var(--sp-glass-rgb) / 0.9);
+  --sp-tabs-active-edge-color: rgb(var(--sp-rim-rgb) / 0.45);
+
+  /* Solid panels that float above the ground: a Select's menu. */
+  --sp-select-panel-color: rgb(var(--sp-glass-deep-rgb));
+
+  /* Info is the system's own light, so it follows the accent.
+     Warning and alert do not: those mean something. */
+  --sp-message-info-rim-color: var(--sp-primary-text);
+  --sp-message-info-wash-color: var(--sp-primary-soft);
+}
+
+/* ============================================================
+   Ground level.
+
+   Not a light mode. These components are lit glass: the fill is a
+   dark translucent plate and the rim is light caught along its
+   edge, so a white page leaves the rim with nothing to catch and
+   the fill reading as a smudge. What CAN move is the room — how
+   far the ground is raised out of the dark behind the glass.
+
+   The glass itself stays glass at every level, which is why the
+   text on it keeps the contrast it was measured for. The ground
+   tints toward the palette's OWN light as it rises, so a raised
+   Nebula warms violet and a raised Verdant warms green rather
+   than both drifting to the same grey.
+
+   Derived, so a consumer's own palette gets all three levels for
+   free: state your channels, and the rooms come with them.
+   ============================================================ */
+[data-sp-palette] {
+  --sp-ground-color: rgb(var(--sp-glass-deep-rgb));
+}
+
+/* Lifted off the floor: the ground reads as a surface rather than
+   as the absence of one. */
+[data-sp-palette][data-sp-ground="raised"] {
+  --sp-ground-color: color-mix(in srgb, rgb(var(--sp-glass-deep-rgb)) 82%, rgb(var(--sp-sheen-rgb)));
+}
+
+/* As bright as the metaphor survives. Past this the glass has
+   nothing left to be translucent against. */
+[data-sp-palette][data-sp-ground="bright"] {
+  --sp-ground-color: color-mix(in srgb, rgb(var(--sp-glass-deep-rgb)) 58%, rgb(var(--sp-sheen-rgb)));
+}

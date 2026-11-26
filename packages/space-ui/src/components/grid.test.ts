@@ -43,6 +43,56 @@ const files = (function walk(at: string): string[] {
   });
 })(dir);
 
+/**
+ * Radii that are not steps on the scale. A circle and a pill must not move
+ * when --sp-radius-base-size does, and a 1px or 2px rounding on a mark is an
+ * optical detail rather than a decision about the library's character.
+ */
+const RADIUS_LITERALS: Record<string, string> = {
+  "50%": "a circle — an orb, a moon, an icon-only button",
+  inherit: "follows the surface it is cut into",
+  "components/Checkbox.module.scss:1px": "the tick's mask, a hairline rather than a corner",
+  "components/Chart.module.scss:2px": "the rounded end of a bar, sized to the stroke",
+  "components/PieChart.module.scss:2px": "the same rounding on a slice's end",
+  "styles/_burst.scss:$radius": "a Sass parameter — the caller supplies the value",
+};
+
+describe("the corner radius scale", () => {
+  it("names a radius step rather than writing a raw length", () => {
+    // Rounding is one decision about the library's character, so it lives in
+    // --sp-radius-* and is retunable from a single base. It used to be eight
+    // separate decisions spread across the stylesheets, which is how 10px and
+    // 14px ended up beside 12px with nothing to tell them apart.
+    const strays: string[] = [];
+
+    for (const file of files) {
+      const name = path.relative(dir, file);
+      readFileSync(file, "utf8").split("\n").forEach((raw, i) => {
+        const line = raw.split("//")[0];
+        const match = /^\s*border-radius\s*:\s*([^;{]+);/.exec(line);
+        if (!match) return;
+        const value = match[1].trim();
+        // Any radius token: the scale itself, or a component's own corner
+        // (--sp-control-radius-size), which is still a decision a consumer
+        // can retune rather than a length baked into the stylesheet.
+        if (/var\(\s*--sp-[a-z-]*radius[a-z-]*\s*[),]/.test(value)) return;
+        if (RADIUS_LITERALS[value] || RADIUS_LITERALS[`${name}:${value}`]) return;
+        strays.push(`${name}:${i + 1}  border-radius: ${value}`);
+      });
+    }
+
+    expect(strays).toEqual([]);
+  });
+
+  it("keeps the circle and the pill off the scale", () => {
+    // If these derived from the base, setting it to 0 for a squared-off
+    // system would turn every orb into a square and every pill into a box.
+    const tokens = readFileSync(path.join(dir, "styles/tokens.css"), "utf8");
+    expect(tokens).toMatch(/--sp-radius-full:\s*999px/);
+    expect(tokens).not.toMatch(/--sp-radius-full:[^;]*var\(/);
+  });
+});
+
 describe("the spacing grid", () => {
   it("names a spacing step rather than writing a raw length", () => {
     // Spacing is --spacing-xs … --spacing-2xl, each one a multiple of

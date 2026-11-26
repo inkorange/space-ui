@@ -76,6 +76,15 @@
   --sp-control-height: 40px;
   --sp-control-height-lg: 48px;
 
+  /* The corner of a control, paired with the ladder above for the same
+     reason: a button and the Select beside it must agree about their shape
+     as well as their height. It is its own token rather than a step on the
+     radius scale because the family is pill-shaped by default — squaring the
+     panels off should not square the buttons unless that is what you meant.
+     Set it to var(--sp-radius-md) for a conventional, less space-like set of
+     controls. */
+  --sp-control-radius-size: var(--sp-radius-full);
+
   --sp-select-trigger-max-width: 20rem;
 
   /* The option panel grows past the trigger to fit its longest option, so a
@@ -230,6 +239,14 @@
   --sp-glint-rgb: 225 238 255;     /* the sweep across the surface      */
   --sp-star-rgb: 255 255 255;      /* speck highlights                  */
   --sp-shadow-rgb: 0 0 0;          /* ambient drop shadow               */
+
+  /* The ground the glass is lit against. The library has always REQUIRED a
+     dark surface behind it without ever naming one, which left every
+     consumer to guess — and a guess that lands too light turns translucent
+     fills into grey smudges. This is that surface, stated: paint it on the
+     page, and the panels sit in the room they were drawn for. */
+  --sp-ground-color: #05070f;
+
   --sp-glass-text: #eaf2ff;        /* text sitting on a glass surface   */
   --sp-focus-ring: #9cc0ff;        /* keyboard focus outline            */
 
@@ -252,6 +269,22 @@
   --spacing-lg: calc(var(--sp-grid-base-size) * 3);    /* 24px */
   --spacing-xl: calc(var(--sp-grid-base-size) * 4);    /* 32px */
   --spacing-2xl: calc(var(--sp-grid-base-size) * 5);   /* 40px */
+
+  /* Corner radius. One base and four steps off it, for the same reason
+     spacing has one: rounding is a single decision about the library's
+     character, and it was previously eight separate decisions scattered
+     across the stylesheets. Set the base to 0 for a squared-off system, or
+     to 14px for a soft one, and every surface follows.
+
+     A circle and a pill are not steps on this scale — they are 50% and
+     --sp-radius-full, which must not move when the base does, or an
+     icon-only button stops being round. */
+  --sp-radius-base-size: 8px;
+  --sp-radius-sm: calc(var(--sp-radius-base-size) * 0.5);   /* 4px  — small inner parts */
+  --sp-radius-md: calc(var(--sp-radius-base-size) * 0.75);  /* 6px  — rows inside a panel */
+  --sp-radius-lg: var(--sp-radius-base-size);               /* 8px  — cards, panels, tooltips */
+  --sp-radius-xl: calc(var(--sp-radius-base-size) * 1.5);   /* 12px — floating surfaces */
+  --sp-radius-full: 999px;                                  /* a pill, at any height */
 
   /* Font family. The library does NOT set a family on any component —
      everything inherits the host app's font, and nothing portals out of

@@ -25,7 +25,7 @@
   min-height: var(--sp-control-height);
   padding: 0 var(--spacing-xl);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--sp-control-radius-size);
   // Typeface comes from the system token, never a per-component hook:
   // one place decides the font for every component.
   /* Written out rather than as the `font` shorthand: the shorthand's slash

@@ -38,7 +38,7 @@
   padding: 0 var(--spacing-sm) 1px;
   color: var(--sp-gray-text-dim);
   border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--sp-radius-xl) var(--sp-radius-xl) 0 0;
   background: linear-gradient(
     180deg,
     var(--sp-tabs-rest-from-color),

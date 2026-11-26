@@ -37,7 +37,7 @@
 
 .pressable {
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   background: none;
   /* The family and weight, but NOT the size: `font: inherit` is a shorthand,
      and it was resetting the size to whatever the page uses — so a row with a
@@ -70,7 +70,7 @@
 .track {
   position: relative;
   height: var(--sp-bar-list-track-height, 8px);
-  border-radius: 999px;
+  border-radius: var(--sp-radius-full);
   background: linear-gradient(
     180deg,
     rgb(var(--sp-glass-rgb) / 0.92),

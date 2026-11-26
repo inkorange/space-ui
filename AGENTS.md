@@ -31,35 +31,52 @@ that wants the palette and the scales without the components).
    for consumers.
 2. **Do not add a provider, context or theme wrapper.** Components read tokens
    straight from CSS custom properties on the document.
-3. **The library is dark-only, by design.** The tokens can be re-pointed, but
-   the components are drawn as lit glass over a dark ground, so a light
-   palette misrepresents every surface. There is no supported light theme; do
-   not build one.
-4. **Style with tokens, never raw lengths or colours.** `var(--spacing-md)`,
+3. **The library is dark-only, by design.** The components are drawn as lit
+   glass over a dark ground: a fill is a translucent plate and a rim is light
+   caught along its edge, so a light palette misrepresents every surface.
+   There is no supported light theme; do not build one, and do not offer a
+   dark/light toggle.
+4. **To change the colour, use a palette.** Import
+   `@inkorange/space-ui/palettes.css` and set `data-sp-palette` to
+   `deep-space`, `nebula`, `verdant`, `solar` or `void` — on the document for
+   the whole application, or on any element for one subtree. Write your own by
+   declaring the six `*-rgb` channels and the `--sp-primary-*` accent under
+   your own `[data-sp-palette="name"]`; the lit chrome derives from them. Never
+   re-point the `--sp-gray-*` ramp, the status colours or the chart series: a
+   palette is not entitled to decide contrast, meaning or data legibility.
+   `data-sp-ground` (`deep`, `raised`, `bright`) raises `--sp-ground-color`,
+   the surface behind the glass. That is a luminance axis, not a light mode.
+5. **Style with tokens, never raw lengths or colours.** `var(--spacing-md)`,
    not `16px`. Spacing is an 8pt grid — every step is a multiple of
-   `--sp-grid-base-size`. Control heights come from `--sp-control-height`
+   `--sp-grid-base-size`. Corners come from `--sp-radius-sm/-md/-lg/-xl`, all
+   derived from `--sp-radius-base-size`, with `--sp-radius-full` for a pill
+   and `50%` for a circle — those two stay put when the base moves, or a
+   squared-off system loses its round orbs. A button's own corner is
+   `--sp-control-radius-size` (a pill by default), kept off the scale so
+   squaring the panels does not square the controls. Control heights come
+   from `--sp-control-height`
    (40px, with `-sm` 36 and `-lg` 48), so a Button and the Select beside it
    match. Colour is a named role: `primary` for emphasis, `success`,
    `warning`, `danger` and `accent` for status, with `-solid`, `-text`,
    `-soft`, `-border`, `-glow` and `-deep` saying which job within the role.
-5. **Override a component token on a class, not with an inline style.** An
+6. **Override a component token on a class, not with an inline style.** An
    inline style wins over every media and container query the consumer will
    later write.
 
    ```css
    .featured { --sp-carousel-view-count: 2.5; }
    ```
-6. **Boolean props default to false**, so `<Button fullWidth />` is the idiom,
+7. **Boolean props default to false**, so `<Button fullWidth />` is the idiom,
    not `fullWidth={true}`. The one exception is `animated`, which defaults to
    true.
-7. **Selection components are controlled through `onValueChange`** — Select,
+8. **Selection components are controlled through `onValueChange`** — Select,
    Slider, RadioGroup, CheckboxGroup, Tabs. Native text inputs (TextField,
    TextArea) keep React's own `value` and `onChange`.
-8. **Keyboard support and ARIA are already inside each component.** Roving
+9. **Keyboard support and ARIA are already inside each component.** Roving
    tabindex, arrow-key navigation, Escape handling, `aria-checked`,
    `aria-expanded` and `aria-current` are implemented; do not re-declare them
    from outside. Do pass `aria-label` where a control has no visible label.
-9. **Nothing touches the DOM at import time.** Components that measure do it in
+10. **Nothing touches the DOM at import time.** Components that measure do it in
    effects, so the entry point imports cleanly in a server build. Components
    needing the top layer use the platform popover API, so no portal target has
    to be provided.
