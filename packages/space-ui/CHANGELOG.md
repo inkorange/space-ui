@@ -1,5 +1,99 @@
 # @inkorange/space-ui
 
+## 1.13.0
+
+### Minor Changes
+
+- f752b08: Add `Switch`, for a setting that takes effect the moment it is flipped.
+
+  The library could say "this is selected" and could not say "this is on".
+  Checkbox answers the first and belongs in a form you submit; a switch answers
+  the second, and a switch inside an unsaved form tells the reader a lie about
+  what has already happened. Both now exist, and the prop shape is deliberately
+  the same — `checked` and `onCheckedChange`, fully controlled, the label part
+  of the click target — so choosing between them is a question about meaning
+  rather than about API.
+
+  It is a native checkbox with `role="switch"` over it, so focus, Space, the
+  disabled state and form participation come from the browser rather than from
+  us, while a screen reader announces on or off instead of ticked.
+
+  Where the Checkbox is a panel that lights and the RadioGroup a sphere that
+  ignites, this is a sphere that travels: the Slider's glass tube with a lit
+  moon crossing it. The movement is the point — a control that only changed
+  colour would be saying what a checkbox already says, and it is the travel
+  that says the setting went somewhere. The thumb's inset and its distance are
+  both derived from the two track sizes, so retuning either keeps the moon
+  inside the tube and the end gaps equal.
+
+  Turning it on flashes the same ring of light that leaves RadioGroup's orb and
+  Checkbox's tile — the shared burst, so the three cannot drift into slightly
+  different versions of the same idea. It leaves the moon rather than the tube,
+  because a ring expanding off a 36px pill would read as the whole control
+  flashing rather than as something switching on. Turning off simply lets the
+  light go out.
+
+  The tube takes `--sp-radius-xl`, which at the shipped sizes IS a pill: 12px of
+  corner on a 20px tube exceeds half its height and the browser clamps it. So
+  nothing moves at the defaults, and the tube squares off with the rest of the
+  library as `--sp-radius-base-size` comes down. The moon stays a circle at
+  every setting.
+
+  Its track, moon and bloom are re-pointed by every palette, so it arrives
+  already knowing about Nebula and Void.
+
+- 0be8e10: Ship five palettes, and name the ground they are lit against.
+
+  `@inkorange/space-ui/palettes.css` is a new optional entry. Import it and set
+  one attribute — `data-sp-palette="nebula"` — and the library repaints: Deep
+  Space (the default, named so a picker can select it), Nebula, Verdant, Solar
+  and Void. Because the tokens are ordinary custom properties the attribute
+  cascades, so it themes the application on `<html>` or one panel on one
+  element. There is still no provider, no context and no wrapper.
+
+  A palette states six channels and an accent; the lit chrome — the spheres of
+  the Slider thumb and radio orb, the washes behind a highlighted row, the limb
+  along a tab — derives from them. So a consumer's own palette is a dozen
+  declarations rather than eighty, and it gets the derived chrome free. What a
+  palette deliberately cannot move: the neutral text ramp, which carries the
+  contrast guarantees; status colour, which means something; and the chart
+  series, which are the measured colour-blind ramp. A test enforces each of
+  those.
+
+  Also new: `--sp-ground-color`, the dark surface the glass is lit against. The
+  library has always required one without ever naming it, which left every
+  consumer to guess — and a guess that lands too light turns a translucent fill
+  into a grey smudge. Palettes raise it in three steps (`data-sp-ground` of
+  `deep`, `raised` or `bright`), tinting toward the palette's own light as it
+  rises. This is a luminance axis, not a light mode: the glass stays glass, so
+  text on it keeps the contrast it was measured for. The library remains
+  dark-only by design.
+
+  Corners are a scale now, too. `--sp-radius-sm`, `-md`, `-lg` and `-xl` all
+  derive from `--sp-radius-base-size`, so one value rounds the whole library or
+  squares it off — rounding was previously eight separate decisions spread
+  across the stylesheets, which is how 10px and 14px ended up beside 12px with
+  nothing to tell them apart. `--sp-radius-full` and `50%` stay off the scale
+  on purpose: a squared-off system must still have round orbs and pill-shaped
+  tracks. A test keeps raw lengths out of `border-radius` from here on.
+
+  Buttons get a dial of their own, `--sp-control-radius-size`, shared with the
+  controls beside them so a squared button never sits next to a pill-shaped
+  select. It defaults to `var(--sp-radius-full)`, so nothing moves unless it is
+  set.
+
+  Three surfaces move by 2px as a result: the Autocomplete and DropdownMenu
+  panels round from 10px to 12px, and one control-chrome surface from 14px to
+  12px.
+
+  The palette layer leaves `:root` untouched, so an application that does not
+  import the new entry renders exactly as before — apart from those three
+  corners.
+
+### Patch Changes
+
+- 0be8e10: PieChart: a donut with a single slice (one value at 100%) cuts its hole in the middle again. The hole's arc ended just left of the top, which made the browser draw it on a circle above the ring, so a dark disc covered the ring's top edge instead.
+
 ## 1.12.1
 
 ### Patch Changes
