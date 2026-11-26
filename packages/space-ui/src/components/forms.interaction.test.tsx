@@ -66,7 +66,13 @@ describe("Checkbox behaviour", () => {
 });
 
 describe("Switch behaviour", () => {
-  const Lamp = ({ onChange = () => {}, disabled = false }) => {
+  const Lamp = ({
+    onChange = () => {},
+    disabled = false,
+  }: {
+    onChange?: (next: boolean) => void;
+    disabled?: boolean;
+  }) => {
     const [on, setOn] = useState(false);
     return (
       <Switch
