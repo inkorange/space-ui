@@ -66,9 +66,16 @@ export const EXPECTED_TOKENS = [
   "--sp-glass-rgb", "--sp-glass-deep-rgb", "--sp-sheen-rgb", "--sp-rim-rgb",
   "--sp-glow-rgb", "--sp-glint-rgb", "--sp-star-rgb", "--sp-shadow-rgb",
   "--sp-glass-text", "--sp-focus-ring",
+  // The dark surface the glass is lit against, which palettes raise.
+  "--sp-ground-color",
   "--sp-ember-glass-rgb", "--sp-ember-glass-deep-rgb", "--sp-ember-sheen-rgb",
   "--sp-ember-rim-rgb", "--sp-ember-glow-rgb",
   "--spacing-xs", "--spacing-sm", "--spacing-md", "--spacing-lg", "--spacing-xl", "--spacing-2xl",
+  // Corner radius — one base, four steps, plus the pill that never moves.
+  "--sp-radius-base-size", "--sp-radius-sm", "--sp-radius-md", "--sp-radius-lg",
+  "--sp-radius-xl", "--sp-radius-full",
+  // The control family's own corner, paired with the height ladder.
+  "--sp-control-radius-size",
   "--sp-font-xs", "--sp-font-sm", "--sp-font-md", "--sp-font-xl",
   "--sp-font-family",
 ];

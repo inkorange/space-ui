@@ -74,6 +74,24 @@ body {
   background-color: var(--docs-stage);
 }
 
+/* With a palette chosen, the stage becomes that palette's ground, so the
+   Deep/Raised/Bright control in the sidebar does something visible on every
+   page rather than only inside the boxes that introduce it. The default
+   stays the fixed, truthful grey: judging a component against a ground that
+   flatters it is how a contrast problem survives review. */
+html[data-sp-palette],
+html[data-sp-palette] body,
+html[data-sp-palette] .ladle-background {
+  background: var(--sp-ground-color);
+  transition: background 0.24s ease;
+}
+
+/* The chrome keeps its own surfaces — a sidebar that slid around with the
+   palette would stop being a fixed place to stand. */
+html[data-sp-palette] nav.ladle-aside {
+  background: linear-gradient(90deg, var(--docs-void) 0%, var(--docs-hull) 100%);
+}
+
 /* ============================================================
    SIDEBAR
    ============================================================ */
@@ -2550,4 +2568,370 @@ nav.ladle-aside a:focus-visible {
    container's height, so a specimen needs room reserved for it to open into. */
 .docs-popover-stage {
   min-height: 220px;
+}
+
+/* ---------------------------------------------------------------
+   PALETTES
+
+   Each box paints its own ground from --sp-ground-color, which the
+   palette it carries supplies. The stage behind them stays the
+   fixed, truthful grey — a page that recoloured itself would stop
+   being a reliable place to judge a palette against.
+   --------------------------------------------------------------- */
+.docs-palettes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.docs-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 12px;
+  /* The palette's own room. This is the demonstration: the box is
+     lit by the tokens it declares, not by the gallery's chrome. */
+  background: var(--sp-ground-color);
+  transition: background 0.24s ease;
+}
+
+.docs-palette__head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.docs-palette__channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-palette__channel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.docs-palette__chip {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  /* The lightest channels are nearly white, so the chip needs an
+     edge of its own or it dissolves into a raised ground. */
+  box-shadow: inset 0 0 0 1px #ffffff26;
+}
+
+.docs-palette__role {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+}
+
+.docs-palette__specimen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.docs-palette__badges,
+.docs-palette__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.docs-palette__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--docs-hairline);
+}
+
+.docs-palette__ground {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------
+   PALETTE SWITCH (sidebar)
+
+   Reachable from every page, because a palette is judged on the
+   components rather than on the page that introduces it.
+   --------------------------------------------------------------- */
+.docs-palette-switch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 8px;
+  background: var(--docs-raised);
+}
+
+.docs-palette-switch__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.docs-palette-switch__label {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+}
+
+.docs-palette-switch__reset {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  color: var(--docs-readout);
+  cursor: pointer;
+}
+
+.docs-palette-switch__reset:hover {
+  text-decoration: underline;
+}
+
+.docs-palette-switch__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.docs-palette-switch__dot {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: none;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.docs-palette-switch__dot:hover {
+  background: var(--docs-wash);
+}
+
+/* The chosen one keeps a ring, so the state survives a dark chip
+   sitting on a dark panel. */
+.docs-palette-switch__dot[aria-pressed="true"] {
+  border-color: var(--docs-terminator);
+  background: var(--docs-wash);
+}
+
+.docs-palette-switch__chip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.docs-palette-switch__ground {
+  padding: 3px 8px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 6px;
+  background: none;
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  color: var(--docs-text-dim);
+  cursor: pointer;
+}
+
+.docs-palette-switch__ground[aria-pressed="true"] {
+  border-color: var(--docs-terminator);
+  color: var(--docs-text);
+}
+
+.docs-palette-switch__dot:focus-visible,
+.docs-palette-switch__ground:focus-visible,
+.docs-palette-switch__reset:focus-visible {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------
+   TOKEN GENERATOR
+   --------------------------------------------------------------- */
+.docs-generator {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 860px) {
+  .docs-generator {
+    grid-template-columns: 1fr;
+  }
+}
+
+.docs-generator__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 10px;
+  background: var(--docs-raised);
+}
+
+.docs-generator__field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  align-items: center;
+}
+
+.docs-generator__name {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--docs-text-dim);
+}
+
+.docs-generator__help {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--docs-muted);
+}
+
+.docs-generator__value {
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-readout);
+}
+
+.docs-generator__colour {
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+}
+
+.docs-generator__text {
+  width: 140px;
+  padding: 4px 8px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 6px;
+  background: var(--docs-stage);
+  color: var(--docs-text);
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+}
+
+.docs-generator__field input[type="range"] {
+  width: 140px;
+  accent-color: var(--docs-terminator);
+}
+
+/* Lit by the generated file, not by the gallery's chrome. */
+.docs-generator__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 12px;
+  background: var(--sp-ground-color);
+}
+
+.docs-generator__channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-generator__channel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--docs-font-mono);
+  font-size: 11px;
+  color: var(--docs-muted);
+}
+
+.docs-generator__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.docs-generator__button {
+  padding: 6px 12px;
+  border: 1px solid var(--docs-hairline);
+  border-radius: 8px;
+  background: var(--docs-raised);
+  color: var(--docs-text);
+  font-family: var(--docs-font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.16s ease;
+}
+
+.docs-generator__button:hover {
+  border-color: var(--docs-terminator);
+}
+
+.docs-generator__button:focus-visible {
+  outline: 2px solid var(--docs-terminator);
+  outline-offset: 2px;
+}
+
+/* The generator's validation suite: enough of the library that any control
+   reaches something visible. */
+.docs-suite {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.docs-suite__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.docs-suite__label {
+  font-family: var(--docs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-muted);
+}
+
+.docs-suite__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
 }

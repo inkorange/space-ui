@@ -9,8 +9,11 @@ import {
 import { storySource, stories } from "virtual:generated-list";
 import { Code } from "../src/docs-code";
 import { PackageLinks } from "../src/docs-links";
+import { PaletteSwitch } from "../src/docs-palette-switch";
+import { readPalette, writePalette } from "../src/palette-state";
 import { howTo, type HowTo } from "../src/howto";
 import "@inkorange/space-ui/tokens.css";
+import "@inkorange/space-ui/palettes.css";
 import "./space.css";
 import {
   componentCount,
@@ -70,6 +73,8 @@ const Brand = () => (
     </a>
 
     <PackageLinks className="docs-links--sidebar" />
+
+    <PaletteSwitch />
 
     <div className="docs-telemetry">
       <div className="docs-telemetry__cell">
@@ -485,6 +490,14 @@ export const Provider: GlobalProvider = ({
 }) => {
   const slot = useSidebarSlot();
   const [navOpen, setNavOpen] = useMobileNav(globalState.story);
+
+  // Re-apply the stored palette before paint, here rather than in the switch:
+  // the switch rides in the sidebar, which preview mode and the story iframe
+  // do not render, and a page that drops back to the default palette when
+  // embedded would misrepresent what the consumer chose.
+  useLayoutEffect(() => {
+    writePalette(readPalette());
+  }, []);
   const { name, levels } = parseStoryId(globalState.story);
 
   const meta = storyMeta as

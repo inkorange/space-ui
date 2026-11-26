@@ -14,6 +14,12 @@ Lit glass. An orbiting rim. Faint starlight across a surface. Not a theme you
 configure — the way these components look out of the box, with nothing to
 compose and nothing to opt into.
 
+Then make it yours: **five palettes ship ready-made**, and a
+[token generator](https://space-components.vercel.app/?story=palettes--generator)
+turns three colours and two lengths into a CSS file you drop into your
+application. One attribute switches the lot — no provider, no context, no
+build step.
+
 <!-- Absolute URLs on purpose: npm renders this file too, and relative paths
      resolve against the registry rather than the repository. This sheet is a
      screenshot of the real components, shot from the gallery — see
@@ -164,6 +170,60 @@ You override only what you name, and everything you leave alone keeps its
 shipped value. Supply no variables at all and the library still renders exactly
 as it does in the gallery.
 
+**Palettes.** Five of those swaps ship ready-made, in an entry you import only
+if you want them:
+
+```js
+import "@inkorange/space-ui/palettes.css";
+```
+
+```html
+<html data-sp-palette="nebula" data-sp-ground="raised">
+```
+
+Deep Space (the default), Nebula, Verdant, Solar and Void. The attribute
+cascades like any other, so put it on the document to repaint the application
+or on one element to repaint one panel. A palette states six channels and an
+accent; every lit sphere, wash and limb derives from them, which is why your
+own palette is a dozen declarations and gets the derived chrome for free.
+
+A palette deliberately moves neither the neutral text ramp, which carries the
+contrast guarantees, nor status colour, which means something, nor the chart
+series, which are the measured colour-blind ramp.
+
+`data-sp-ground` raises `--sp-ground-color` — the dark surface the glass is lit
+against — through `deep`, `raised` and `bright`, tinting toward the palette's
+own light as it rises. It is a luminance axis, not a light mode: the glass
+stays glass, so text on it keeps its measured contrast at every level. See them
+side by side in the [palette
+gallery](https://space-components.vercel.app/?story=palettes--presets).
+
+**Build your own in the browser.** The [token
+generator](https://space-components.vercel.app/?story=palettes--generator) asks
+five questions — glass, light, accent, and the two base lengths — and writes
+the file. The preview is not a rendering of that file; it *is* that file,
+injected live, so what you see is what downloads.
+
+Two lengths, because the scales derive from them. `--sp-grid-base-size` sets
+the spacing rhythm: every step is a multiple of it, so 4px gives a dense
+application and 10px a roomy one. `--sp-radius-base-size` does the same for
+corners — `--sp-radius-sm`, `-md`, `-lg` and `-xl` are all derived, so one
+value rounds the whole library or squares it off. Circles and pills sit
+deliberately off that scale, so a squared-off system still has round orbs and
+pill-shaped tracks.
+
+Buttons keep a dial of their own, `--sp-control-radius-size`, because the
+control family is pill-shaped by default and squaring the panels off should
+not square the buttons unless that is what you meant.
+
+```css
+:root {
+  --sp-grid-base-size: 10px;        /* roomier: every gap follows */
+  --sp-radius-base-size: 0px;       /* squared off, orbs still round */
+  --sp-control-radius-size: 6px;    /* and buttons, only if you say so */
+}
+```
+
 ## The components
 
 Every one of these has a live page in the gallery — the component running, the
@@ -203,7 +263,10 @@ These ran in production before they became a package, so they arrived with
 their edge cases already found rather than imagined.
 
 **Requires** React 19 and a dark surface. There is deliberately no light theme;
-these components assume the dark they were drawn for.
+these components assume the dark they were drawn for. They are not
+dark-coloured but lit glass — a fill is a translucent plate and a rim is light
+caught along its edge, so on a white page the rim has nothing to catch. Hue is
+yours to change, and so is how far the ground rises out of the dark.
 
 ## For AI agents
 

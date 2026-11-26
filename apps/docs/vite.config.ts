@@ -19,6 +19,12 @@ export default defineConfig({
         __dirname,
         "../../packages/space-ui/src/styles/tokens.css",
       ),
+      // Each subpath entry needs its own alias: the bare-name alias below
+      // points at index.ts, so a subpath would resolve INTO that file's path.
+      "@inkorange/space-ui/palettes.css": resolve(
+        __dirname,
+        "../../packages/space-ui/src/styles/palettes.css",
+      ),
       "@inkorange/space-ui": resolve(__dirname, "../../packages/space-ui/src/index.ts"),
     },
   },

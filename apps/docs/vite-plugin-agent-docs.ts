@@ -65,12 +65,21 @@ const USAGE_RULES: Array<{ rule: string; detail: string; code?: string }> = [
   {
     rule: "The library is dark-only, by design",
     detail:
-      "The tokens can be re-pointed, but the components are drawn as lit glass over a dark ground, so a light palette misrepresents every surface. There is no supported light theme; do not build one.",
+      "The components are drawn as lit glass over a dark ground: a fill is a translucent plate and a rim is light caught along its edge, so on a light page the rim has nothing to catch. There is no supported light theme; do not build one, and do not offer a dark/light toggle.",
+  },
+  {
+    rule: "To change the colour, use a palette",
+    detail:
+      "Five ship ready-made in an optional entry, and the attribute cascades — put it on the document for the application, or on one element for one subtree. Write your own by declaring the six *-rgb channels and the --sp-primary-* accent; the lit chrome derives from them. A palette must never re-point the --sp-gray-* ramp, the status colours or the chart series: it is not entitled to decide contrast, meaning or data legibility. data-sp-ground (deep, raised, bright) raises --sp-ground-color, the surface behind the glass — a luminance axis, not a light mode.",
+    code: `import "@inkorange/space-ui/palettes.css";
+
+// deep-space (the default), nebula, verdant, solar, void
+<html data-sp-palette="nebula" data-sp-ground="raised">`,
   },
   {
     rule: "Style with tokens, never with raw lengths or colours",
     detail:
-      "Spacing comes from the step scale, control heights from the ladder, colour from a named role. A raw px value puts the layout off the 8pt grid the whole library shares.",
+      "Spacing comes from the step scale, corners from --sp-radius-sm/-md/-lg/-xl, control heights from the ladder, colour from a named role. A raw px value puts the layout off the 8pt grid the whole library shares. Both scales derive from one base each (--sp-grid-base-size, --sp-radius-base-size), so a consumer retunes the rhythm or the rounding with a single value.",
     code: `/* Right */
 .panel { padding: var(--spacing-md); gap: var(--spacing-sm); }
 

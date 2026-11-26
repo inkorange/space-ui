@@ -15,7 +15,7 @@
 .progress {
   overflow: hidden;
   height: var(--sp-progress-height, 6px);
-  border-radius: 999px;
+  border-radius: var(--sp-radius-full);
 
   /* Glass tube: the same recess as the slider track, at meter scale. */
   background: var(

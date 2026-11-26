@@ -7,7 +7,7 @@
   position: relative;
   background: var(--sp-gray-surface);
   border: 1px solid var(--sp-gray-border);
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   padding: var(--spacing-md);
 }
 
@@ -19,7 +19,7 @@
   /* Negative margins rather than a padding-less card, so the body below keeps
      the card's normal inset without every consumer re-adding it. */
   margin: calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) var(--spacing-md);
-  border-radius: 7px 7px 0 0; /* 8px radius less the 1px border */
+  border-radius: calc(var(--sp-radius-lg) - 1px) calc(var(--sp-radius-lg) - 1px) 0 0; /* 8px radius less the 1px border */
   overflow: hidden;
 
   /* Reserve the box BEFORE the image loads. This is what stops a row of cards

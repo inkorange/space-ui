@@ -160,7 +160,7 @@
   min-width: 120px;
   padding: var(--sp-grid-base-size, var(--spacing-sm));
   border: 1px solid var(--sp-gray-border);
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   background: var(--sp-select-panel-color);
   color: var(--sp-glass-text);
   pointer-events: none;

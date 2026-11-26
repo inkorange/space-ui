@@ -18,7 +18,7 @@
 
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid rgb(var(--sp-rim-rgb) / 0.22);
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   background: linear-gradient(180deg, rgb(var(--sp-glass-rgb) / 0.96), rgb(var(--sp-glass-deep-rgb) / 0.97));
   backdrop-filter: blur(8px);
   box-shadow: 0 6px 20px rgb(var(--sp-shadow-rgb) / 0.55);

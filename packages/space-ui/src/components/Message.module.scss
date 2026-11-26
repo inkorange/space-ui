@@ -22,7 +22,7 @@
      a full 16px. 20px puts 17px between the edge and the glyph, which reads
      as balanced. A documented exception to the grid, like Card's 12px. */
   padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) var(--spacing-lg);
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   overflow: hidden;
 
   /* The glass the whole system is built from, so a message sits in the same

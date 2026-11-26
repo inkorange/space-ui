@@ -45,7 +45,7 @@ $glass:
      the trigger 8px wider than the sibling TextFields on each side. */
   margin-inline: 0;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--sp-control-radius-size);
   font-size: rem(14);
   font-weight: 500;
   color: var(--sp-glass-text);
@@ -152,7 +152,7 @@ $glass:
    quieter limb rim, squared enough to hold a list. */
 .spacePanel.spacePanel {
   border: 1px solid transparent;
-  border-radius: 14px;
+  border-radius: var(--sp-radius-xl);
   animation: rimRotate 12s linear infinite;
   background:
     #{$glass} padding-box,
@@ -204,7 +204,7 @@ $glass:
   height: var(--sp-control-height);
   box-sizing: border-box;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--sp-control-radius-size);
   animation: rimRotate 12s linear infinite;
   background:
     #{$stars},
@@ -285,7 +285,7 @@ $glass:
   min-height: 92px;
   /* Tighter than the pill fields, but still soft — a large surface reads as
      rounder than a small one at the same radius. */
-  border-radius: 12px;
+  border-radius: var(--sp-radius-xl);
   /* The root contributes horizontal inset only. Its own :global(.spTextFieldRoot)
      rule above outranks this block, so the override has to be stated at
      matching specificity — otherwise the two stack and the text sits twice as

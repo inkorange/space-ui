@@ -20,7 +20,7 @@
   color: inherit;
   background: none;
   border: 1px solid var(--sp-gray-border);
-  border-radius: 6px;
+  border-radius: var(--sp-radius-md);
   padding: var(--spacing-xs) var(--spacing-sm);
   font: inherit;
 
@@ -111,7 +111,7 @@
   overflow-y: auto;
   background: var(--sp-select-panel-color);
   border: 1px solid var(--sp-gray-border);
-  border-radius: 8px;
+  border-radius: var(--sp-radius-lg);
   padding: var(--spacing-xs);
   outline: none;
 
@@ -127,7 +127,7 @@
 }
 
 .item {
-  border-radius: 6px;
+  border-radius: var(--sp-radius-md);
   padding: var(--spacing-sm);
   cursor: pointer;
 

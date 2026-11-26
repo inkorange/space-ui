@@ -5,7 +5,7 @@
   align-items: center;
   padding: var(--spacing-xs);
   gap: var(--spacing-xs);
-  border-radius: 999px;
+  border-radius: var(--sp-control-radius-size);
   background: rgb(var(--sp-glass-deep-rgb) / 0.6);
   border: 1px solid var(--sp-gray-border);
   backdrop-filter: blur(6px);

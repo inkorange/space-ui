@@ -31,7 +31,7 @@
   /* For the rare browser with no popover support, where it stays in flow. */
   z-index: 50;
   padding: var(--spacing-sm);
-  border-radius: 10px;
+  border-radius: var(--sp-radius-xl);
 
   /* The shared reveal, keyed to the popover state the panel is toggled with.
      Only the panel itself: the list inside it uses hidden, and animating that
@@ -69,7 +69,7 @@
   justify-content: space-between;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm);
-  border-radius: 6px;
+  border-radius: var(--sp-radius-md);
   cursor: pointer;
   font-size: var(--sp-font-sm);
   color: var(--sp-glass-text);

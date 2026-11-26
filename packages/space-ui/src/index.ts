@@ -13,7 +13,9 @@
  * - One stylesheet import, at the application root. There is no
  *   per-component CSS, no provider, no context and no theme wrapper.
  * - Style with tokens, not lengths: `var(--spacing-md)` over `16px`. Spacing
- *   is an 8pt grid, every step a multiple of `--sp-grid-base-size`. Control
+ *   is an 8pt grid, every step a multiple of `--sp-grid-base-size`; corners
+ *   are `--sp-radius-sm/-md/-lg/-xl`, derived from `--sp-radius-base-size`,
+ *   with `--sp-radius-full` for a pill and `50%` for a circle. Control
  *   heights come from `--sp-control-height` (40px, `-sm` 36, `-lg` 48), so
  *   controls placed side by side line up without arithmetic. Colour is a
  *   named role — `primary`, `success`, `warning`, `danger`, `accent` — with
@@ -27,9 +29,19 @@
  *   React's own `value` and `onChange`.
  * - Keyboard behaviour and ARIA live inside the components. Pass `aria-label`
  *   where there is no visible label; do not re-declare the rest.
- * - The components are drawn as lit glass over a dark ground. The tokens can
- *   be re-pointed, but there is no supported light theme, and a light palette
- *   misrepresents every surface here.
+ * - The components are drawn as lit glass over a dark ground: a fill is a
+ *   translucent plate, a rim is light caught along its edge. There is no
+ *   supported light theme, because on a white page the rim has nothing to
+ *   catch and the plate reads as a smudge.
+ * - Colour is yours to change, though. Import
+ *   `@inkorange/space-ui/palettes.css` and set `data-sp-palette` to
+ *   `deep-space`, `nebula`, `verdant`, `solar` or `void` — on the document,
+ *   or on one element to repaint one panel. `data-sp-ground` (`deep`,
+ *   `raised`, `bright`) raises the surface behind the glass. A palette never
+ *   moves the neutral text ramp, the status colours or the chart series.
+ *   To build your own, the generator at
+ *   https://space-components.vercel.app/?story=palettes--generator writes the
+ *   file from three colours and the two base lengths.
  *
  * The full generated reference, including every token each component accepts,
  * is at https://space-components.vercel.app/llms.txt
@@ -39,9 +51,9 @@
 // The default token values ship WITH the components, so `styles.css` alone
 // renders a working library. A consuming app overrides by loading its own
 // :root block afterwards — same specificity, later source order — which is
-// what makes a whole theme (light mode, a brand palette) a one-file swap
-// rather than a fork. tokens.css is still exported separately for anyone who
-// wants to read or extend the defaults.
+// what makes a whole palette a one-file swap — and what palettes.css does
+// one attribute at a time. tokens.css is still exported separately for
+// anyone who wants to read or extend the defaults.
 import "./styles/tokens.css";
 
 export { Text, type TextProps } from "./components/Text";
